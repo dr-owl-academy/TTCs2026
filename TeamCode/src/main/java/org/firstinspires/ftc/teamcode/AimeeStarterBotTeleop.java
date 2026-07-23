@@ -194,6 +194,9 @@ public class AimeeStarterBotTeleop extends OpMode {
         /*
          * Send calculated power to wheels
          */
+        leftDrive.setPower(0.75);
+        rightDrive.setPower(0.75);
+
         leftDrive.setPower(leftPower);
         rightDrive.setPower(rightPower);
     }
