@@ -1,35 +1,3 @@
-/*
- * Copyright (c) 2025 FIRST
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to
- * endorse or promote products derived from this software without specific prior
- * written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
@@ -40,8 +8,6 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
  * This file includes a teleop (driver-controlled) file for the goBILDA® StarterBot Chassis/Intake for the
@@ -49,9 +15,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * one motor driving an intake roller, and two servos which pull elements out of corners.
  */
 
-@TeleOp(name = "eason", group = "StarterBot")
+@TeleOp(name = "Eason_Opmode", group = "StarterBot")
 //@Disabled
-public class eason extends OpMode {
+public class Eason_Opmode extends OpMode {
 
     // Declare OpMode members.
     private DcMotor leftDrive = null;
@@ -156,7 +122,7 @@ public class eason extends OpMode {
          * Each trigger outputs a signal from 0-1, with 0 as fully released, and 1 fully depressed.
          * This gives us proportional control of the intake speed. The speed increases as we pull
          * the right trigger further. It's occasionally helpful to be able to reverse the intake,
-         * so we also factor in the the left trigger. If the left trigger is fully depressed,
+         * so we also factor in the left trigger. If the left trigger is fully depressed,
          * the intakePower variable will be -1. If the right trigger is fully depressed, the variable
          * will be 1. If the driver pulls both triggers, the intake will remain off.
          * We use this technique (creating a variable, and setting it to our control inputs) to
