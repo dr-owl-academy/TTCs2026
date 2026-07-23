@@ -197,7 +197,5 @@ public class AimeeStarterBotTeleop extends OpMode {
         leftDrive.setPower(0.75);
         rightDrive.setPower(0.75);
 
-        leftDrive.setPower(leftPower);
-        rightDrive.setPower(rightPower);
     }
 }
