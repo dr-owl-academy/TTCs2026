@@ -41,11 +41,17 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 /*
+checklist : lower turn sensitivity
+            (play Toon's Universe after wards to grind for Frizzles emblem)
+ */
+
+/*
  * This file includes a teleop (driver-controlled) file for the goBILDA® StarterBot Chassis/Intake for the
  * 2026-2027 FIRST® Tech Challenge. It leverages a differential/Skid-Steer system for robot mobility,
  * one motor driving an intake roller, and two servos which pull elements out of corners.
  */
 
+//maybe switch the name of the bot to Dictator Mbappe later (it's right under this comment)
 @TeleOp(name = "StarterBot Chassis Teleop", group = "StarterBot")
 //@Disabled
 public class AimeeStarterBotTeleop extends OpMode {
