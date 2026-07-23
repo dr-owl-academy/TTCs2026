@@ -1,3 +1,4 @@
+package org.firstinspires.ftc.teamcode;
 /*
  * Copyright (c) 2025 FIRST
  * All rights reserved.
@@ -30,8 +31,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
-
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -40,8 +39,6 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
  * This file includes a teleop (driver-controlled) file for the goBILDA® StarterBot Chassis/Intake for the
@@ -51,7 +48,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "StarterBot Chassis Teleop", group = "StarterBot")
 //@Disabled
-public class StarterBotChassisTeleop extends OpMode {
+public class AimeeStarterBotTeleop extends OpMode {
 
     // Declare OpMode members.
     private DcMotor leftDrive = null;
