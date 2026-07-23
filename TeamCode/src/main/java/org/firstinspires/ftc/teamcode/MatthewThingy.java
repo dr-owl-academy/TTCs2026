@@ -184,8 +184,8 @@ public class MatthewThingy extends OpMode {
     }
 
     void arcadeDrive(double forward, double rotate) {
-        leftPower = (forward + rotate)/2;
-        rightPower = (forward - rotate)/2;
+        leftPower = (forward + rotate)/1.5;
+        rightPower = (forward - rotate)/1.5;
 
         /*
          * Send calculated power to wheels
