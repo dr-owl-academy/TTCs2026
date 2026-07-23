@@ -192,8 +192,7 @@ public class DanielStarterBotTeleop extends OpMode {
         /*
          * Send calculated power to wheels
          */
-        leftDrive.setPower(0.5);
-        rightDrive.setPower(0.5);
+
         leftDrive.setPower(leftPower);
         rightDrive.setPower(rightPower);
     }
