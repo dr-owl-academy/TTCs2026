@@ -254,7 +254,17 @@ public class yajatMecanumDrive extends OpMode {
       //  launch(gamepad2.rightBumperWasPressed());
 
 
-        mecanumDrive (-gamepad1.right_trigger, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        double forward = 0;
+        double strafe = 0;
+
+        if (gamepad1.dpad_up){forward=1;}
+        else if (gamepad1.dpad_down){forward=-1;}
+
+        if (gamepad1.dpad_right){strafe=1;}
+        else if (gamepad1.dpad_left){strafe=-1;}
+
+        double driveTurn = gamepad1.right_stick_x;
+        mecanumDrive(forward,strafe,driveTurn);
 
         telemetry.addData("leftfrontpwr","%.2f",leftFrontPower);
         telemetry.addData("rightfwdpower","%.2f",rightFrontPower);
