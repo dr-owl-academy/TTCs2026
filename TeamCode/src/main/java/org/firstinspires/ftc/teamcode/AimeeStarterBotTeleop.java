@@ -42,7 +42,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 /*
 checklist : lower turn sensitivity (DONE, hopefully)
-            (play Toon's Universe after wards to grind for Patchers emblem)
  */
 
 /*
@@ -194,8 +193,8 @@ public class AimeeStarterBotTeleop extends OpMode {
         /*
          * Send calculated power to wheels
          */
-        leftDrive.setPower(0.75);
-        rightDrive.setPower(0.75);
+        leftDrive.setPower(leftPower);
+        rightDrive.setPower(rightPower);
 
     }
 }
