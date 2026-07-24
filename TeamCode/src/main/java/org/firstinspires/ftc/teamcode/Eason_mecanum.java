@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -41,10 +39,7 @@ public class Eason_mecanum extends OpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightBackDrive = null;
-    private PinpointLocalizer localizer = null;
-
     // Change this to your desired starting pose: x, y in inches, heading in radians
-    private Pose2d initialRobotPose = new Pose2d(-24, -62, 0);
     private static final double PINPOINT_IN_PER_TICK = 0.0019684344326;
 
     ElapsedTime feederTimer = new ElapsedTime();
@@ -108,14 +103,6 @@ public class Eason_mecanum extends OpMode {
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        /*
-         * Here we set our launcher to the RUN_USING_ENCODER runmode.
-         * If you notice that you have no control over the velocity of the motor, it just jumps
-         * right to a number much higher than your set point, make sure that your encoders are plugged
-         * into the port right beside the motor itself. And that the motors polarity is consistent
-         * through any wiring.
-         */
-        launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         /*
          * Setting zeroPowerBehavior to BRAKE enables a "brake mode". This causes the motor to
@@ -128,13 +115,12 @@ public class Eason_mecanum extends OpMode {
         rightBackDrive.setZeroPowerBehavior(BRAKE);
 
         // coach: Initialize PinpointLocalizer with starting pose
-        localizer = new PinpointLocalizer(hardwareMap, PINPOINT_IN_PER_TICK, initialRobotPose);
+
 
         /*
          * Tell the driver that initialization is complete.
          */
         telemetry.addData("Status", "Initialized");
-        telemetry.addData("Initial Pose", "(%.2f, %.2f, %.2f rad)", initialRobotPose.position.x, initialRobotPose.position.y, initialRobotPose.heading.toDouble());
         telemetry.update();
     }
 
@@ -166,17 +152,14 @@ public class Eason_mecanum extends OpMode {
          * both motors work to rotate the robot. Combinations of these inputs can be used to create
          * more complex maneuvers.
          */
-        PoseVelocity2d currentVelocity = localizer.update();
-        Pose2d currentPose = localizer.getPose();
 
-// hold right bumper to auto-aim
-        if (gamepad1.right_bumper) {
-            driverTurn = spintoRed(currentPose);
-        } else {
-            driverTurn = gamepad1.right_stick_x;
-        }
+// hold right bumper to auto-ai
 
-        mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, driverTurn);
+        mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        double LFPower = leftFrontDrive.getPower();
+        double RFPower = rightFrontDrive.getPower();
+        double LBPower = leftBackDrive.getPower();
+        double RBPower = rightBackDrive.getPower();
 
 
         /*
@@ -197,21 +180,9 @@ public class Eason_mecanum extends OpMode {
 
 
 // Distance to BLUE goal
-        double distToBlue = Math.hypot(BLUE_GOAL_X - currentPose.position.x, BLUE_GOAL_Y - currentPose.position.y);
-
-// Distance to RED goal
-        double distToRed = Math.hypot(RED_GOAL_X - currentPose.position.x, RED_GOAL_Y - currentPose.position.y);
 
 
-        double robotX = currentPose.position.x;
-        double robotY = currentPose.position.y;
-        double robotHeading = currentPose.heading.toDouble();
 
-        double dx = RED_GOAL_X - robotX;
-        double dy = RED_GOAL_Y - robotY;
-
-        double targetAngle = -Math.atan2(dx, dy); // radians
-        double angleError = targetAngle - robotHeading;
 
         // wrap to [-pi, pi]
         //angleError = Math.atan2(Math.sin(angleError), Math.cos(angleError));
@@ -219,13 +190,12 @@ public class Eason_mecanum extends OpMode {
         /*
          * Show the state and motor powers
          */
-        telemetry.addData("State", launchState);
-        telemetry.addData("Pose", "(%.1f, %.1f, %.1f)", currentPose.position.x, currentPose.position.y, Math.toDegrees(currentPose.heading.toDouble()));
-        telemetry.addData("Velocity", "(%.1f, %.1f, %.1f)", currentVelocity.linearVel.x, currentVelocity.linearVel.y, Math.toDegrees(currentVelocity.angVel));
-        telemetry.addData("Dist Blue", "%.1f in", distToBlue);
-        telemetry.addData("Dist Red", "%.1f in", distToRed);
-        telemetry.addData("targetAngle", Math.toDegrees(targetAngle));
-        telemetry.addData("angleError", Math.toDegrees(angleError));
+
+        //telemetry.addData("State", launchState);
+        telemetry.addData("LFPower",LFPower);
+        telemetry.addData("RFPower",RFPower);
+        telemetry.addData("LBPower",LBPower);
+        telemetry.addData("RBPower",RBPower);
         telemetry.update();
 
     }
@@ -238,14 +208,21 @@ public class Eason_mecanum extends OpMode {
     }
 
     void mecanumDrive(double forward, double strafe, double rotate){
-        double dimension =
+        double dimension = Math.max(Math.abs(forward)+Math.abs(strafe)+Math.abs(rotate),1);
         leftFrontPower = (forward+strafe+rotate)/dimension;
         rightFrontPower = (forward-strafe-rotate)/dimension;
         leftBackPower = (forward-strafe+rotate)/dimension;
         rightBackPower = (forward+strafe-rotate)/dimension;
 
-    }
+        leftFrontDrive.setPower(leftFrontPower);
+        rightFrontDrive.setPower(rightFrontPower);
+        leftBackDrive.setPower(leftBackPower);
+        rightBackDrive.setPower(rightBackPower);
 
+        telemetry.addData("forward", forward);
+        telemetry.addData("strafe", strafe);
+        telemetry.addData("rotate", rotate);
+    }
     double velocityFromDistance(double x) {
         // Only clamp minimum (no upper clamp)
         x = Math.max(18, x);
@@ -259,21 +236,5 @@ public class Eason_mecanum extends OpMode {
                 + 0.128207 * x * x
                 - 5.0367 * x
                 + 1298.79524;
-    }
-
-    double spintoRed (Pose2d pose2d) {
-        double robotX = pose2d.position.x;
-        double robotY = pose2d.position.y;
-        double robotHeading = pose2d.heading.toDouble(); // radians
-
-        double dx = RED_GOAL_X - robotX;
-        double dy = RED_GOAL_Y - robotY;
-
-        double targetAngle = -Math.atan2(dx, dy); // radians
-        double angleError = targetAngle - robotHeading;
-
-        // wrap to [-pi, pi], can also use mod but more complicated
-        angleError = Math.atan2(Math.sin(angleError), Math.cos(angleError));
-        return -kTurn * angleError;
     }
 }
