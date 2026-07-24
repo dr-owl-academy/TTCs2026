@@ -1,9 +1,11 @@
+package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name= "yajatAutonBot")
+@Autonomous(name= "yajatAutonBot", group = "StarterBot")
 public class yajatAutonBot extends OpMode{
 
     DcMotor frontLeft;
@@ -14,6 +16,12 @@ public class yajatAutonBot extends OpMode{
 
     DcMotor backRight;
 
+    double leftFrontPower;
+    double leftBackPower;
+    double rightFrontPower;
+    double rightBackPower;
+
+
     ElapsedTime timer =new ElapsedTime();
 
     double drivePower = 0.5;
@@ -21,8 +29,8 @@ public class yajatAutonBot extends OpMode{
     @Override
     public void init() {
         // Connect motors to the Robot Configuration.
-        frontLeft = hardwareMap.get(DcMotor.class,"frontleft");
-        frontRight = hardwareMap.get(DcMotor.class,"frontright");
+        frontLeft = hardwareMap.get(DcMotor.class,"frontLeft");
+        frontRight = hardwareMap.get(DcMotor.class,"frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
@@ -41,6 +49,22 @@ public class yajatAutonBot extends OpMode{
         telemetry.addLine("Ready");
     }
 
+    void mecanumDrive(double forward,double strafe, double rotate){double denominator = Math.max(Math.abs(forward) + Math.abs(strafe) + Math.abs(rotate),1);
+
+        leftFrontPower = (forward + strafe + rotate) / denominator;
+        rightFrontPower = (forward -strafe - rotate) / denominator;
+        leftBackPower = (forward - strafe + rotate) / denominator;
+        rightBackPower = (forward + strafe - rotate) / denominator;
+
+        telemetry.addData("forward","%.2f",forward);
+        telemetry.addData("strafing","%.2f",strafe);
+        telemetry.addData("rotation","%.2f",rotate);
+
+        frontLeft.setPower(leftFrontPower);
+        frontRight.setPower(rightFrontPower);
+        backLeft.setPower(leftBackPower);
+        backRight.setPower(rightBackPower);}
+
     @Override
     public void start() {
 
@@ -53,71 +77,47 @@ public class yajatAutonBot extends OpMode{
 
         double time = timer.seconds();
 
-        if (time < 1.5) {
+        if (time < 0.9) {
 
             // Side 1: Drive forward.
-            frontLeft.setPower(drivePower);
-            frontRight.setPower(drivePower);
-            backLeft.setPower(drivePower);
-            backRight.setPower(drivePower);
+            mecanumDrive(0.5,0,0);
 
 
 
-        } else if (time < 2.0) {
+        } else if (time < 1.1) {
 
             // Pause.
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
+            mecanumDrive(0,0,0);
 
-        } else if (time < 3.8) {
+        } else if (time < 2.3) {
 
             // Side 2: Strafe right.
-            frontLeft.setPower(drivePower);
-            frontRight.setPower(-drivePower);
-            backLeft.setPower(-drivePower);
-            backRight.setPower(drivePower);
+            mecanumDrive(0,0.5,0);
 
-        } else if (time < 4.3) {
+        } else if (time < 2.5) {
 
             // Pause.
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
+            mecanumDrive(0,0,0);
 
-        } else if (time < 5.8) {
+        } else if (time < 3.4) {
 
             // Side 3: Drive backward.
-            frontLeft.setPower(-drivePower);
-            frontRight.setPower(-drivePower);
-            backLeft.setPower(-drivePower);
-            backRight.setPower(-drivePower);
+            mecanumDrive(-0.5,0,0);
 
-        } else if (time < 6.3) {
+        } else if (time < 3.6) {
 
             // Pause.
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
+            mecanumDrive(0,0,0);
 
-        } else if (time < 8.1) {
+        } else if (time < 4.8) {
 
             // Side 4: Strafe left.
-            frontLeft.setPower(-drivePower);
-            frontRight.setPower(drivePower);
-            backLeft.setPower(drivePower);
-            backRight.setPower(-drivePower);
+            mecanumDrive(0,-0.5,0);
 
         } else {
 
             // Finished.
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
+            mecanumDrive(0,0,0);
         }
 
         telemetry.addData("Time", "%.1f seconds", time);
@@ -134,4 +134,4 @@ public class yajatAutonBot extends OpMode{
     }
 
     }
-}
+
