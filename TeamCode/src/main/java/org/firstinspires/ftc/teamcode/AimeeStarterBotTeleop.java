@@ -42,6 +42,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 /*
 checklist : lower turn sensitivity (DONE, hopefully)
+            add more later...
  */
 
 /*
