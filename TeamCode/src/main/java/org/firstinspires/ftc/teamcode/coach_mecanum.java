@@ -60,9 +60,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * we will also need to adjust the "PIDF" coefficients with some that are a better fit for our application.
  */
 
-@TeleOp(name = "CoachTeleopStarterBot", group = "StarterBot")
+@TeleOp(name = "coach_mecanum", group = "StarterBot")
 //@Disabled
-public class CoachTeleopStarterBot extends OpMode {
+public class coach_mecanum extends OpMode {
     final double FEED_TIME_SECONDS = 0.50; //The feeder servos run this long when a shot is requested.
     final double STOP_SPEED = 0.0; //We send this power to the servos when we want them to stop.
     final double FULL_SPEED = 1.0;
