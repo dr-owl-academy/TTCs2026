@@ -41,8 +41,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 /*
-checklist : lower turn sensitivity
-            (play Toon's Universe after wards to grind for Frizzles emblem)
+checklist : lower turn sensitivity (DONE, hopefully)
+            (play Toon's Universe after wards to grind for Patchers emblem)
  */
 
 /*
