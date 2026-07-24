@@ -50,31 +50,31 @@ public class Eason_Auton_Starter  extends OpMode {
 
         double time = timer.seconds();
 
-        if (time < 1.5) {
+        if (time < 0.7) {
 
            mecanumDrive(drivePower,0,0);
 
-        } else if (time < 2.0) {
+        } else if (time < 1) {
 
             mecanumDrive(0,0,0);
 
-        } else if (time < 3.8) {
+        } else if (time < 1.9) {
 
             mecanumDrive(0,drivePower,0);
 
-        } else if (time < 4.3) {
+        } else if (time < 2.2) {
 
             mecanumDrive(0,0,0);
 
-        } else if (time < 5.8) {
+        } else if (time < 2.9) {
 
             mecanumDrive(-drivePower,0,0);
 
-        } else if (time < 6.3) {
+        } else if (time < 3.4) {
 
             mecanumDrive(0,0,0);
 
-        } else if (time < 8.1) {
+        } else if (time < 4.0) {
 
             mecanumDrive(0,-drivePower,0);
 
