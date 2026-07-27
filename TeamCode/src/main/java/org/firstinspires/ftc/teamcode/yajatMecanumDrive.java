@@ -257,6 +257,8 @@ public class yajatMecanumDrive extends OpMode {
         double forward = 0;
         double strafe = 0;
 
+        mecanumDrive(gamepad1.left_stick_x,gamepad1.left_stick_y,gamepad1.right_stick_x);
+
         if (gamepad1.dpad_up){forward=1;}
         else if (gamepad1.dpad_down){forward=-1;}
 
