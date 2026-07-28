@@ -13,13 +13,13 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-@Disabled
-public class Constants {
+
+public class Constants2 {
     public static FollowerConstants followerConstants = new FollowerConstants().mass(8.4)
             .forwardZeroPowerAcceleration(-34.34415518547419)
             .lateralZeroPowerAcceleration(-54.76122077)
-    .translationalPIDFCoefficients(new PIDFCoefficients(0.3,0,0.0001,0.01))
-    .headingPIDFCoefficients(new PIDFCoefficients(0.6,0,0.2,0.01));
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.3,0,0.0001,0.01))
+            .headingPIDFCoefficients(new PIDFCoefficients(0.6,0,0.2,0.01));
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
             .rightFrontMotorName("frontRight")
@@ -57,3 +57,4 @@ public class Constants {
                 .build();
     }
 }
+
