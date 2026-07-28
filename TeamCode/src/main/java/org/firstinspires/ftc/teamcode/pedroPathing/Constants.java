@@ -8,7 +8,6 @@ import com.pedropathing.ftc.drivetrains.MecanumConstants;
 import com.pedropathing.ftc.localization.constants.PinpointConstants;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -17,7 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 //@Disabled
 
-public class DictaterMbappeConstants {
+public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(7.05)
             .forwardZeroPowerAcceleration(-34.34415518547419)
@@ -51,7 +50,7 @@ public class DictaterMbappeConstants {
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(1.5)
-            .strafePodX(-7.5)
+            .strafePodX(-6.5)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
