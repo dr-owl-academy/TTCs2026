@@ -52,7 +52,67 @@ public class ChickenBotConstants {
             .forwardPodY(1.25)
             .strafePodX(-4.62)
             .distanceUnit(DistanceUnit.INCH)
-            .hardwareMapName("pinpoint")
+            .hardwareMapName("pipackage org.firstinspires.ftc.teamcode.pedroPathing;\n" +
+                    "\n" +
+                    "import com.pedropathing.control.PIDFCoefficients;\n" +
+                    "import com.pedropathing.follower.Follower;\n" +
+                    "import com.pedropathing.follower.FollowerConstants;\n" +
+                    "import com.pedropathing.ftc.FollowerBuilder;\n" +
+                    "import com.pedropathing.ftc.drivetrains.MecanumConstants;\n" +
+                    "import com.pedropathing.ftc.localization.constants.PinpointConstants;\n" +
+                    "import com.pedropathing.paths.PathConstraints;\n" +
+                    "import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;\n" +
+                    "import com.qualcomm.robotcore.eventloop.opmode.Disabled;\n" +
+                    "import com.qualcomm.robotcore.hardware.DcMotorSimple;\n" +
+                    "import com.qualcomm.robotcore.hardware.HardwareMap;\n" +
+                    "\n" +
+                    "import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;\n" +
+                    "\n" +
+                    "\n" +
+                    "@Disabled\n" +
+                    "public class ChickenBotConstants {\n" +
+                    "    public static FollowerConstants followerConstants = new FollowerConstants()\n" +
+                    "            .mass(8.4)\n" +
+                    "            .forwardZeroPowerAcceleration(-34.34415518547419)\n" +
+                    "            .lateralZeroPowerAcceleration(-54.76122077)\n" +
+                    "            .translationalPIDFCoefficients(new PIDFCoefficients(0.3, 0, 0.0001, 0.01))\n" +
+                    "            .headingPIDFCoefficients(new PIDFCoefficients(0.6, 0, 0.2, 0.01));\n" +
+                    "\n" +
+                    "\n" +
+                    "    public static MecanumConstants driveConstants = new MecanumConstants()\n" +
+                    "            .maxPower(1)\n" +
+                    "            .rightFrontMotorName(\"frontRight\")\n" +
+                    "            .leftFrontMotorName(\"frontLeft\")\n" +
+                    "            .rightRearMotorName(\"backRight\")\n" +
+                    "            .leftRearMotorName(\"backLeft\")\n" +
+                    "            .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)\n" +
+                    "            .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)\n" +
+                    "            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)\n" +
+                    "            .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)\n" +
+                    "            .xVelocity(59.146876858288226)\n" +
+                    "            .yVelocity(50.5002934814);\n" +
+                    "\n" +
+                    "    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.85, 0.27);\n" +
+                    "\n" +
+                    "    public static Follower createFollower(HardwareMap hardwareMap) {\n" +
+                    "        return new FollowerBuilder(followerConstants, hardwareMap)\n" +
+                    "                .pathConstraints(pathConstraints)\n" +
+                    "                .mecanumDrivetrain(driveConstants)\n" +
+                    "                .pinpointLocalizer(localizerConstants)\n" +
+                    "                .build();\n" +
+                    "    }\n" +
+                    "\n" +
+                    "    public static PinpointConstants localizerConstants = new PinpointConstants()\n" +
+                    "            .forwardPodY(1.25)\n" +
+                    "            .strafePodX(-4.62)\n" +
+                    "            .distanceUnit(DistanceUnit.INCH)\n" +
+                    "            .hardwareMapName(\"pinpoint\")\n" +
+                    "            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)\n" +
+                    "            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "}npoint")
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
