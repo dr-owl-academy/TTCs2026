@@ -8,17 +8,21 @@ import com.pedropathing.ftc.drivetrains.MecanumConstants;
 import com.pedropathing.ftc.localization.constants.PinpointConstants;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-public class Constants {
+
+@Disabled
+public class ChickenBotConstants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(8.4)
             .forwardZeroPowerAcceleration(-34.34415518547419)
             .lateralZeroPowerAcceleration(-54.76122077)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.3, 0, 0.0001, 0.01));
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.3, 0, 0.0001, 0.01))
+            .headingPIDFCoefficients(new PIDFCoefficients(0.6, 0, 0.2, 0.01));
 
 
     public static MecanumConstants driveConstants = new MecanumConstants()
@@ -34,7 +38,7 @@ public class Constants {
             .xVelocity(59.146876858288226)
             .yVelocity(50.5002934814);
 
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
+    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.85, 0.27);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
