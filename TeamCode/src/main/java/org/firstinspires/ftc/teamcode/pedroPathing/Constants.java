@@ -17,12 +17,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants().mass(7.05) //new mass of robot
-            /*
-            .forwardZeroPowerAcceleration(-34.34415518547419) //change later   -----**
-            .lateralZeroPowerAcceleration(-54.76122077) //change later   -----**
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.3,0,0.0001,0.01)) //change later   -----**
-            .headingPIDFCoefficients(new PIDFCoefficients(0.6,0,0.2,0.01)); //change later   -----**
-             */
+
+            //.forwardZeroPowerAcceleration(-34.34415518547419) //change later   -----**
+            //.lateralZeroPowerAcceleration(-54.76122077) //change later   -----**
+            //.translationalPIDFCoefficients(new PIDFCoefficients(0.3,0,0.0001,0.01)) //change later   -----**
+            //.headingPIDFCoefficients(new PIDFCoefficients(0.6,0,0.2,0.01)); //change later   -----**
+
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
@@ -34,10 +34,9 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            /*
-            .xVelocity(59.146876858288226) //change later   -----**
-            .yVelocity(50.5002934814); //change later   -----**
-             */
+            //.xVelocity(59.146876858288226) //change later   -----**
+            //.yVelocity(50.5002934814); //change later   -----**
+
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(1.5) //note that these values may be wrong (as of writing this)
