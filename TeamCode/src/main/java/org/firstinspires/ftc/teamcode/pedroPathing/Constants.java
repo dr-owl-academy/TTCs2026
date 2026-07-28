@@ -17,10 +17,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants().mass(7.05) //new mass of robot
+            /*
             .forwardZeroPowerAcceleration(-34.34415518547419) //change later   -----**
             .lateralZeroPowerAcceleration(-54.76122077) //change later   -----**
             .translationalPIDFCoefficients(new PIDFCoefficients(0.3,0,0.0001,0.01)) //change later   -----**
             .headingPIDFCoefficients(new PIDFCoefficients(0.6,0,0.2,0.01)); //change later   -----**
+             */
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
@@ -32,22 +34,25 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+            /*
             .xVelocity(59.146876858288226) //change later   -----**
             .yVelocity(50.5002934814); //change later   -----**
+             */
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(1.5) //note that these values may be wrong (as of writing this)
-            .strafePodX(-7.5) //note that these values may be wrong (as of writing this)
+            .strafePodX(-6.5) //note that these values may be wrong (as of writing this)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
+
     public static PathConstraints pathConstraints = new PathConstraints(0.99,
             100,
-            0.27,
-            0.85);  //change breakingStrength and breakingStart later   -----**
+            1,
+            1);  //change breakingStrength and breakingStart later   -----**
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
