@@ -24,7 +24,7 @@ public class coach_mecanum_intake extends OpMode {
     private DcMotorEx intakeMotor;
 
     // Pedro is used only to read the robot's pose
-    private Follower follower;
+    //private Follower follower;
 
     // Drive motor powers for telemetry
     private double leftFrontPower;
@@ -45,10 +45,10 @@ public class coach_mecanum_intake extends OpMode {
          * Create Pedro using the existing drivetrain
          * and Pinpoint configuration.
          */
-        follower = Constants.createFollower(hardwareMap);
+       // follower = Constants.createFollower(hardwareMap);
 
         // Starting coordinate
-        follower.setStartingPose(new Pose(0, 0, 0));
+       // follower.setStartingPose(new Pose(0, 0, 0));
 
         // Connect the drivetrain motors
         leftFrontDrive =
@@ -109,7 +109,7 @@ public class coach_mecanum_intake extends OpMode {
         intakeMotor.setVelocity(0);
 
         // Read the starting Pinpoint position
-        follower.updatePose();
+       // follower.updatePose();
 
         telemetry.addLine("Initialized");
         telemetry.addLine("Intake uses encoder velocity control");
@@ -123,7 +123,7 @@ public class coach_mecanum_intake extends OpMode {
          * Update only Pedro's localization.
          * mecanumDrive() controls the drivetrain directly.
          */
-        follower.updatePose();
+      //  follower.updatePose();
 
         // Drive the robot
         mecanumDrive(
@@ -153,25 +153,13 @@ public class coach_mecanum_intake extends OpMode {
         }
 
         // Read the robot's current Pedro pose
-        Pose robotPose = follower.getPose();
+      //  Pose robotPose = follower.getPose();
 
-        telemetry.addData(
-                "X",
-                "%.2f inches",
-                robotPose.getX()
-        );
+    //    telemetry.addData("X","%.2f inches",robotPose.getX());
 
-        telemetry.addData(
-                "Y",
-                "%.2f inches",
-                robotPose.getY()
-        );
+     //   telemetry.addData("Y","%.2f inches",robotPose.getY());
 
-        telemetry.addData(
-                "Heading",
-                "%.1f degrees",
-                Math.toDegrees(robotPose.getHeading())
-        );
+      //  telemetry.addData("Heading","%.1f degrees",Math.toDegrees(robotPose.getHeading()));
 
         /*
          * Target velocity is what the code requests.
@@ -179,13 +167,11 @@ public class coach_mecanum_intake extends OpMode {
          */
         telemetry.addData(
                 "Intake Target",
-                "%.0f ticks/sec",
                 intakeMotor.getTargetPosition()
         );
 
         telemetry.addData(
                 "Intake Velocity",
-                "%.0f ticks/sec",
                 intakeMotor.getVelocity()
         );
 
