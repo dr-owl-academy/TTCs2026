@@ -18,6 +18,7 @@ public class MatthewThingy extends OpMode {
     private DcMotor rightFrontDrive;
     private DcMotor leftBackDrive;
     private DcMotor rightBackDrive;
+    private DcMotor intakemotor;
     private double leftFrontPower;
     private double rightFrontPower;
     private double leftBackPower;
@@ -41,13 +42,16 @@ public class MatthewThingy extends OpMode {
         //Change this to your desired starting pose: x, y in inches, pedro takes heading in radians
         follower.setStartingPose(new Pose(0, 0, Math.toRadians(0)));
 
-        leftFrontDrive =hardwareMap.get(DcMotor.class, "frontLeft");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "frontLeft");
 
         rightFrontDrive = hardwareMap.get(DcMotor.class, "frontRight");
 
         leftBackDrive = hardwareMap.get(DcMotor.class, "backLeft");
 
         rightBackDrive = hardwareMap.get(DcMotor.class, "backRight");
+
+        // ADDED: Initialize intake motor
+        intakemotor = hardwareMap.get(DcMotor.class, "intakemotor");
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -59,10 +63,16 @@ public class MatthewThingy extends OpMode {
         leftBackDrive.setZeroPowerBehavior(BRAKE);
         rightBackDrive.setZeroPowerBehavior(BRAKE);
 
+        // ADDED: Set intake brake mode (optional but recommended)
+        intakemotor.setZeroPowerBehavior(BRAKE);
+
         leftFrontDrive.setPower(0);
         rightFrontDrive.setPower(0);
         leftBackDrive.setPower(0);
         rightBackDrive.setPower(0);
+
+        // ADDED: Make sure intake starts off
+        intakemotor.setPower(0);
 
         /*
          * Read the starting Pinpoint position.
@@ -95,8 +105,10 @@ public class MatthewThingy extends OpMode {
 
         follower.updatePose();
 
-
         mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+
+        // ADDED: Intake control with right trigger
+        intakemotor.setPower(gamepad1.right_trigger);
 
         //Get the current Pedro pose.
         Pose robotPose = follower.getPose();
@@ -112,7 +124,6 @@ public class MatthewThingy extends OpMode {
         telemetry.addData("Y", "%.2f inches", robotY);
 
         telemetry.addData("Heading", "%.1f degrees", Math.toDegrees(robotHeading));
-
 
         telemetry.update();
     }
@@ -135,6 +146,7 @@ public class MatthewThingy extends OpMode {
         leftBackDrive.setPower(leftBackPower);
         rightBackDrive.setPower(rightBackPower);
     }
+
     /*
      * Code to run ONCE after the driver hits STOP
      */
