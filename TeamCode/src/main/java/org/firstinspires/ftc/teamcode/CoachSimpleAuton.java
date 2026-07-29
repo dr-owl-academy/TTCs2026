@@ -14,8 +14,8 @@ public class CoachSimpleAuton extends OpMode {
 
     // Finite state machine states.
     private enum AutoState {
-        START_TURN_TO_ZERO,
-        WAIT_FOR_TURN_TO_ZERO,
+        START_TURN_TO_180,
+        WAIT_FOR_TURN_TO_180,
         START_DRIVE_TO_TARGET,
         WAIT_FOR_DRIVE_TO_TARGET,
         COMPLETE
@@ -27,11 +27,11 @@ public class CoachSimpleAuton extends OpMode {
     private PathChain driveToTarget;
 
     // Starting FSM state.
-    private AutoState autoState = AutoState.START_TURN_TO_ZERO;
+    private AutoState autoState = AutoState.START_TURN_TO_180;
 
     private static final Pose START_POSE = new Pose(72,72,Math.toRadians(90) );
-    private static final Pose DRIVE_START_POSE = new Pose(72,72,Math.toRadians(0));
-    private static final Pose TARGET_POSE = new Pose(120,72, Math.toRadians(0));
+    private static final Pose DRIVE_START_POSE = new Pose(72,72,Math.toRadians(180));
+    private static final Pose TARGET_POSE = new Pose(24,72, Math.toRadians(180));
 
     @Override
     public void init() {
@@ -86,7 +86,7 @@ public class CoachSimpleAuton extends OpMode {
 
         driveToTarget = follower.pathBuilder()
                 .addPath(new BezierLine(DRIVE_START_POSE,TARGET_POSE))
-                .setConstantHeadingInterpolation( Math.toRadians(0))
+                .setConstantHeadingInterpolation( Math.toRadians(180))
                 .build();
          }
 
@@ -95,13 +95,13 @@ public class CoachSimpleAuton extends OpMode {
 
         switch (autoState) {
 
-            case START_TURN_TO_ZERO:
+            case START_TURN_TO_180:
                 // Turn in place from 90 degrees to 0 degrees.
-                follower.turnTo( Math.toRadians(0));
-                autoState = AutoState.WAIT_FOR_TURN_TO_ZERO;
+                follower.turnTo( Math.toRadians(180));
+                autoState = AutoState.WAIT_FOR_TURN_TO_180;
                 break;
 
-            case WAIT_FOR_TURN_TO_ZERO:
+            case WAIT_FOR_TURN_TO_180:
                 // Wait for the turn to finish.
                 if (!follower.isBusy()) {
                     autoState = AutoState.START_DRIVE_TO_TARGET;
