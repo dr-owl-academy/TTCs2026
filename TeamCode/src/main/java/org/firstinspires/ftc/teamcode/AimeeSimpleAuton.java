@@ -64,5 +64,15 @@ public class AimeeSimpleAuton extends OpMode {
         Pose currentPose = follower.getPose();
 
         telemetry.addData("X",currentPose.getX());
+
+        telemetry.addData("Y", currentPose.getY());
+
+        telemetry.addData("Heading", Math.toDegrees(currentPose.getHeading()));
+
+        telemetry.addData("State", autoState);
+
+        if (autoState == AutoState.DONE) {
+
+        }
     }
 }
