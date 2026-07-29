@@ -19,14 +19,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous(name = "JeremySimpleAuton") // tells the robot the code is autonomous
-public class JeremySimpleAuton {
+public class JeremySimpleAuton implements JeremySimpleAutonMbappe {
 
     private enum AutoState { // create enums for the tasks (finite state machine [fsm])
         START_TURNING_180,
         WAIT_TO_TURN_180,
         START_DRIVING_TO_TARGET,
         WAIT_TO_DRIVE_TO_TARGET,
-        COMPLETE;
+        COMPLETE
     }
 
     private Follower simpleMbappeSpecial; // define a follower to do the tasks
@@ -40,8 +40,8 @@ public class JeremySimpleAuton {
     private static final Pose DRIVING_POSE = new Pose(72, 72, Math.toRadians(180));
     private static final Pose TARGET_POSE = new Pose(24, 72, Math.toRadians(180));
 
-    //@Override
-    private void init(){
+    @Override
+    public void init(){
         simpleMbappeSpecial = Constants.createFollower(hardwareMap); // create the follower
 
         simpleMbappeSpecial.setStartingPose(START_POSE); // make mbappe start the special
@@ -55,8 +55,8 @@ public class JeremySimpleAuton {
         telemetry.update(); // update telemetry
     }
 
-    //@Override
-    private void loop(){
+    @Override
+    public void loop(){
         simpleMbappeSpecial.update(); // update the follower every cycle
 
         autonomousPathUpdate(); // update the fsm
@@ -76,7 +76,7 @@ public class JeremySimpleAuton {
         telemetry.update();
     }
 
-    //@Override
+    @Override
     public void stop(){} // stop the bot while keeping pedropath
 
     private void buildPath(){ // build mbappes path
