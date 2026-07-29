@@ -92,10 +92,10 @@ public class Tuning extends SelectableOpMode {
     @Override
     public void onSelect() {
         if (follower == null) {
-            follower = ChickenBotConstants.createFollower(hardwareMap);
+            follower = Constants.createFollower(hardwareMap);
             PanelsConfigurables.INSTANCE.refreshClass(this);
         } else {
-            follower = ChickenBotConstants.createFollower(hardwareMap);
+            follower = Constants.createFollower(hardwareMap);
         }
 
         follower.setStartingPose(new Pose());
