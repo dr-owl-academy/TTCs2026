@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -83,4 +84,24 @@ public class AimeeSimpleAuton extends OpMode {
     public void stop() {
     }
 
+    //
+
+    private void buildPath() {
+        driveToTarget = follower.pathBuilder()
+                .addPath(new BezierLine(DRIVE_START_POSE, TARGET_POSE))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .build();
+    }
+
+    //
+    private void autonomousPathUpdate() {
+
+        switch (autoState) {
+
+            case START_TO_TURN_180:
+                //
+                follower.trunTo(Math.toRadians(180));
+                autoState
+        }
+    }
 }
