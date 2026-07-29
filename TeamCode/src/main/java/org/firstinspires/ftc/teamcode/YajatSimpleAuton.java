@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
+
 import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -8,6 +10,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -15,6 +18,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Autonomous(name = "Simple Auton Code Yajat")
 public class YajatSimpleAuton extends OpMode {
 
+    private
     private static final double INTAKE_VELOCITY = 2000;
 
     //now we put the things in order ig
@@ -52,6 +56,13 @@ public class YajatSimpleAuton extends OpMode {
 
         follower.setStartingPose(START_POSE);
 
+        intakeMotor =
+                hardwareMap.get(DcMotorEx.class, "intakemotor");
+
+        intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+        intakeMotor.setZeroPowerBehavior(BRAKE);
+        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeMotor.setVelocity(0);
 
 
 
