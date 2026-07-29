@@ -33,7 +33,9 @@ public class MatthewSimpleAuton {
 
     public void init() {
 
-        follower = Constants.createFollower(HardwareMap);
+        follower = Constants.createFollower(hardwareMap);
 
         follower.setStartingPose(START_POSE);
+
+    }
 }
