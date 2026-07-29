@@ -118,7 +118,7 @@ public class AimeeSimpleAuton extends OpMode {
                 break;
 
             case WAIT_TO_DRIVE_TO_TARGET:
-                //
+                //wait for the robot to stop driving before starting the next part
                 if (!follower.isBusy()) {
                     autoState = AutoState.DONE;
                 }
