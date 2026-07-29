@@ -7,6 +7,9 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
+
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
 @Autonomous(name = "Simple Auton Code Yajat")
 public class YajatSimpleAuton extends OpMode {
     //now we put the things in order ig
@@ -27,9 +30,8 @@ public class YajatSimpleAuton extends OpMode {
 
 //did somthing i think. also lots of errors
 
-    private YajatSimpleAuton.AutoState = YajatSimpleAuton.AutoState.START_TURN_TO_180;
 
-    private static final Pose START_POSE = new Pose(72, 72, Math.toRadians());
+    private static final Pose START_POSE = new Pose(72, 72, Math.toRadians(90));
 
     private static final Pose DRIVE_START_POSE = new Pose(72, 72, 180);
 
@@ -39,6 +41,19 @@ public class YajatSimpleAuton extends OpMode {
 
     @Override
     public void init() {
+
+        follower = Constants.createFollower(hardwareMap);
+
+        follower.setStartingPose(START_POSE);
+
+        // Reduced power for initial testing.
+        follower.setMaxPower(0.5);
+
+        buildPath();
+
+        telemetry.addLine("Autonomous ready");
+        telemetry.update();
+
     }
 
 
