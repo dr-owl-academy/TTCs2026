@@ -11,6 +11,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.har
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -47,7 +48,7 @@ public class JeremySimpleAuton {
 
         simpleMbappeSpecial.setMaxPower(0.5); // set mbappe's strength
 
-        buildpath();
+        buildPath();
 
         // output to express how ready mbappe is
         telemetry.addLine("Mbappe Ready!");
@@ -65,11 +66,57 @@ public class JeremySimpleAuton {
         // add data to the telemetry: display the position
         telemetry.addData("X: ", curPose.getX());
         telemetry.addData("Y: ", curPose.getY());
-        telemetry.addData("Heading: ", Math.toDegrees(curPose.getHeading());
+        telemetry.addData("Heading: ", Math.toDegrees(curPose.getHeading()));
+        telemetry.addData("State: ", autoState);
 
+        if(autoState == AutoState.COMPLETE){ // when we are done say "we are done"
+            telemetry.addLine("Mbappe Special is done; sometimes i get i little competitive, but its good");
+        }
 
-
+        telemetry.update();
     }
+
+    //@Override
+    public void stop(){} // stop the bot while keeping pedropath
+
+    private void buildPath(){ // build mbappes path
+        driveToTarget = simpleMbappeSpecial.pathBuilder() // making a path from one point to another
+                .addPath(new BezierLine(DRIVING_POSE, TARGET_POSE))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .build();
+    }
+
+    private void autonomousPathUpdate(){ // write when to switch to next fsm segment
+        switch(autoState){
+            case START_TURNING_180: // first step: turn 180 degrees
+                simpleMbappeSpecial.turnTo(Math.toRadians(180)); // start turning
+                autoState = AutoState.WAIT_TO_TURN_180;
+                break;
+
+            case WAIT_TO_TURN_180: // second step: wait to turn 180
+                if(!simpleMbappeSpecial.isBusy()){ // check if we are still turning
+                    autoState = AutoState.START_DRIVING_TO_TARGET; // if not then move on
+                }
+                break;
+
+            case START_DRIVING_TO_TARGET: // third step: move 2 tiles
+                simpleMbappeSpecial.followPath(driveToTarget, true); // start moving
+                autoState = AutoState.WAIT_TO_DRIVE_TO_TARGET;
+                break;
+
+            case WAIT_TO_DRIVE_TO_TARGET: //  fourth step: wait to move 2 tiles
+                if(!simpleMbappeSpecial.isBusy()){
+                    autoState = AutoState.COMPLETE;
+                }
+                break;
+
+            case COMPLETE: // fifth: finish
+                break;
+
+        }
+    }
+
+
 
 
 
