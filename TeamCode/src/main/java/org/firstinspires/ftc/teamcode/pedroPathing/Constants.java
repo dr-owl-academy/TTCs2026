@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
+import com.pedropathing.control.FilteredPIDFCoefficients;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
@@ -19,8 +20,10 @@ public class Constants {
             .mass(7.05)
             //.forwardZeroPowerAcceleration(-34.34415518547419)
             //.lateralZeroPowerAcceleration(-54.76122077)
-            //.translationalPIDFCoefficients(new PIDFCoefficients(0.3,0,0.0001,0.01))
-            //.headingPIDFCoefficients(new PIDFCoefficients(0.6, 0, 0.2, 0.01))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.15,0,0.01,0.015))
+            .headingPIDFCoefficients(new PIDFCoefficients(2,0,0.1,0.01))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.025,0,0.000001,0.6,0.0001))
+            .centripetalScaling(0.0011)
            ;
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
@@ -32,8 +35,8 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            //.xVelocity(59.146876858288226)
-            //.yVelocity(50.5002934814)
+            .xVelocity(64.75662896263943)
+            .yVelocity(56.794285411284036)
             ;
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
@@ -46,8 +49,9 @@ public class Constants {
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
     public static PathConstraints pathConstraints = new PathConstraints(0.99,
             100,
-            1,
-            1);
+            0.9,
+            0.4);
+    //break strength might be different but I can't read the handwriting could be 4 or 9   ---- **
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
