@@ -6,6 +6,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
 public class MatthewSimpleAuton {
@@ -29,4 +30,10 @@ public class MatthewSimpleAuton {
     private static final Pose START_POSE = new Pose(72,72,Math.toRadians(90) );
     private static final Pose DRIVE_START_POSE = new Pose(72,72,Math.toRadians(180));
     private static final Pose TARGET_POSE = new Pose(24,72, Math.toRadians(180));
+
+    public void init() {
+
+        follower = Constants.createFollower(HardwareMap);
+
+        follower.setStartingPose(START_POSE);
 }
