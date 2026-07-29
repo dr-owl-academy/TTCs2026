@@ -37,6 +37,7 @@ public class AimeeSimpleAuton extends OpMode {
 
     private static final Pose TARGET_POSE = new Pose(24,72, Math.toRadians(180));
 
+    //private static final
     @Override
     public void init() {
 
