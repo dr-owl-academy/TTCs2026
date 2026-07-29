@@ -73,6 +73,14 @@ public class AimeeSimpleAuton extends OpMode {
 
         if (autoState == AutoState.DONE) {
 
+            telemetry.addLine("Autonomous complete");
         }
+
+        telemetry.update();
     }
+
+    @Override
+    public void stop() {
+    }
+
 }
