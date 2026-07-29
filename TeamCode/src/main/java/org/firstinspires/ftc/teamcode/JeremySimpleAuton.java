@@ -8,13 +8,12 @@ package org.firstinspires.ftc.teamcode;
 
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -40,12 +39,37 @@ public class JeremySimpleAuton {
     private static final Pose DRIVING_POSE = new Pose(72, 72, Math.toRadians(180));
     private static final Pose TARGET_POSE = new Pose(24, 72, Math.toRadians(180));
 
-    @Override
+    //@Override
     private void init(){
         simpleMbappeSpecial = Constants.createFollower(hardwareMap); // create the follower
 
+        simpleMbappeSpecial.setStartingPose(START_POSE); // make mbappe start the special
+
+        simpleMbappeSpecial.setMaxPower(0.5); // set mbappe's strength
+
+        buildpath();
+
+        // output to express how ready mbappe is
+        telemetry.addLine("Mbappe Ready!");
+        telemetry.update(); // update telemetry
     }
 
+    //@Override
+    private void loop(){
+        simpleMbappeSpecial.update(); // update the follower every cycle
+
+        autonomousPathUpdate(); // update the fsm
+
+        Pose curPose = simpleMbappeSpecial.getPose();
+
+        // add data to the telemetry: display the position
+        telemetry.addData("X: ", curPose.getX());
+        telemetry.addData("Y: ", curPose.getY());
+        telemetry.addData("Heading: ", Math.toDegrees(curPose.getHeading());
+
+
+
+    }
 
 
 
