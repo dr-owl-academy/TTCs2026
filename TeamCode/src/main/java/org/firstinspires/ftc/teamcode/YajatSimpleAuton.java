@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+
 import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -18,7 +19,7 @@ public class YajatSimpleAuton extends OpMode {
 
         WAIT_FOR_TURN,
         START_DRIVE_TO_TARGET,
-        WAIT_FOR_TARGET,
+        WAIT_FOR_DRIVE_TO_TARGET,
         COMPLETE
     }
 
@@ -27,6 +28,7 @@ public class YajatSimpleAuton extends OpMode {
 
     //use pathchaining
     private PathChain driveToTarget;
+    private AutoState autoState = AutoState.START_TURN_TO_180;
 
 //did somthing i think. also lots of errors
 
@@ -73,9 +75,9 @@ public class YajatSimpleAuton extends OpMode {
 
         telemetry.addData("Heading", Math.toDegrees(currentPose.getHeading()));
 
-        telemetry.addData("State", AutoState );
+        telemetry.addData("State", autoState );
 
-        if (AutoState == AutoState.COMPLETE) {
+        if (autoState == AutoState.COMPLETE) {
 
             telemetry.addLine("Autonomous complete" );
         }
@@ -83,8 +85,56 @@ public class YajatSimpleAuton extends OpMode {
         telemetry.update();
     }
 
+    @Override
+    public void stop() {
+    }
+
+    // Builds all PathChains used by this autonomous.
+    private void buildPath() {
+
+        driveToTarget = follower.pathBuilder()
+                .addPath(new BezierLine(DRIVE_START_POSE,TARGET_POSE))
+                .setConstantHeadingInterpolation( Math.toRadians(180))
+                .build();
+    }
+
+    // Updates the autonomous finite state machine.
+    private void autonomousPathUpdate() {
+
+        switch (autoState) {
+
+            case START_TURN_TO_180:
+                // Turn in place from 90 degrees to 0 degrees.
+                follower.turnTo(Math.toRadians(180));
+                autoState = AutoState.WAIT_FOR_TURN;
+                break;
+
+            case WAIT_FOR_TURN:
+                // Wait for the turn to finish.
+                if (!follower.isBusy()) {
+                    autoState = AutoState.START_DRIVE_TO_TARGET;
+                }
+                break;
+
+            case START_DRIVE_TO_TARGET:
+                /* Start driving to the target.
+                 * true tells Pedro to hold the final pose.
+                 */
+                follower.followPath(driveToTarget, true);
+                autoState = AutoState.WAIT_FOR_DRIVE_TO_TARGET;
+                break;
+
+            case WAIT_FOR_DRIVE_TO_TARGET:
+                // Wait for the driving path to finish.
+                if (!follower.isBusy()) {
+                    autoState = AutoState.COMPLETE;
+                }
+                break;
+
+            case COMPLETE:
+                break;
+        }
 
 
-
-
+    }
 }
