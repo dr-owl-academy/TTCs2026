@@ -15,11 +15,12 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous(name = "JeremySimpleAuton") // tells the robot the code is autonomous
-public class JeremySimpleAuton implements JeremySimpleAutonMbappe {
+public class JeremySimpleAuton extends OpMode {
 
     private enum AutoState { // create enums for the tasks (finite state machine [fsm])
         START_TURNING_180,
