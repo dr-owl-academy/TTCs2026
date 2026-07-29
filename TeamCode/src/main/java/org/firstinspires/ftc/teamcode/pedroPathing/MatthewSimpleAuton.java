@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
+import com.pedropathing.follower.Follower;
+import com.pedropathing.paths.PathChain;
+
 public class MatthewSimpleAuton {
 
     private enum Autostate{
@@ -10,6 +13,9 @@ public class MatthewSimpleAuton {
         COMPLETE
 
     }
+    private Follower follower;
 
+    //use PathChain for each path segment
+    private PathChain driveToTarget;
 
 }
