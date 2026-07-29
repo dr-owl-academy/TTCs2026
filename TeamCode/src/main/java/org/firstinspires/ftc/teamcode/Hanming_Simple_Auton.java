@@ -14,3 +14,6 @@ public class Hanming_Simple_Auton {
         Complete
 }
 
+private Bot follower;
+private path pathChain;
+private
