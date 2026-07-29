@@ -59,7 +59,7 @@ public class AimeeSimpleAuton extends OpMode {
         //the pedropathing has to update every single cycle
         follower.update();
 
-        //
+        //this is to update the FSM
         autonomousPathUpdate();
 
         Pose currentPose = follower.getPose();
