@@ -41,8 +41,8 @@ public class EasonSimpleAuton extends OpMode {
     private static final Pose START_POSE = new Pose(72,72,Math.toRadians(90));
     private static final Pose DRIVE_START_POSE_1 = new Pose(72,72,Math.toRadians(180));
     private static final Pose TARGET_POSE_1 = new Pose(24,72,Math.toRadians(180));
-    private static final Pose DRIVE_START_POSE_2 = new Pose(24,72,Math.toRadians(-150));
-    private static final Pose TARGET_POSE_2 = new Pose(48,24,Math.toRadians(-150));
+    private static final Pose DRIVE_START_POSE_2 = new Pose(24,72,Math.toRadians(-60));
+    private static final Pose TARGET_POSE_2 = new Pose(48,24,Math.toRadians(-60));
     private static final double INTAKE_VELOCITY = 2000;
     @Override
     public void init(){
@@ -106,7 +106,7 @@ public class EasonSimpleAuton extends OpMode {
                 //Straight Line
                 .addPath(new BezierLine(DRIVE_START_POSE_2,TARGET_POSE_2))
                 //Maintain Heading
-                .setConstantHeadingInterpolation(Math.toRadians(-150))
+                .setConstantHeadingInterpolation(Math.toRadians(-60))
                 .build();
     }
     //Update Machine States
@@ -142,7 +142,7 @@ public class EasonSimpleAuton extends OpMode {
 
             case START_TURN_2:
                 //Turn to 180 degrees in PedroPathing
-                follower.turnTo( Math.toRadians(-150));
+                follower.turnTo( Math.toRadians(-60));
                 autoState = AutoState.WAIT_FOR_TURN_2;
                 break;
 
