@@ -115,6 +115,17 @@ public class AimeeSimpleAuton extends OpMode {
                 //
                 follower.followPath(driveToTarget,true);
                 autoState = AutoState.WAIT_TO_DRIVE_TO_TARGET;
+                break;
+
+            case WAIT_TO_DRIVE_TO_TARGET:
+                //
+                if (!follower.isBusy()) {
+                    autoState = AutoState.DONE;
+                }
+                break;
+
+            case DONE:
+                break;
         }
     }
 }
