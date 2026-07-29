@@ -8,7 +8,7 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 @Autonomous(name = "Simple Auton Code Yajat")
-public class YajatSimpleAuton extends OpMode {
+public class SimpleAutonCodeYajat extends OpMode {
   //now we put the things in order ig
     private enum AutoState{
         START_TURN_TO_180,
