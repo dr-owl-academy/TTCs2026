@@ -87,6 +87,31 @@ public class EasonSimpleAuton extends OpMode {
                 follower.turnTo( Math.toRadians(180));
                 autoState = AutoState.WAIT_FOR_TURN_1;
                 break;
+
+            case WAIT_FOR_TURN_1:
+                //Wait Until Robot is Facing 180 Degrees
+                if (!follower.isBusy()){
+                    autoState = AutoState.START_DRIVE_TO_TARGET_1;
+                }
+                break;
+
+            case START_DRIVE_TO_TARGET_1:
+                //Driving To Target
+                follower.followPath(driveToTarget,true);
+                autoState = AutoState.WAIT_FOR_DRIVE_TO_TARGET;
+                break;
+
+            case WAIT_FOR_DRIVE_TO_TARGET:
+                //Wait Until Done With Driving
+                if (!follower.isBusy()){
+                    autoState = AutoState.COMPLETE;
+                }
+                break;
+
+            case COMPLETE:
+                //Hold Position
+                break;
         }
+
     }
 }
