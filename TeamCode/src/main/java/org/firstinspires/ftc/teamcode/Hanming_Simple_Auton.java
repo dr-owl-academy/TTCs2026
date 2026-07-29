@@ -22,35 +22,58 @@ public class Hanming_Simple_Auton extends OpMode {
 
     private Follower follower;
     private PathChain driveToTarget;
+
     private AutoState autoState = AutoState.Init_turn;
-    private static final Pose START_POSE = new Pose(72, 72, Math.toRadians(90));
-    private static final Pose DRIVE_START_POSE = new Pose(72, 72, Math.toRadians(180));
-    private static final Pose TARGET_POSE = new Pose(24, 72, Math.toRadians(180));
+
+    // Robot begins at (72, 72), facing 90 degrees.
+    private static final Pose START_POSE =
+            new Pose(72, 72, Math.toRadians(90));
+
+    // Same position after turning to 180 degrees.
+    private static final Pose DRIVE_START_POSE =
+            new Pose(72, 72, Math.toRadians(180));
+
+    // Move 24 inches in the negative X direction.
+    private static final Pose TARGET_POSE =
+            new Pose(48, 72, Math.toRadians(180));
 
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
+
         follower.setStartingPose(START_POSE);
         follower.setMaxPower(0.5);
 
         buildPath();
 
-        telemetry.addLine("Auton ready");
+        telemetry.addLine("Autonomous ready");
+        telemetry.addData("Starting pose", START_POSE);
         telemetry.update();
     }
 
     @Override
+    public void start() {
+        autoState = AutoState.Init_turn;
+    }
+
+    @Override
     public void loop() {
+        // Must be called every loop.
         follower.update();
+
         autonomousPathUpdate();
+
         Pose currentPose = follower.getPose();
+
+        telemetry.addData("State", autoState);
+        telemetry.addData("Busy", follower.isBusy());
         telemetry.addData("X", currentPose.getX());
         telemetry.addData("Y", currentPose.getY());
         telemetry.addData(
                 "Heading",
                 Math.toDegrees(currentPose.getHeading())
         );
-        telemetry.addData("State", autoState);
+
         if (autoState == AutoState.Complete) {
             telemetry.addLine("Autonomous complete");
         }
@@ -58,17 +81,17 @@ public class Hanming_Simple_Auton extends OpMode {
         telemetry.update();
     }
 
-    @Override
-    public void stop() {
-    }
-
     private void buildPath() {
         driveToTarget = follower.pathBuilder()
-                .addPath(new BezierLine(
-                        DRIVE_START_POSE,
-                        TARGET_POSE
-                ))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .addPath(
+                        new BezierLine(
+                                DRIVE_START_POSE,
+                                TARGET_POSE
+                        )
+                )
+                .setConstantHeadingInterpolation(
+                        Math.toRadians(180)
+                )
                 .build();
     }
 
@@ -76,29 +99,41 @@ public class Hanming_Simple_Auton extends OpMode {
         switch (autoState) {
 
             case Init_turn:
+                // Start turning from 90 degrees to 180 degrees.
                 follower.turnTo(Math.toRadians(180));
+
+                // Immediately switch to the waiting state so
+                // turnTo() is not restarted every loop.
                 autoState = AutoState.Wait_turn;
                 break;
 
             case Wait_turn:
+                // Wait until the turn has finished.
                 if (!follower.isBusy()) {
                     autoState = AutoState.Init_drive;
                 }
                 break;
 
             case Init_drive:
+                // Begin driving from X=72 to X=48.
                 follower.followPath(driveToTarget, true);
                 autoState = AutoState.Wait_drive;
                 break;
 
             case Wait_drive:
+                // Wait until the 24-inch drive has finished.
                 if (!follower.isBusy()) {
                     autoState = AutoState.Complete;
                 }
                 break;
 
             case Complete:
+                // Autonomous is finished.
                 break;
         }
+    }
+
+    @Override
+    public void stop() {
     }
 }
