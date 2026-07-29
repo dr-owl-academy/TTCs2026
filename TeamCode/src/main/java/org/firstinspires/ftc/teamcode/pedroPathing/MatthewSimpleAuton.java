@@ -20,7 +20,8 @@ public class MatthewSimpleAuton extends OpMode{
         WAIT_FOR_TURN_TO_180,
         START_DRIVE_TO_TARGET,
         WAIT_FOR_DRIVE_TO_TARGET,
-        COMPLETE
+        COMPLETE,
+        INTAKE
 
     }
     private Follower follower;
@@ -96,7 +97,7 @@ public class MatthewSimpleAuton extends OpMode{
 
             case START_TURN_TO_180:
                 // Turn in place from 90 degrees to 0 degrees.
-                follower.turnTo( Math.toRadians(180));
+                follower.turnTo(Math.toRadians(180));
                 autoState = autoState.WAIT_FOR_TURN_TO_180;
                 break;
 
@@ -111,7 +112,7 @@ public class MatthewSimpleAuton extends OpMode{
                 /* Start driving to the target.
                  * true tells Pedro to hold the final pose.
                  */
-                follower.followPath(driveToTarget,true);
+                follower.followPath(driveToTarget, true);
                 autoState = autoState.WAIT_FOR_DRIVE_TO_TARGET;
                 break;
 
