@@ -100,14 +100,14 @@ public class AimeeSimpleAuton extends OpMode {
 
             case START_TO_TURN_180:
                 //start turning from 0 degrees all the way to 90 degrees
-                follower.trunTo(Math.toRadians(180));
+                follower.turnTo(Math.toRadians(180));
                 autoState = AutoState.WAIT_FOR_TURN_180;
                 break;
 
             case WAIT_FOR_TURN_180:
                 //
                 if(!follower.isBusy()) {
-                    autoState = AutoState.START_TO_DRIVE_TO_TARGET
+                    autoState = AutoState.START_TO_DRIVE_TO_TARGET;
                 }
                 break;
 
