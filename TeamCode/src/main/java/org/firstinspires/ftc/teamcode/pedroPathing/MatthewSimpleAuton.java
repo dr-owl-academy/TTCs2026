@@ -39,5 +39,10 @@ public class MatthewSimpleAuton {
 
         follower.setMaxPower(0.5);
 
+        buildPath();
+
+        telemetry.addLine("Autonomous ready");
+        telemetry.update();
+
     }
 }
