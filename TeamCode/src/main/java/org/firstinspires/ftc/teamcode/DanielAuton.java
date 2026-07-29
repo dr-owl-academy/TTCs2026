@@ -13,6 +13,10 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Autonomous(name = "Daniel Auton")
 public class DanielAuton extends OpMode {
 
+    //What is stated in Finite State Machine (Commands such as Start, wait, turn, etc.)
+
+
+    //tells if action is done or not done
     private enum Autostate {
         START_TURN_TO_180,
         WAIT_FOR_TURN_TO_180,
@@ -22,10 +26,7 @@ public class DanielAuton extends OpMode {
     }
 
 
-//What is stated in Finite State Machine (Commands such as Start, wait, turn, etc.)
 
-
-    //tells if action is done or not done
     private Follower follower;
 
     //Pathchain links paths, use for each segment
