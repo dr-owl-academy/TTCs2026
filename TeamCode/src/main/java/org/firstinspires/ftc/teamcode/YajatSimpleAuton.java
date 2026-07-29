@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Autonomous(name = "Simple Auton Code Yajat")
 public class YajatSimpleAuton extends OpMode {
 
-    private
+    private DcMotorEx intakeMotor;
     private static final double INTAKE_VELOCITY = 2000;
 
     //now we put the things in order ig
@@ -146,6 +146,9 @@ public class YajatSimpleAuton extends OpMode {
                 // Wait for the driving path to finish.
                 if (!follower.isBusy()) {
                     autoState = AutoState.COMPLETE;
+
+
+
                 }
                 break;
 
