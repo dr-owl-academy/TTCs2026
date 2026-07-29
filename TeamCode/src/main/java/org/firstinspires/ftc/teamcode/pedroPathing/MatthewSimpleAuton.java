@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
-public class MatthewSimpleAuton {
+public class MatthewSimpleAuton extends OpMode{
 
     private enum Autostate{
         START_TURN_TO_180,
