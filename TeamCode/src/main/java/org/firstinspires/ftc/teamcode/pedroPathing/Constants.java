@@ -20,7 +20,7 @@ public class Constants {
             .mass(7.05)
             //.forwardZeroPowerAcceleration()
             //.lateralZeroPowerAcceleration()
-            //.translationalPIDFCoefficients(new PIDFCoefficients(0.3, 0, 0.0001, 0.01))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.15, 0, 0.015, 0.01))
     ;
 
 
