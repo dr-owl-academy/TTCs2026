@@ -1,15 +1,22 @@
 package org.firstinspires.ftc.teamcode;
 
+import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous(name = "EasonSimpleAuton")
 public class EasonSimpleAuton extends OpMode {
+
+    private DcMotorEx intakeMotor;
 
     //Machine States
     private enum AutoState {
@@ -29,15 +36,24 @@ public class EasonSimpleAuton extends OpMode {
     private static final Pose START_POSE = new Pose(72,72,Math.toRadians(90));
     private static final Pose DRIVE_START_POSE = new Pose(72,72,Math.toRadians(180));
     private static final Pose TARGET_POSE = new Pose(24,72,Math.toRadians(180));
-
+    private static final double INTAKE_VELOCITY = 2000;
     @Override
     public void init(){
+
         follower = Constants.createFollower(hardwareMap);
 
         follower.setStartingPose(START_POSE);
 
         //Less Power
         follower.setMaxPower(0.5);
+
+        intakeMotor =
+                hardwareMap.get(DcMotorEx.class, "intakemotor");
+
+        intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+        intakeMotor.setZeroPowerBehavior(BRAKE);
+        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeMotor.setVelocity(0);
 
         buildPath();
         //Show String
@@ -103,7 +119,9 @@ public class EasonSimpleAuton extends OpMode {
                 break;
 
             case WAIT_FOR_DRIVE_TO_TARGET:
-                //Wait Until Done With Driving
+                //Intake Start
+                intakeMotor.setVelocity(-INTAKE_VELOCITY);
+                // Wait Until Done With Driving
                 if (!follower.isBusy()){
                     autoState = AutoState.COMPLETE;
                 }
