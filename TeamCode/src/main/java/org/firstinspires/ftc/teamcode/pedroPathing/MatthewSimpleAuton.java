@@ -23,4 +23,10 @@ public class MatthewSimpleAuton {
     //use PathChain for each path segment
     private PathChain driveToTarget;
 
+    // Starting FSM state.
+    private AutoState autoState = AutoState.START_TURN_TO_180;
+
+    private static final Pose START_POSE = new Pose(72,72,Math.toRadians(90) );
+    private static final Pose DRIVE_START_POSE = new Pose(72,72,Math.toRadians(180));
+    private static final Pose TARGET_POSE = new Pose(24,72, Math.toRadians(180));
 }
