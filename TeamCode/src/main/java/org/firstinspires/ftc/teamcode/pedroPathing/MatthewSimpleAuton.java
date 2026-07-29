@@ -92,6 +92,39 @@ public class MatthewSimpleAuton {
     // Updates the autonomous finite state machine.
 
     public void autonomousPathUpdate(){
+        switch (autoState) {
 
+            case START_TURN_TO_180:
+                // Turn in place from 90 degrees to 0 degrees.
+                follower.turnTo( Math.toRadians(180));
+                autoState = autoState.WAIT_FOR_TURN_TO_180;
+                break;
+
+            case WAIT_FOR_TURN_TO_180:
+                // Wait for the turn to finish.
+                if (!follower.isBusy()) {
+                    autoState = autoState.START_DRIVE_TO_TARGET;
+                }
+                break;
+
+            case START_DRIVE_TO_TARGET:
+                /* Start driving to the target.
+                 * true tells Pedro to hold the final pose.
+                 */
+                follower.followPath(driveToTarget,true);
+                autoState = autoState.WAIT_FOR_DRIVE_TO_TARGET;
+                break;
+
+            case WAIT_FOR_DRIVE_TO_TARGET:
+                // Wait for the driving path to finish.
+                if (!follower.isBusy()) {
+                    autoState = autoState.COMPLETE;
+                }
+                break;
+
+            case COMPLETE:
+                break;
+        }
     }
 }
+
