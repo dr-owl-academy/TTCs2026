@@ -76,4 +76,18 @@ public class MatthewSimpleAuton {
 
         telemetry.update();
     }
+    @Override
+    public void stop() {
+    }
+
+    // Builds all PathChains used by this autonomous.
+    private void buildPath() {
+
+        driveToTarget = follower.pathBuilder()
+                .addPath(new BezierLine(DRIVE_START_POSE,TARGET_POSE))
+                .setConstantHeadingInterpolation( Math.toRadians(180))
+                .build();
+    }
+
+    // Updates the autonomous finite state machine.
 }
