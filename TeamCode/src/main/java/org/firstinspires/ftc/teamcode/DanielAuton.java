@@ -112,7 +112,7 @@ public class DanielAuton extends OpMode {
             case WAIT_FOR_TURN_TO_180:
                 //Wait for turn to finish, follower is busy means it is finished
                 if (!follower.isBusy()) {
-                    autoState = Autostate.WAIT_FOR_TURN_TO_180;
+                    autoState = Autostate.START_DRIVE_TO_TARGET;
                 }
                 break;
 
