@@ -69,7 +69,7 @@ public class MatthewSimpleAuton {
 
         telemetry.addData("State", autoState );
 
-        if (autoState == Autostate.COMPLETE) {
+        if (autoState == autoState.COMPLETE) {
 
             telemetry.addLine("Autonomous complete" );
         }
