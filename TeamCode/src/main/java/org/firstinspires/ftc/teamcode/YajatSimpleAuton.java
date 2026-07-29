@@ -8,11 +8,15 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous(name = "Simple Auton Code Yajat")
 public class YajatSimpleAuton extends OpMode {
+
+    private static final double INTAKE_VELOCITY = 2000;
+
     //now we put the things in order ig
     private enum AutoState {
         START_TURN_TO_180,
@@ -47,6 +51,9 @@ public class YajatSimpleAuton extends OpMode {
         follower = Constants.createFollower(hardwareMap);
 
         follower.setStartingPose(START_POSE);
+
+
+
 
         // Reduced power for initial testing.
         follower.setMaxPower(0.5);
