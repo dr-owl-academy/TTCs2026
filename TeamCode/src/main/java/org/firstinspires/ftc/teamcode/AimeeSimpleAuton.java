@@ -84,7 +84,7 @@ public class AimeeSimpleAuton extends OpMode {
     public void stop() {
     }
 
-    //
+    //this will build all the PathChains that are going to be used
 
     private void buildPath() {
         driveToTarget = follower.pathBuilder()
@@ -93,26 +93,26 @@ public class AimeeSimpleAuton extends OpMode {
                 .build();
     }
 
-    //
+    //this updates the FSM
     private void autonomousPathUpdate() {
 
         switch (autoState) {
 
             case START_TO_TURN_180:
-                //start turning from 0 degrees all the way to 90 degrees
+                //start turning from 90 degrees all the way to 0 degrees
                 follower.turnTo(Math.toRadians(180));
                 autoState = AutoState.WAIT_FOR_TURN_180;
                 break;
 
             case WAIT_FOR_TURN_180:
-                //
+                //this waits, very patiently, for the turn to be done
                 if(!follower.isBusy()) {
                     autoState = AutoState.START_TO_DRIVE_TO_TARGET;
                 }
                 break;
 
             case START_TO_DRIVE_TO_TARGET:
-                //
+                //starts driving to the target location and then stops and holds its position
                 follower.followPath(driveToTarget,true);
                 autoState = AutoState.WAIT_TO_DRIVE_TO_TARGET;
                 break;
