@@ -50,4 +50,30 @@ public class MatthewSimpleAuton {
         telemetry.update();
 
     }
+    @Override
+    public void loop() {
+
+        // Pedro must update every loop.
+        follower.update();
+
+        // Update the autonomous FSM.
+        autonomousPathUpdate();
+
+        Pose currentPose = follower.getPose();
+
+        telemetry.addData("X", currentPose.getX() );
+
+        telemetry.addData("Y", currentPose.getY() );
+
+        telemetry.addData("Heading", Math.toDegrees(currentPose.getHeading()));
+
+        telemetry.addData("State", autoState );
+
+        if (autoState == Autostate.COMPLETE) {
+
+            telemetry.addLine("Autonomous complete" );
+        }
+
+        telemetry.update();
+    }
 }
