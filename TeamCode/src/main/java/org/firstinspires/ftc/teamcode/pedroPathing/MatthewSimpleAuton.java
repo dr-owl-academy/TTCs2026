@@ -31,6 +31,7 @@ public class MatthewSimpleAuton {
     private static final Pose DRIVE_START_POSE = new Pose(72,72,Math.toRadians(180));
     private static final Pose TARGET_POSE = new Pose(24,72, Math.toRadians(180));
 
+    @Override
     public void init() {
 
         follower = Constants.createFollower(hardwareMap);
