@@ -18,8 +18,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "Jeremy的简单Auton") // tells the robot the code is autonomous
-public class Jeremy的简单Auton {
+@Autonomous(name = "JeremySimpleAuton") // tells the robot the code is autonomous
+public class JeremySimpleAuton {
 
     private enum AutoState { // create enums for the tasks (finite state machine [fsm])
         START_TURNING_180,
@@ -29,7 +29,7 @@ public class Jeremy的简单Auton {
         COMPLETE;
     }
 
-    private Follower simpleMbappeSpecial; // make a follower to do the tasks
+    private Follower simpleMbappeSpecial; // define a follower to do the tasks
 
     private PathChain driveToTarget; // make a path chain for each task segment
 
@@ -42,7 +42,7 @@ public class Jeremy的简单Auton {
 
     @Override
     private void init(){
-        simpleMbappeSpecial = Constants.createFollower(hardwareMap);
+        simpleMbappeSpecial = Constants.createFollower(hardwareMap); // create the follower
 
     }
 
