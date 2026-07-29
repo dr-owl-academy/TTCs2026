@@ -13,7 +13,7 @@ import com.pedropathing.paths.PathChain;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "Simple Auton Code Yajat")
+@Autonomous(name = "YajatSimpleAuton")
 public class YajatSimpleAuton extends OpMode {
     //now we put the things in order ig
     private enum AutoState{
