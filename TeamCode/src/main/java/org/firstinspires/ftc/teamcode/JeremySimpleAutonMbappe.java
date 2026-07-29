@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Autonomous(name = "JeremySimpleAutonMbappe") // tells the robot the code is autonomous
 public class JeremySimpleAutonMbappe extends OpMode {
 
-    private static final double INTAKE_VELOCITY = 2000; // make the speed of mbappes legs
+    private static final double INTAKE_VELOCITY = -2000; // make the speed of mbappes legs
     private DcMotorEx mbappesLegs; // create the motor
 
     private enum AutoState { // create enums for the tasks (finite state machine [fsm])
