@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Autonomous(name = "Simple Auton Code Yajat")
 public class YajatSimpleAuton extends OpMode {
 
-    //private static final double INTAKE_VELOCITY = 2000;
+    private static final double INTAKE_VELOCITY = 2000;
 
     //now we put the things in order ig
     private enum AutoState {
