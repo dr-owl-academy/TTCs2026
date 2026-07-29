@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -30,7 +31,7 @@ public class EasonSimpleAuton extends OpMode {
 
     @Override
     public void init(){
-        follower - Constants.createFollower(hardwareMap);
+        follower = Constants.createFollower(hardwareMap);
 
         follower.setStartingPose(START_POSE);
 
@@ -61,8 +62,31 @@ public class EasonSimpleAuton extends OpMode {
 
         telemetry.addData("State", autoState);
 
-        if (autoState== AutoState.COMPLETE) {}
+        if (autoState== AutoState.COMPLETE) {
+            telemetry.addLine("Autonomous complete");
+        }
 
-
+        telemetry.update();
+    }
+    @Override
+    public void stop(){
+    }
+    private void buildPath(){
+        driveToTarget=follower.pathBuilder()
+                //Straight Line
+                .addPath(new BezierLine(DRIVE_START_POSE,TARGET_POSE))
+                //Maintain Heading
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .build();
+    }
+    //Update Machine States
+    private void autonomousPathUpdate() {
+        switch (autoState) {
+            case START_TURN_1:
+                //Turn to 180 degrees in PedroPathing
+                follower.turnTo( Math.toRadians(180));
+                autoState = AutoState.WAIT_FOR_TURN_1;
+                break;
+        }
     }
 }
