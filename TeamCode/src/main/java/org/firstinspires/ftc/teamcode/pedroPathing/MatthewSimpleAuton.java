@@ -57,7 +57,7 @@ public class MatthewSimpleAuton {
         follower.update();
 
         // Update the autonomous FSM.
-        autonomousPathUpdate();
+        follower.update();
 
         Pose currentPose = follower.getPose();
 
