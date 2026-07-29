@@ -37,5 +37,7 @@ public class MatthewSimpleAuton {
 
         follower.setStartingPose(START_POSE);
 
+        follower.setMaxPower(0.5);
+
     }
 }
