@@ -15,7 +15,7 @@ public class TouchSensorPractice extends OpMode {
     @Override
     public void init() {
         bench.init(hardwareMap);
-        Motor = hardwareMap.get(DcMotor.class, "Motor");
+        Motor = hardwareMap.get(DcMotor.class, "motor");
         Motor.setPower(0);
         Motor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
