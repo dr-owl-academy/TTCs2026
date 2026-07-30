@@ -36,9 +36,10 @@ public class DanielAuton extends OpMode {
     private Autostate autoState = Autostate.START_TURN_TO_180;
 
     //Sets what positions to to move to during FSM
-    private static final Pose START_POSE = new Pose(72, 72, Math.toRadians(90));
-    private static final Pose DRIVE_START_POSE = new Pose(72, 72, Math.toRadians(180));
-    private static final Pose TARGET_POSE = new Pose(24, 72, Math.toRadians(180));
+    private static final Pose START_POSE = new Pose(72, 72, Math.toRadians(90)); //original direction
+    private static final Pose DRIVE_START_POSE = new Pose(72, 72, Math.toRadians(180)); //turn 90 degrees
+    private static final Pose TARGET_POSE = new Pose(24, 72, Math.toRadians(180)); //move x
+    private static final double INTAKE_VELOCITY = 2000; //setting intake speed
 
     @Override
     public void init() {
@@ -52,6 +53,7 @@ public class DanielAuton extends OpMode {
 
         buildPath();
 
+        //shows robot is ready to run
         telemetry.addLine("Autonomous ready");
         telemetry.update();
     }
@@ -68,6 +70,7 @@ public class DanielAuton extends OpMode {
         //Gets the pose for follower (know what coordinate it is)
         Pose currentPose = follower.getPose();
 
+        //telemetry gives me the x and y positions on screen and other info
         telemetry.addData("X", currentPose.getX());
 
         telemetry.addData("X", currentPose.getY());
@@ -78,7 +81,7 @@ public class DanielAuton extends OpMode {
 
         if (autoState == Autostate.COMPLETE) {
 
-            telemetry.addLine("Autonomous complete");
+            telemetry.addLine("Autonomous complete"); //auto is complete after action is complete
         }
 
         telemetry.update();
