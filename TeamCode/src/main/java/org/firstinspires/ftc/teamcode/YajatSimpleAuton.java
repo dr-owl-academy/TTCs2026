@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.opencv.core.Mat;
 
 @Autonomous(name = "Simple Auton Code Yajat")
 public class YajatSimpleAuton extends OpMode {
@@ -37,6 +38,7 @@ public class YajatSimpleAuton extends OpMode {
 
     //use pathchaining
     private PathChain driveToTarget;
+    private PathChain driveTarget_zwei;
     private AutoState autoState = AutoState.START_TURN_TO_180;
 
 //did somthing i think. also lots of errors
@@ -44,9 +46,13 @@ public class YajatSimpleAuton extends OpMode {
 
     private static final Pose START_POSE = new Pose(72, 72, Math.toRadians(90));
 
-    private static final Pose DRIVE_START_POSE = new Pose(72, 72, 180);
+    private static final Pose DRIVE_START_POSE = new Pose(72, 72, Math.toRadians(180));
 
-    private static final Pose TARGET_POSE = new Pose(24, 72, 180);
+    private static final Pose TARGET_POSE = new Pose(24, 72,Math.toRadians(180));
+
+    private static final Pose DRIVE_START_POSE_ZWEI =   new Pose(24,72,Math.toRadians(-60));
+
+    private static final Pose TARGET_POSE_ZWEI = new Pose(48,24,Math.toRadians(-60));
 
 //i think i did something so the bot knows where to go
 
@@ -116,7 +122,8 @@ public class YajatSimpleAuton extends OpMode {
                 .setConstantHeadingInterpolation( Math.toRadians(180))
                 .build();
         driveTarget_zwei = follower.pathBuilder()
-                .addPath(new BezierLine(DRIVE_START_POSE))
+                .addPath(new BezierLine(DRIVE_START_POSE_ZWEI,TARGET_POSE_ZWEI))
+                .setConstantHeadingInterpolation(Math.toRadians(-60));
     }
 
     // Updates the autonomous finite state machine.
