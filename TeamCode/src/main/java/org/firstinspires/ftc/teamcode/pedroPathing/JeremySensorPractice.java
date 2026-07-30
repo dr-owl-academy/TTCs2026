@@ -13,8 +13,7 @@ public class JeremySensorPractice extends OpMode {
 
     // define class variables
     double motorVelocity = 0.3; // speed of motor
-    int sensorHoldTime = 0; // if held for enough time will turn off motor (3 second = 150 revolutions)
-    boolean isMotorSpinning = false;
+    double power;
     int sensorClicks = 0; // how many times the sensor was clicked
 
     @Override
@@ -28,27 +27,30 @@ public class JeremySensorPractice extends OpMode {
 
     @Override
     public void loop(){
+        // gamepad movement
+        if (gamepad1.right_bumper) {  // intake
+            power = motorVelocity;
+            motor.setPower(power);
 
+        } else if (gamepad1.left_bumper) {
+            power = -motorVelocity;
+            motor.setPower(power); // outake
 
-        if(!bench.touchSensorState()){
-            isMotorSpinning = true; // make the motor spin
-            motorVelocity = -motorVelocity; // flip the direction
-            sensorHoldTime++; // add one to the time
-            sensorClicks++;
+        } else {
+            motor.setPower(0); //power off
+        }
 
-            if(sensorHoldTime >= 150){
-                isMotorSpinning = false;
-            }
-        } else{
-            sensorHoldTime = 0; // reset time if released
-            if(isMotorSpinning){ // spin the motor only when told to
-                motor.setPower(motorVelocity);
+        if(!bench.touchSensorState()){ // if button is pressed
+            if(power > 0){
+                sensorClicks++;
+            } else if(power < 0){
+                sensorClicks--;
             }
         }
 
         telemetry.addData("Touch Sensor State: ", bench.touchSensorState());
         telemetry.addData("Motor Power: ", motor.getPower());
-        telemetry.addData("Sensor Clicks: ", sensorClicks);
+        telemetry.addData("Balls: ", sensorClicks);
         telemetry.update();
     }
 }
