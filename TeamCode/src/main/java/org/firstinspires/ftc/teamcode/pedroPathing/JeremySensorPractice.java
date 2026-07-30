@@ -15,7 +15,7 @@ public class JeremySensorPractice extends OpMode {
     double motorVelocity = 0.3; // speed of motor
     double power;
     int sensorClicks = 0; // how many times the sensor was clicked
-    boolean sensorClicked = false;
+    boolean sensorEngaged = false;
 
     @Override
     public void init(){
@@ -43,16 +43,16 @@ public class JeremySensorPractice extends OpMode {
         }
 
         if(!bench.touchSensorState()){ // if button is pressed
-            if(!sensorClicked){
+            if(!sensorEngaged){
                 if(power > 0){ // if the motor is spinning forward
                     sensorClicks++;
-                } else if(power < 0){ // if the motor is spinning backward
+                } else if(power < 0 && sensorClicks > 0){ // if the motor is spinning backward
                     sensorClicks--;
                 }
-                sensorClicked = true;
+                sensorEngaged = true;
             }
         } else { // reset after sensor is released
-            sensorClicked = false;
+            sensorEngaged = false;
         }
 
 
