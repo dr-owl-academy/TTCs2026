@@ -15,6 +15,7 @@ public class JeremySensorPractice extends OpMode {
 
         motor = hardwareMap.get(DcMotor.class, "motor"); // initialize motor
         motor.setPower(0);
+        motor.setDirection(DcMotor.Direction.FORWARD);
     }
 
     @Override
@@ -23,7 +24,6 @@ public class JeremySensorPractice extends OpMode {
 
         if(!bench.touchSensorState()){
             motor.setPower(0.5);
-            motor.setDirection(DcMotor.Direction.FORWARD);
         }
     }
 }
