@@ -58,7 +58,7 @@ public class JeremySensorPractice extends OpMode {
 
         telemetry.addData("Touch Sensor State: ", bench.touchSensorState());
         telemetry.addData("Motor Power: ", motor.getPower());
-        telemetry.addData("Balls: ", sensorClicks);
+        telemetry.addData("Your Balls", sensorClicks);
         telemetry.update();
     }
 }
