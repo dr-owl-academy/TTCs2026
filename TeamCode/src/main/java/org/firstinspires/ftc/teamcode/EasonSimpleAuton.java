@@ -80,7 +80,7 @@ public class EasonSimpleAuton extends OpMode {
 
         telemetry.addData("X",currentPose.getX());
 
-        telemetry.addData("X",currentPose.getX());
+        telemetry.addData("Y",currentPose.getY());
 
         telemetry.addData("Heading",Math.toDegrees(currentPose.getHeading()));
 
