@@ -55,9 +55,7 @@ public class AimeeSimpleAuton extends OpMode {
         follower.setMaxPower(0.5);
 
         LeIntake = (DcMotorEx) hardwareMap.get(DcMotor.class, "intakemotor"); //continue this later!!
-
         LeIntake.setDirection(DcMotorSimple.Direction.FORWARD);
-
         LeIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         buildPath();
