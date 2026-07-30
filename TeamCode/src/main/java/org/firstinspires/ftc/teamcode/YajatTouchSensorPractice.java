@@ -44,7 +44,7 @@ public class YajatTouchSensorPractice extends OpMode {
         boolean currentTouchState = !bench.getTouchSensorState();
         if(currentTouchState && !lastTouchState){
             if(intakeDirection==1){BallCounter++;}
-            else if(intakeDirection==-1){BallCounter--;}
+            else if(intakeDirection==-1 && BallCounter>0){BallCounter--;}
         }
 
         lastTouchState=currentTouchState;
