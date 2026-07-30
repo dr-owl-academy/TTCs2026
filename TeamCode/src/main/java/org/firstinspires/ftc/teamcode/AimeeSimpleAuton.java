@@ -6,6 +6,8 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -47,6 +49,8 @@ public class AimeeSimpleAuton extends OpMode {
 
         //this is to reduce the power
         follower.setMaxPower(0.5);
+
+        //LeIntake = (DcMotorEx) hardwareMap.get(DcMotor.class, "intakemotor"); //continue this later!!
 
         buildPath();
 
