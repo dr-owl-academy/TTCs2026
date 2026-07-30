@@ -12,10 +12,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
+//
+
 @Autonomous(name = "Aimee Simple Auton")
 public class AimeeSimpleAuton extends OpMode {
 
-    private static final double INTAKE_VELOCITY = 1500; //eat
     private DcMotorEx LeIntake;
 
     private enum AutoState {
@@ -24,6 +25,10 @@ public class AimeeSimpleAuton extends OpMode {
         WAIT_FOR_TURN_180,
         START_TO_DRIVE_TO_TARGET,
         WAIT_TO_DRIVE_TO_TARGET,
+        START_TO_TURN_2,
+        WAIT_FOR_TURN_2,
+        START_TO_DRIVE_TO_TARGET_2,
+        WAIT_TO_DRIVE_TO_TARGET_2,
         DONE
     }
 
@@ -32,6 +37,8 @@ public class AimeeSimpleAuton extends OpMode {
 
     //you can use the PathChain to make paths for each part of the run (segment)
     private PathChain driveToTarget;
+
+    private PathChain driveToTarget2;
 
     //this part starts the FSM state (think of the bubbles and how one leads to another)
     private AutoState autoState = AutoState.START_TO_TURN_180;
@@ -42,6 +49,12 @@ public class AimeeSimpleAuton extends OpMode {
     private static final Pose DRIVE_START_POSE = new Pose(72,72, Math.toRadians(180));
 
     private static final Pose TARGET_POSE = new Pose(24,72, Math.toRadians(180));
+
+    private static final Pose DRIVE_START_POSE_2 = new Pose(24,72, Math.toRadians(-90)); //leave off on the last spot
+
+    private static final Pose TARGET_POSE_2 = new Pose(48,24, Math.toRadians(-90)); //maybe test and change the values for the Radians for this one and the one above
+
+    private static final double INTAKE_VELOCITY = 1500; //eat
 
     //private static final
     @Override
@@ -55,8 +68,11 @@ public class AimeeSimpleAuton extends OpMode {
         follower.setMaxPower(0.5);
 
         LeIntake = (DcMotorEx) hardwareMap.get(DcMotor.class, "intakemotor"); //continue this later!!
+
         LeIntake.setDirection(DcMotorSimple.Direction.FORWARD);
-        LeIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LeIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); //maybe change this later
+        LeIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LeIntake.setVelocity(0);
 
         buildPath();
 
@@ -102,6 +118,10 @@ public class AimeeSimpleAuton extends OpMode {
                 .addPath(new BezierLine(DRIVE_START_POSE, TARGET_POSE))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
+        driveToTarget2 = follower.pathBuilder()
+                .addPath(new BezierLine(DRIVE_START_POSE_2, TARGET_POSE_2))
+                .setConstantHeadingInterpolation(Math.toRadians(-90))
+                .build();
     }
 
     //this updates the FSM
@@ -130,6 +150,31 @@ public class AimeeSimpleAuton extends OpMode {
 
             case WAIT_TO_DRIVE_TO_TARGET:
                 //wait for the robot to stop driving before starting the next part
+                if (!follower.isBusy()) {
+                    autoState = AutoState.START_TO_TURN_2;
+                }
+                break;
+
+            case START_TO_TURN_2:
+                //hopefully this will turn to the correct position to go and get the ball
+                follower.turnTo(Math.toRadians(-90));
+                autoState = AutoState.WAIT_FOR_TURN_2;
+                break;
+
+            case WAIT_FOR_TURN_2:
+                if(!follower.isBusy()) {
+                    autoState = AutoState.START_TO_DRIVE_TO_TARGET_2;
+                }
+                break;
+
+            case START_TO_DRIVE_TO_TARGET_2:
+                follower.followPath(driveToTarget2,true);
+                autoState = AutoState.WAIT_TO_DRIVE_TO_TARGET_2;
+                break;
+
+            case WAIT_TO_DRIVE_TO_TARGET_2:
+                //start the intake
+                LeIntake.setVelocity(-INTAKE_VELOCITY);
                 if (!follower.isBusy()) {
                     autoState = AutoState.DONE;
                 }
