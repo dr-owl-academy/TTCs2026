@@ -7,6 +7,8 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
 import java.lang.reflect.Parameter;
 
 @Autonomous
@@ -23,8 +25,7 @@ public class BallCollecterTest extends OpMode {
     SECOND BALL - THIRD BALL
     THIRD BALL - DEPOSIT
       */
-
-
+    STARTPOS_1MID
 
     }
 
@@ -46,11 +47,25 @@ public class BallCollecterTest extends OpMode {
                 .build();
     }
 
+    public void statePathUpdate() {
+        switch (pathState) {
+            case STARTPOS_1MID:
+                follower.followPath(startPoseMid1Pose,true);
+        }
+
+
+
+    }
 
 
     @Override
     public void init() {
+        pathState=PathState.STARTPOS_1MID;
 
+
+        follower= Constants.createFollower(hardwareMap);
+
+        follower.setStartingPose(startingPose);
 
     }
 
