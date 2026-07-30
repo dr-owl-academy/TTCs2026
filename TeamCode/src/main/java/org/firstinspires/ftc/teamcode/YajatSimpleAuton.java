@@ -24,10 +24,11 @@ public class YajatSimpleAuton extends OpMode {
     //now we put the things in order ig
     private enum AutoState {
         START_TURN_TO_180,
-
         WAIT_FOR_TURN,
         START_DRIVE_TO_TARGET,
         WAIT_FOR_DRIVE_TO_TARGET,
+        START_DRIVE_2,
+        WAIT_FOR_DRIVE2,
         COMPLETE
     }
 
@@ -144,13 +145,18 @@ public class YajatSimpleAuton extends OpMode {
 
             case WAIT_FOR_DRIVE_TO_TARGET:
                 // Wait for the driving path to finish.
+               //intake start ig
+                intakeMotor.setVelocity(-INTAKE_VELOCITY);
+
                 if (!follower.isBusy()) {
                     autoState = AutoState.COMPLETE;
 
-
-
                 }
                 break;
+
+            case START_DRIVE_2:
+
+
 
             case COMPLETE:
                 break;
