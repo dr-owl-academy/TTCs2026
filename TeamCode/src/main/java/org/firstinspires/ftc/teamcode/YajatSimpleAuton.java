@@ -115,6 +115,8 @@ public class YajatSimpleAuton extends OpMode {
                 .addPath(new BezierLine(DRIVE_START_POSE,TARGET_POSE))
                 .setConstantHeadingInterpolation( Math.toRadians(180))
                 .build();
+        driveTarget_zwei = follower.pathBuilder()
+                .addPath(new BezierLine(DRIVE_START_POSE))
     }
 
     // Updates the autonomous finite state machine.
