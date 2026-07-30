@@ -35,7 +35,7 @@ public class DanielAuton extends OpMode {
     //the first action or starts the finite state machine
     private Autostate autoState = Autostate.START_TURN_TO_180;
 
-    //Sets what positions to to move to during FSM
+    //Sets what positions to move to during FSM
     private static final Pose START_POSE = new Pose(72, 72, Math.toRadians(90)); //original direction
     private static final Pose DRIVE_START_POSE = new Pose(72, 72, Math.toRadians(180)); //turn 90 degrees
     private static final Pose TARGET_POSE = new Pose(24, 72, Math.toRadians(180)); //move x
