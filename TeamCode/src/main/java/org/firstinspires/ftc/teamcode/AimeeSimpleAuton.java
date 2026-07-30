@@ -8,11 +8,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous(name = "Aimee Simple Auton")
 public class AimeeSimpleAuton extends OpMode {
+
+    private static final double INTAKE_VELOCITY = 1500; //eat
+    private DcMotorEx LeIntake;
 
     private enum AutoState {
 
@@ -50,7 +54,11 @@ public class AimeeSimpleAuton extends OpMode {
         //this is to reduce the power
         follower.setMaxPower(0.5);
 
-        //LeIntake = (DcMotorEx) hardwareMap.get(DcMotor.class, "intakemotor"); //continue this later!!
+        LeIntake = (DcMotorEx) hardwareMap.get(DcMotor.class, "intakemotor"); //continue this later!!
+
+        LeIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        LeIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         buildPath();
 
