@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.Mechanisms;
+package org.firstinspires.ftc.teamcode.pedroPathing.JeremyMechanisms;
 
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class TestBench {
+public class SimpleMbappeMechanism {
 
     public DigitalChannel touchSensor; // create a touch sensor
 
