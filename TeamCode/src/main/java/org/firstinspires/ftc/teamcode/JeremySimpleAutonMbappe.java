@@ -29,21 +29,28 @@ public class JeremySimpleAutonMbappe extends OpMode {
     private enum AutoState { // create enums for the tasks (finite state machine [fsm])
         START_TURNING_180,
         WAIT_TO_TURN_180,
-        START_DRIVING_TO_TARGET,
-        WAIT_TO_DRIVE_TO_TARGET,
+        START_DRIVING_TO_FIRST,
+        WAIT_TO_DRIVE_TO_FIRST,
+        START_TURNING_296_565,
+        WAIT_TO_TURN_296_565,
+        START_TO_DRIVE_TO_SECOND,
+        WAIT_TO_DRIVE_TO_SECOND,
         COMPLETE
     }
 
     private Follower simpleMbappeSpecial; // define a follower to do the tasks
 
-    private PathChain driveToTarget; // make a path chain for each task segment
+    // make a path chain for each driving pose for bezier line
+    private PathChain driveToFirstTarget;
+    private PathChain driveToSecondTarget;
 
     private AutoState autoState = AutoState.START_TURNING_180; // start running fsm
 
     // making each chain segment of the fsm; radians are used in trig. to calculate things easier (other degrees)
     private static final Pose START_POSE = new Pose(72, 72, Math.toRadians(90));
     private static final Pose DRIVING_POSE = new Pose(72, 72, Math.toRadians(180));
-    private static final Pose TARGET_POSE = new Pose(24, 72, Math.toRadians(180));
+    private static final Pose FIRST_TARGET_POSE = new Pose(24, 72, Math.toRadians(180));
+    private static final Pose SECOND_TARGET_POSE = new Pose(48, 24, Math.toRadians(296.565)); // calculated using gpt after finding hypotenuse of delta x/y
 
     @Override
     public void init(){
@@ -93,9 +100,14 @@ public class JeremySimpleAutonMbappe extends OpMode {
     public void stop(){} // stop the bot while keeping pedropath
 
     private void buildPath(){ // build mbappes path
-        driveToTarget = simpleMbappeSpecial.pathBuilder() // making a path from one point to another
-                .addPath(new BezierLine(DRIVING_POSE, TARGET_POSE))
+        driveToFirstTarget = simpleMbappeSpecial.pathBuilder() // making a path from one point to another
+                .addPath(new BezierLine(DRIVING_POSE, FIRST_TARGET_POSE))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
+                .build();
+
+        driveToSecondTarget = simpleMbappeSpecial.pathBuilder()
+                .addPath(new BezierLine(FIRST_TARGET_POSE, SECOND_TARGET_POSE))
+                .setConstantHeadingInterpolation(Math.toRadians(296.565))
                 .build();
     }
 
@@ -108,23 +120,47 @@ public class JeremySimpleAutonMbappe extends OpMode {
 
             case WAIT_TO_TURN_180: // second step: wait to turn 180
                 if(!simpleMbappeSpecial.isBusy()){ // check if we are still turning
-                    autoState = AutoState.START_DRIVING_TO_TARGET; // if not then move on
+                    autoState = AutoState.START_DRIVING_TO_FIRST; // if not then move on
                 }
                 break;
 
-            case START_DRIVING_TO_TARGET: // third step: move 2 tiles
-                simpleMbappeSpecial.followPath(driveToTarget, true); // start moving
+            case START_DRIVING_TO_FIRST: // third step: move 2 tiles
+                simpleMbappeSpecial.followPath(driveToFirstTarget, true); // start moving
                 mbappesLegs.setVelocity(INTAKE_VELOCITY); // start moving intake
-                autoState = AutoState.WAIT_TO_DRIVE_TO_TARGET;
+                autoState = AutoState.WAIT_TO_DRIVE_TO_FIRST;
                 break;
 
-            case WAIT_TO_DRIVE_TO_TARGET: //  fourth step: wait to move 2 tiles
+            case WAIT_TO_DRIVE_TO_FIRST: //  fourth step: wait to move 2 tiles
+                if(!simpleMbappeSpecial.isBusy()){
+                    autoState = AutoState.START_TURNING_296_565;
+                }
+                break;
+
+            case START_TURNING_296_565: // turn 116.565 degrees
+                simpleMbappeSpecial.turnTo(Math.toRadians(296.565)); // start turning
+                autoState = AutoState.WAIT_TO_TURN_296_565;
+                break;
+
+            case WAIT_TO_TURN_296_565: // second step: wait to turn 116.565
+                if(!simpleMbappeSpecial.isBusy()){ // check if we are still turning
+                    autoState = AutoState.START_TO_DRIVE_TO_SECOND; // if not then move on
+                }
+                break;
+
+
+            case START_TO_DRIVE_TO_SECOND: // fifth: move x: -1 tiles and y: -2 tiles
+                simpleMbappeSpecial.followPath(driveToSecondTarget, true); // start moving
+                mbappesLegs.setVelocity(INTAKE_VELOCITY); // start moving intake
+                autoState = AutoState.WAIT_TO_DRIVE_TO_SECOND;
+                break;
+
+            case WAIT_TO_DRIVE_TO_SECOND: //  fourth step: wait to move 2 tiles
                 if(!simpleMbappeSpecial.isBusy()){
                     autoState = AutoState.COMPLETE;
                 }
                 break;
 
-            case COMPLETE: // fifth: finish
+            case COMPLETE: // seventh: finish
                 break;
 
         }
