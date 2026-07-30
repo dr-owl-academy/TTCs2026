@@ -10,8 +10,11 @@ import org.firstinspires.ftc.teamcode.mechanisms.touchsensorBench;
 @TeleOp
 public class TouchSensorPractice extends OpMode {
 
+
+
     private int BallCounter=0;
     private boolean lastTouchState=false;
+    private int intakeDirection = 0;
     private DcMotor motor;
     touchsensorBench bench = new touchsensorBench();
 
@@ -30,15 +33,17 @@ public class TouchSensorPractice extends OpMode {
     public void loop() {
         telemetry.addData("Touch Sensor State", bench.getTouchSensorState());
 
-        if(!bench.getTouchSensorState()){
-           motor.setPower(0.3);
-        }
-        else {
-            motor.setPower(0);
-        }
+        if(gamepad1.right_bumper){intakeDirection=1;}
+        else if(gamepad1.left_bumper){intakeDirection=-1;}
+        else{intakeDirection=0;}
+
+        motor.setPower(0.3*intakeDirection);
 
         boolean currentTouchState = !bench.getTouchSensorState();
-        if(currentTouchState&&!lastTouchState){BallCounter++;}
+        if(currentTouchState && !lastTouchState){
+            if(intakeDirection==1){BallCounter++;}
+            else if(intakeDirection==-1){BallCounter--;}
+        }
 
         lastTouchState=currentTouchState;
         telemetry.addData("Ball Count",BallCounter);
