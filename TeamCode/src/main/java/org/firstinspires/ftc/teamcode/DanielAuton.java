@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
@@ -5,13 +6,19 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 
 @Autonomous(name = "Daniel Auton")
 public class DanielAuton extends OpMode {
+
+    private DcMotorEx IntakeMotor; //Shows that intake motor is connected to DCMotorEx
 
     //What is stated in Finite State Machine (Commands such as Start, wait, turn, etc.)
 
@@ -35,11 +42,17 @@ public class DanielAuton extends OpMode {
     //the first action or starts the finite state machine
     private Autostate autoState = Autostate.START_TURN_TO_180;
 
+    IntakeMotor = hardwareMap.get(DcMotor.class,"intake")
+
+    IntakeMotor.setdirection(DcMotor.Direction.FORWARD);
+    IntakeMotor.ZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     //Sets what positions to move to during FSM
     private static final Pose START_POSE = new Pose(72, 72, Math.toRadians(90)); //original direction
     private static final Pose DRIVE_START_POSE = new Pose(72, 72, Math.toRadians(180)); //turn 90 degrees
     private static final Pose TARGET_POSE = new Pose(24, 72, Math.toRadians(180)); //move x
-    private static final double INTAKE_VELOCITY = 2000; //setting intake speed
+    private static final double INTAKE_VELOCITY = -2000; //setting intake speed
+
 
     @Override
     public void init() {
@@ -136,4 +149,4 @@ public class DanielAuton extends OpMode {
         }
 
     }
-}
+}*/
