@@ -15,7 +15,7 @@ public class DanielMechanism {
     public void init(HardwareMap hwMap) {
 
 
-        touchSensor = hwMap.get(DigitalChannel.class,"touch_sensor");
+        touchSensor = hwMap.get(DigitalChannel.class,"touchSensor");
         touchSensor.setMode(DigitalChannel.Mode.INPUT);
 
     }
