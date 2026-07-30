@@ -11,6 +11,8 @@ public class TouchSensorPractice extends OpMode {
     DanielMechanism bench = new DanielMechanism();
 
     private DcMotor Motor;
+    private int ballcounter = 0;
+    private boolean lastTouchState = false;
 
     @Override
     public void init() {
@@ -18,7 +20,7 @@ public class TouchSensorPractice extends OpMode {
         Motor = hardwareMap.get(DcMotor.class, "motor");
         Motor.setPower(0);
         Motor.setDirection(DcMotorSimple.Direction.FORWARD);
-        Motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //Motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     @Override
@@ -28,7 +30,7 @@ public class TouchSensorPractice extends OpMode {
         } else{
             Motor.setPower(0);
         }
-        int currentPosition = Motor.getCurrentPosition();
+
 
 
 
