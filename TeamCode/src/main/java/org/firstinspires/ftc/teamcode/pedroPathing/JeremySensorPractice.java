@@ -38,18 +38,20 @@ public class JeremySensorPractice extends OpMode {
             motor.setPower(power); // outake
 
         } else {
+            power = 0;
             motor.setPower(0); //power off
         }
 
-        if(!bench.touchSensorState() && !sensorClicked){ // if button is pressed
-            if(power > 0){
-                sensorClicks++;
-            } else if(power < 0){
-                sensorClicks--;
+        if(!bench.touchSensorState()){ // if button is pressed
+            if(!sensorClicked){
+                if(power > 0){ // if the motor is spinning forward
+                    sensorClicks++;
+                } else if(power < 0){ // if the motor is spinning backward
+                    sensorClicks--;
+                }
+                sensorClicked = true;
             }
-
-            sensorClicked = true;
-        } else {
+        } else { // reset after sensor is released
             sensorClicked = false;
         }
 
