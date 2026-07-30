@@ -15,6 +15,7 @@ public class JeremySensorPractice extends OpMode {
     double motorVelocity = 0.3; // speed of motor
     double power;
     int sensorClicks = 0; // how many times the sensor was clicked
+    boolean sensorClicked = false;
 
     @Override
     public void init(){
@@ -40,13 +41,18 @@ public class JeremySensorPractice extends OpMode {
             motor.setPower(0); //power off
         }
 
-        if(!bench.touchSensorState()){ // if button is pressed
+        if(!bench.touchSensorState() && !sensorClicked){ // if button is pressed
             if(power > 0){
                 sensorClicks++;
             } else if(power < 0){
                 sensorClicks--;
             }
+
+            sensorClicked = true;
+        } else {
+            sensorClicked = false;
         }
+
 
         telemetry.addData("Touch Sensor State: ", bench.touchSensorState());
         telemetry.addData("Motor Power: ", motor.getPower());
