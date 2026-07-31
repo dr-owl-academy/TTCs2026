@@ -20,8 +20,9 @@ public class MatthewSimpleAuton extends OpMode{
         WAIT_FOR_TURN_TO_180,
         START_DRIVE_TO_TARGET,
         WAIT_FOR_DRIVE_TO_TARGET,
+        START_DRIVE_2,
+        WAIT_FOR_DRIVE_2,
         COMPLETE,
-        INTAKE
 
     }
     private Follower follower;
@@ -35,6 +36,8 @@ public class MatthewSimpleAuton extends OpMode{
     private static final Pose START_POSE = new Pose(72,72,Math.toRadians(90) );
     private static final Pose DRIVE_START_POSE = new Pose(72,72,Math.toRadians(180));
     private static final Pose TARGET_POSE = new Pose(24,72, Math.toRadians(180));
+    private static final Pose TARGET_POSE2 = new Pose(24,72, Math.toRadians(-60));
+    private static final Pose INTAKE = new Pose();
 
     @Override
     public void init() {
