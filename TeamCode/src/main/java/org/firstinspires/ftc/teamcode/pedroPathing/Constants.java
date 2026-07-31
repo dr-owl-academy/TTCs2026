@@ -28,15 +28,15 @@ public class Constants {
             ;
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
-            .rightFrontMotorName("frontRight")
-            .rightRearMotorName("backRight")
-            .leftRearMotorName("frontLeft")
-            .leftFrontMotorName("backRight")
+            .rightFrontMotorName("motorRF")
+            .rightRearMotorName("motorRB")
+            .leftRearMotorName("motorLB")
+            .leftFrontMotorName("motorLF")
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .xVelocity(66.9086890032911)
+            .xVelocity(67.34373766481095)
          //    .yVelocity()
             ;
 
