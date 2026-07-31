@@ -79,6 +79,10 @@ follower = Constants.createFollower(hardwareMap); //initiate follower object
                 .addPath(new BezierLine(BALL2POSE, BALL3POSE))
                 .setLinearHeadingInterpolation(BALL2POSE.getHeading(), BALL3POSE.getHeading())
                 .build();
+        drivetoball3 = follower.pathBuilder()
+                .addPath(new BezierLine(BALL3POSE, TARGET_POSE))
+                .setLinearHeadingInterpolation(BALL3POSE.getHeading(), TARGET_POSE.getHeading())
+                .build();
 
     }
 
