@@ -5,22 +5,30 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.har
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 public class DanielMechanism {
-    private DigitalChannel touchSensor;
-
-
+    TouchSensor touchSensor;
 
 
     public void init(HardwareMap hwMap) {
 
 
-        touchSensor = hwMap.get(DigitalChannel.class,"touchSensor");
-        touchSensor.setMode(DigitalChannel.Mode.INPUT);
+        touchSensor = hwMap.get(TouchSensor.class, "touchSensor");
+
 
     }
 
     public boolean getTouchSensorState() {
-        return touchSensor.getState();
+        return touchSensor.isPressed();
+    }
+
+    public int numbercounter() {
+        int counter = 0;
+        if (touchSensor.isPressed()) {
+            counter = counter + 1;
+
+        }
+        return counter;
     }
 }
