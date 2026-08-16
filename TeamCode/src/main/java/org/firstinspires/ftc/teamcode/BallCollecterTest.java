@@ -32,6 +32,7 @@ public class BallCollecterTest extends OpMode {
         MID2_BALL2,
         BALL2_BALL3,
         BALL3_DEPOSIT,
+        WAIT_FOR_DEPOSIT,
         COMPLETE
 
     }
@@ -124,9 +125,14 @@ public class BallCollecterTest extends OpMode {
             case BALL3_DEPOSIT:
                 if (!follower.isBusy()){
                     follower.followPath(Ball3toDeposit);
-                pathState = PathState.COMPLETE;
+                pathState = PathState.WAIT_FOR_DEPOSIT;
                 }
                 break;
+
+            case WAIT_FOR_DEPOSIT:
+                if(!follower.isBusy()){
+                    pathState = PathState.COMPLETE;
+                }
 
             case COMPLETE:
                 break;
