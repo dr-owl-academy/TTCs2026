@@ -19,7 +19,7 @@ import org.opencv.core.Mat;
 @Autonomous(name = "Simple Auton Code Yajat")
 public class YajatSimpleAuton extends OpMode {
 
-    private DcMotorEx intakeMotor;
+  //  private DcMotorEx intakeMotor;
     private static final double INTAKE_VELOCITY = 2000;
 
     //now we put the things in order ig
@@ -63,13 +63,15 @@ public class YajatSimpleAuton extends OpMode {
 
         follower.setStartingPose(START_POSE);
 
-        intakeMotor =
+       /* intakeMotor =
                 hardwareMap.get(DcMotorEx.class, "intakemotor");
 
         intakeMotor.setDirection(DcMotor.Direction.FORWARD);
         intakeMotor.setZeroPowerBehavior(BRAKE);
         intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intakeMotor.setVelocity(0);
+
+        */
 
 
 
@@ -156,17 +158,23 @@ public class YajatSimpleAuton extends OpMode {
             case WAIT_FOR_DRIVE_TO_TARGET:
                 // Wait for the driving path to finish.
                //intake start ig
-                intakeMotor.setVelocity(-INTAKE_VELOCITY);
+                //intakeMotor.setVelocity(-INTAKE_VELOCITY);
 
                 if (!follower.isBusy()) {
-                    autoState = AutoState.COMPLETE;
+                    autoState = AutoState.START_DRIVE_2;
 
                 }
                 break;
 
             case START_DRIVE_2:
+                follower.followPath(driveTarget_zwei, true);
+                autoState = AutoState.WAIT_FOR_DRIVE2;
+                break;
 
-
+            case WAIT_FOR_DRIVE2:
+                if(!follower.isBusy()) {
+                    autoState = AutoState.COMPLETE;
+                }
 
             case COMPLETE:
                 break;
