@@ -28,14 +28,14 @@ public class DanielAuton extends OpMode {
 
     // Starting FSM state.
     private AutoState autoState = AutoState.START_TURN_TO_180;
-
+// Movements for FSM
     private static final Pose START_POSE = new Pose(72,72,Math.toRadians(90) );
     private static final Pose DRIVE_START_POSE = new Pose(72,72,Math.toRadians(180));
     private static final Pose TARGET_POSE = new Pose(24,72, Math.toRadians(180));
 
     @Override
     public void init() {
-
+// Hardware Map appears in init
         follower = Constants.createFollower(hardwareMap);
 
         follower.setStartingPose(START_POSE);
@@ -124,6 +124,7 @@ public class DanielAuton extends OpMode {
                 break;
 
             case COMPLETE:
+                //Path is now complete
                 break;
         }
     }
