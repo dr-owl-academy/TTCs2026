@@ -48,9 +48,9 @@ public class YajatSimpleAuton extends OpMode {
 
     private static final Pose DRIVE_START_POSE = new Pose(72, 72, Math.toRadians(180));
 
-    private static final Pose TARGET_POSE = new Pose(24, 72,Math.toRadians(180));
+    private static final Pose TARGET_POSE = new Pose(20, 72,Math.toRadians(180));
 
-    private static final Pose DRIVE_START_POSE_ZWEI =   new Pose(24,72,Math.toRadians(-60));
+    private static final Pose DRIVE_START_POSE_ZWEI =   new Pose(20,72,Math.toRadians(-60));
 
     private static final Pose TARGET_POSE_ZWEI = new Pose(48,24,Math.toRadians(-60));
 
