@@ -31,7 +31,8 @@ public class BallCollecterTest extends OpMode {
         BALL1_MID2,
         MID2_BALL2,
         BALL2_BALL3,
-        BALL3_DEPOSIT
+        BALL3_DEPOSIT,
+        COMPLETE
 
     }
 
@@ -89,38 +90,47 @@ public class BallCollecterTest extends OpMode {
         switch (pathState) {
             case STARTPOS_1MID:
                 follower.followPath(startPoseMid1Pose, true);
-                pathState = PathState.STARTPOS_1MID;
+                pathState = PathState.MID1_BALL1;
                 break;
 
             case MID1_BALL1:
-                if (!follower.isBusy())
-                    follower.followPath(Mid1toBall1,true);
-                    pathState = PathState.MID1_BALL1;
-                    break;
+                if (!follower.isBusy()) {
+                    follower.followPath(Mid1toBall1, true);
+                    pathState = PathState.BALL1_MID2;
+                }
+                break;
 
             case BALL1_MID2:
-                if (!follower.isBusy())
+                if (!follower.isBusy()) {
                     follower.followPath(Ball1toMid2);
-                    pathState = PathState.BALL1_MID2;
-                    break;
+                    pathState = PathState.MID2_BALL2;
+                }
+                break;
 
             case MID2_BALL2:
-                if(!follower.isBusy())
+                if (!follower.isBusy()) {
                     follower.followPath(Mid2toBall2);
-                    pathState = PathState.MID2_BALL2;
-                    break;
+                    pathState = PathState.BALL2_BALL3;
+                }
+                break;
 
             case BALL2_BALL3:
-                if(!follower.isBusy())
+                if (!follower.isBusy()) {
                     follower.followPath(Ball2toBall3);
-                    pathState = PathState.BALL2_BALL3;
-                    break;
+                    pathState = PathState.BALL3_DEPOSIT;
+                }
+                break;
 
             case BALL3_DEPOSIT:
-                if(!follower.isBusy())
+                if (!follower.isBusy()){
                     follower.followPath(Ball3toDeposit);
-                    pathState = PathState.BALL3_DEPOSIT;
-                    break;
+                pathState = PathState.COMPLETE;
+                }
+                break;
+
+            case COMPLETE:
+                break;
+
 
 
 
@@ -132,10 +142,11 @@ public class BallCollecterTest extends OpMode {
     public void init() {
         pathState=PathState.STARTPOS_1MID;
 
-
         follower= Constants.createFollower(hardwareMap);
 
         follower.setStartingPose(startingPose);
+
+        buildPaths();
 
     }
 
@@ -146,6 +157,7 @@ public class BallCollecterTest extends OpMode {
 
     @Override
     public void loop() {
-
+        follower.update();
+        statePathUpdate();
     }
 }
