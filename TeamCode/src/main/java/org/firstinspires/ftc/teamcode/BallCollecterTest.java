@@ -105,28 +105,28 @@ public class BallCollecterTest extends OpMode {
 
             case BALL1_MID2:
                 if (!follower.isBusy()) {
-                    follower.followPath(Ball1toMid2);
+                    follower.followPath(Ball1toMid2, true);
                     pathState = PathState.MID2_BALL2;
                 }
                 break;
 
             case MID2_BALL2:
                 if (!follower.isBusy()) {
-                    follower.followPath(Mid2toBall2);
+                    follower.followPath(Mid2toBall2, true);
                     pathState = PathState.BALL2_BALL3;
                 }
                 break;
 
             case BALL2_BALL3:
                 if (!follower.isBusy()) {
-                    follower.followPath(Ball2toBall3);
+                    follower.followPath(Ball2toBall3,true);
                     pathState = PathState.BALL3_DEPOSIT;
                 }
                 break;
 
             case BALL3_DEPOSIT:
                 if (!follower.isBusy()){
-                    follower.followPath(Ball3toDeposit);
+                    follower.followPath(Ball3toDeposit,true);
                 pathState = PathState.WAIT_FOR_DEPOSIT;
                 }
                 break;
@@ -135,6 +135,7 @@ public class BallCollecterTest extends OpMode {
                 if(!follower.isBusy()){
                     pathState = PathState.COMPLETE;
                 }
+                break;
 
             case COMPLETE:
                 break;
