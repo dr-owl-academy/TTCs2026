@@ -45,8 +45,8 @@ public class BallCollecterTest extends OpMode {
     private final Pose ball1Pose = new Pose(77.4977220676374,71.41611221732335,Math.toRadians(180));
     private final Pose mid2Pose = new Pose(79.84632554962174,24.328636451650116,Math.toRadians(180));
     private final Pose ball2Pose = new Pose(27.4282145960422,21.987112844302306,Math.toRadians(180));
-    private final Pose ball3Pose = new Pose(134.43833943833945,35.81623931623931,Math.toRadians(0));
-    private final Pose deposit = new Pose(132.04214983276103,23.63395836848312,Math.toRadians(270));
+    private final Pose ball3Pose = new Pose(122.19884169884172,31.856499356499356,Math.toRadians(0));
+    private final Pose deposit = new Pose(123.19884169884172,25.482625482625487,Math.toRadians(270));
 
     private PathChain startPoseMid1Pose;
     private PathChain Mid1toBall1;
