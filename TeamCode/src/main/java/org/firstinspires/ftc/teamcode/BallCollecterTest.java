@@ -8,6 +8,8 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -18,6 +20,10 @@ public class BallCollecterTest extends OpMode {
 
     private Follower follower;
 
+    private DcMotor Intake;
+    private ElapsedTime motorTimer = new ElapsedTime();
+
+    private boolean motorRunning = false;
     public enum PathState {
     /*
     START POS - MID FIRST BALL
@@ -55,6 +61,25 @@ public class BallCollecterTest extends OpMode {
     private PathChain Ball2toBall3;
     private PathChain Ball3toDeposit;
 
+    private double motorPower;
+
+    private void startMotor(double power){
+        motorTimer.reset();
+        motorRunning = true;
+        motorPower = power;
+        Intake.setPower(power);
+    }
+
+    private void updateMotor() {
+        if (motorRunning) {
+            if (motorTimer.seconds()<2.0){
+                Intake.setPower(motorPower);
+            } else {
+                Intake.setPower(0);
+                motorRunning = false;
+            }
+        }
+    }
     public void buildPaths() {
 
         startPoseMid1Pose = follower.pathBuilder()
@@ -92,12 +117,14 @@ public class BallCollecterTest extends OpMode {
     public void statePathUpdate() {
         switch (pathState) {
             case STARTPOS_1MID:
+                startMotor(1.0);
                 follower.followPath(startPoseMid1Pose, true);
                 pathState = PathState.MID1_BALL1;
                 break;
 
             case MID1_BALL1:
                 if (!follower.isBusy()) {
+                    startMotor(1.0);
                     follower.followPath(Mid1toBall1, true);
                     pathState = PathState.BALL1_MID2;
                 }
@@ -105,6 +132,7 @@ public class BallCollecterTest extends OpMode {
 
             case BALL1_MID2:
                 if (!follower.isBusy()) {
+                    startMotor(1.0);
                     follower.followPath(Ball1toMid2, true);
                     pathState = PathState.MID2_BALL2;
                 }
@@ -112,6 +140,7 @@ public class BallCollecterTest extends OpMode {
 
             case MID2_BALL2:
                 if (!follower.isBusy()) {
+                    startMotor(1.0);
                     follower.followPath(Mid2toBall2, true);
                     pathState = PathState.BALL2_BALL3;
                 }
@@ -119,6 +148,7 @@ public class BallCollecterTest extends OpMode {
 
             case BALL2_BALL3:
                 if (!follower.isBusy()) {
+                    startMotor(1.0);
                     follower.followPath(Ball2toBall3,true);
                     pathState = PathState.BALL3_DEPOSIT;
                 }
@@ -133,6 +163,7 @@ public class BallCollecterTest extends OpMode {
 
             case WAIT_FOR_DEPOSIT:
                 if(!follower.isBusy()){
+                    startMotor(-1.0);
                     pathState = PathState.COMPLETE;
                 }
                 break;
@@ -149,11 +180,16 @@ public class BallCollecterTest extends OpMode {
 
     @Override
     public void init() {
+
+
         pathState=PathState.STARTPOS_1MID;
 
         follower= Constants.createFollower(hardwareMap);
 
         follower.setStartingPose(startingPose);
+
+        Intake = hardwareMap.get(DcMotor.class, "Intake");
+        Intake.setPower(0);
 
         buildPaths();
 
@@ -168,5 +204,6 @@ public class BallCollecterTest extends OpMode {
     public void loop() {
         follower.update();
         statePathUpdate();
+        updateMotor();
     }
 }
