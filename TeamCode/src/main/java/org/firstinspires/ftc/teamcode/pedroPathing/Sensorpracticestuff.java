@@ -30,6 +30,7 @@ public class Sensorpracticestuff extends OpMode {
         Drive_to_Ball1,
         Drive_to_Ball2,
         Drive_to_Ball3,
+        Drive_to_Target,
         Complete
     }
 
@@ -91,17 +92,22 @@ follower = Constants.createFollower(hardwareMap); //initiate follower object
 
             case Drive_to_Ball1:
                 if (!follower.isBusy()) {
-                    follower.followPath(drivetoball2);
+                    follower.followPath(drivetoball1);
                     pathState = PathState.Drive_to_Ball2;
                 }
                 break;
             case Drive_to_Ball2:
                 if (!follower.isBusy()) {
-                    follower.followPath(drivetoball3);
+                    follower.followPath(drivetoball2);
                     pathState = PathState.Drive_to_Ball3;
                 }
                 break;
             case Drive_to_Ball3:
+                if (!follower.isBusy()) {
+                    follower.followPath(drivetoball3);
+                    pathState = PathState.Drive_to_Target;
+                }
+            case Drive_to_Target:
                 if (!follower.isBusy()) {
                     follower.followPath(driveToTarget);
                     pathState = PathState.Complete;
