@@ -20,7 +20,7 @@ public class Sensorpracticestuff extends OpMode {
     private PathState pathState = PathState.Drive_to_Ball1;
 
 
-    private final Pose START_POSE = new Pose(37, 134, Math.toRadians(90));
+    private final Pose START_POSE = new Pose(37, 134, Math.toRadians(-90));
     private final Pose BALL1POSE = new Pose(24, 24, Math.toRadians(264));
     private final Pose BALL2POSE = new Pose(128, 48, Math.toRadians(16));
     private final Pose BALL3POSE = new Pose(79, 69, Math.toRadians(158));
