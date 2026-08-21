@@ -67,19 +67,19 @@ follower = Constants.createFollower(hardwareMap); //initiate follower object
     private void buildPath() {
 
 
-        driveToTarget = follower.pathBuilder()
+        drivetoball1 = follower.pathBuilder()
                 .addPath(new BezierLine(START_POSE, BALL1POSE))
                         .setLinearHeadingInterpolation(START_POSE.getHeading(), BALL1POSE.getHeading())
                                 .build();
-        drivetoball1 = follower.pathBuilder()
+        drivetoball2 = follower.pathBuilder()
                 .addPath(new BezierLine(BALL1POSE, BALL2POSE))
                 .setLinearHeadingInterpolation(BALL1POSE.getHeading(), BALL2POSE.getHeading())
                 .build();
-        drivetoball2 = follower.pathBuilder()
+        drivetoball3 = follower.pathBuilder()
                 .addPath(new BezierLine(BALL2POSE, BALL3POSE))
                 .setLinearHeadingInterpolation(BALL2POSE.getHeading(), BALL3POSE.getHeading())
                 .build();
-        drivetoball3 = follower.pathBuilder()
+        driveToTarget = follower.pathBuilder()
                 .addPath(new BezierLine(BALL3POSE, TARGET_POSE))
                 .setLinearHeadingInterpolation(BALL3POSE.getHeading(), TARGET_POSE.getHeading())
                 .build();
@@ -91,16 +91,19 @@ follower = Constants.createFollower(hardwareMap); //initiate follower object
 
             case Drive_to_Ball1:
                 if (!follower.isBusy()) {
+                    follower.followPath(drivetoball2);
                     pathState = PathState.Drive_to_Ball2;
                 }
                 break;
             case Drive_to_Ball2:
                 if (!follower.isBusy()) {
+                    follower.followPath(drivetoball3);
                     pathState = PathState.Drive_to_Ball3;
                 }
                 break;
             case Drive_to_Ball3:
                 if (!follower.isBusy()) {
+                    follower.followPath(driveToTarget);
                     pathState = PathState.Complete;
                 }
                 break;
