@@ -89,6 +89,14 @@ public class AimeeLimeLight extends OpMode {
         // TELEMETRY !!
         // -------------------------------- **
 
-        telemetry.addData();
+        telemetry.addData(
+                "Green Ball Detected",
+                targetDetected
+        );
+
+        telemetry.addData(
+                "Motor Power",
+                testMotor.getPower()
+        );
     }
 }
