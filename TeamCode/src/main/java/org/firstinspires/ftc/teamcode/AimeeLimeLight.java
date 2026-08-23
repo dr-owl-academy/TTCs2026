@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -32,5 +33,39 @@ public class AimeeLimeLight extends OpMode {
         );
 
         testMotor.setPower(0);
+
+
+        //Limelight
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+
+        limelight.pipelineSwitch(GREEN_BALL_PIPELINE);
+
+        telemetry.addData("Status", "Initialized");
+        telemetry.addData(
+                "Pipeline",
+                GREEN_BALL_PIPELINE
+        );
+    }
+
+
+    @Override
+    public void start() {
+
+        //Start receiving results from Limelight
+        limelight.start();
+    }
+
+    @Override
+    public void loop() {
+
+        LLResult result = limelight.getLatestResult();
+
+        boolean targetDetected = false;
+
+
+        // Check whether green target exists or not
+        if (result != null && result.isValid() && !result.getColorResults().isEmpty()) {
+
+        }
     }
 }
