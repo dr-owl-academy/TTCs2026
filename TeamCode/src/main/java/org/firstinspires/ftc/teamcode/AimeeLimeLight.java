@@ -74,7 +74,7 @@ public class AimeeLimeLight extends OpMode {
         // MOTOR CONTROL !!
         // -------------------------------- **
 
-        if(targetDetected) {
+        if (targetDetected) {
 
             testMotor.setPower(MOTOR_POWER);
 
@@ -98,5 +98,16 @@ public class AimeeLimeLight extends OpMode {
                 "Motor Power",
                 testMotor.getPower()
         );
+
+        telemetry.update();
+    }
+
+
+    @Override
+    public void stop() {
+
+        testMotor.setPower(0);
+
+        limelight.stop();
     }
 }
