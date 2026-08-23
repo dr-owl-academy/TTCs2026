@@ -66,6 +66,29 @@ public class AimeeLimeLight extends OpMode {
         // Check whether green target exists or not
         if (result != null && result.isValid() && !result.getColorResults().isEmpty()) {
 
+            targetDetected = true;
         }
+
+
+        // -------------------------------- **
+        // MOTOR CONTROL !!
+        // -------------------------------- **
+
+        if(targetDetected) {
+
+            testMotor.setPower(MOTOR_POWER);
+
+        } else {
+
+            testMotor.setPower(0);
+
+        }
+
+
+        // -------------------------------- **
+        // TELEMETRY !!
+        // -------------------------------- **
+
+        telemetry.addData();
     }
 }
