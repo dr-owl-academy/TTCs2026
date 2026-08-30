@@ -19,7 +19,7 @@ public class Daniel_YellowBall_Limelight extends OpMode {
     private Limelight3A limelight;
 
     private final Pose startPose = new Pose(72, 72, Math.PI / 2);
-    //limeline pipeline used to tune green ball
+    //limelight pipeline used to tune green ball
     private static final int YELLOW_BALL_PIPELINE = 2;
 
     // CAMERA GEOMETRY
