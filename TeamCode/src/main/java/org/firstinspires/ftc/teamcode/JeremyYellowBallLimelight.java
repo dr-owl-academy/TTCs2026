@@ -23,7 +23,7 @@ public class JeremyYellowBallLimelight extends OpMode {
     private static final int YELLOW_BALL_PIPELINE = 2;
 
     // CAMERA GEOMETRY: relative height camera to ball center
-    private static final double HEIGHT_DIFFERENCE = 3.6;   // 3.6 inches
+    private static final double HEIGHT_DIFFERENCE = 5.0;   // 3.6 inches
 
     private static final double CAMERA_DOWN_ANGLE = 45.0;
 
@@ -65,7 +65,7 @@ public class JeremyYellowBallLimelight extends OpMode {
     @Override
     public void init() {
 
-        // setup the follower
+        // set up the follower
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
 
