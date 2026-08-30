@@ -18,7 +18,7 @@ public class Karim_Limelight extends OpMode {
     private Limelight3A limelight;
 
     private final Pose startPose = new Pose(72, 72, Math.PI / 2);
-    private static final int YELLOW_BALL_PIPELINE = 2;
+    private static final int YELLOW_BALL_PIPELINE = 9;
 
     // CAMERA GEOMETRY
     private static final double HEIGHT_DIFFERENCE = 9.5;
