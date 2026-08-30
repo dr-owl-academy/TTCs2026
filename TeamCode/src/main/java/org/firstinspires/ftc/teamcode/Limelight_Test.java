@@ -14,7 +14,7 @@ public class Limelight_Test extends OpMode {
     private DcMotor testMotor;
     private Limelight3A limelight;
 
-    private static final int GREEN_BALL_PIPELINE = 9;
+    private static final int YELLOW_BALL_PIPELINE = 2;
     private static final double MOTOR_POWER = 0.2;
 
     @Override //ignore everything before this line
@@ -34,12 +34,12 @@ public class Limelight_Test extends OpMode {
         //Limelight
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
-        limelight.pipelineSwitch(GREEN_BALL_PIPELINE); //tells limelight which pipeline you chose
+        limelight.pipelineSwitch(YELLOW_BALL_PIPELINE); //tells limelight which pipeline you chose
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData(
                 "Pipeline",
-                GREEN_BALL_PIPELINE
+                YELLOW_BALL_PIPELINE
         );
     }
 
