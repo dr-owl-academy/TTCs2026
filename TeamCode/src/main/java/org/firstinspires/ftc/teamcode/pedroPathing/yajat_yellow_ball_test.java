@@ -20,15 +20,15 @@ public class yajat_yellow_ball_test extends OpMode {
 
     private final Pose startPose = new Pose(72, 72, Math.PI / 2);
     //limelight pipeline used to tune green ball
-    private static final int YELLOW_BALL_PIPELINE = 2;
+    private static final int YELLOW_BALL_PIPELINE = 9;
 
     // CAMERA GEOMETRY
     //relative height camera to ball center
-    private static final double HEIGHT_DIFFERENCE = 3.6;   // 3.6 inches
+    private static final double HEIGHT_DIFFERENCE = 9.5;   // 9.5 inches
 
     private static final double CAMERA_DOWN_ANGLE = 45.0;
 
-    private static final double STOP_DISTANCE = 6.0;
+    private static final double STOP_DISTANCE = 4.5;
 
 
     // MOVEMENT SETTINGS
