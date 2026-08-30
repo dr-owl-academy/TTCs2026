@@ -28,7 +28,7 @@ public class Daniel_YellowBall_Limelight extends OpMode {
 
     private static final double CAMERA_DOWN_ANGLE = 45.0;
 
-    private static final double STOP_DISTANCE = 6.0;
+    private static final double STOP_DISTANCE = 4.5;
 
 
     // MOVEMENT SETTINGS
@@ -42,6 +42,7 @@ public class Daniel_YellowBall_Limelight extends OpMode {
     private static final double TURN_KP = 0.015;
 
     private static final double MAX_TURN_POWER = 0.20;
+
 
     // LIMELIGHT DATA
 
@@ -180,6 +181,7 @@ public class Daniel_YellowBall_Limelight extends OpMode {
             // =============================================
 
             case SEARCH:
+
 
                 if (targetDetected) {
 
