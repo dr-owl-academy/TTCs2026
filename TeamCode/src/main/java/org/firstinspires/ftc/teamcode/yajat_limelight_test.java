@@ -13,7 +13,7 @@ public class yajat_limelight_test extends OpMode {
     private Limelight3A limelight;
 
     // CHANGE THIS to the pipeline number which you used to tune for the greenballs
-    private static final int GREEN_BALL_PIPELINE = 9;
+    private static final int Yellow_BALL_PIPELINE = 2;
 
     private static final double MOTOR_POWER = 0.2;
 
@@ -37,12 +37,12 @@ public class yajat_limelight_test extends OpMode {
         // Limelight
         limelight = hardwareMap.get( Limelight3A.class,"limelight" );
 
-        limelight.pipelineSwitch(GREEN_BALL_PIPELINE );
+        limelight.pipelineSwitch(Yellow_BALL_PIPELINE );
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData(
                 "Pipeline",
-                GREEN_BALL_PIPELINE
+                Yellow_BALL_PIPELINE
         );
     }
 
