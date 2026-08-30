@@ -24,7 +24,7 @@ public class Daniel_YellowBall_Limelight extends OpMode {
 
     // CAMERA GEOMETRY
     //relative height camera to ball center
-    private static final double HEIGHT_DIFFERENCE = 3.6;   // 3.6 inches
+    private static final double HEIGHT_DIFFERENCE = 9.5;   // 3.6 inches
 
     private static final double CAMERA_DOWN_ANGLE = 45.0;
 
