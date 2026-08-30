@@ -24,7 +24,7 @@ public class yajat_limelight_test extends OpMode {
         // Motor
         testMotor = hardwareMap.get(
                 DcMotor.class,
-                "testMotor"
+                "intake"
         );
 
         testMotor.setDirection(
