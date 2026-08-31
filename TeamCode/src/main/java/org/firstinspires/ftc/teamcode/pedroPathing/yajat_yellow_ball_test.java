@@ -4,6 +4,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -52,16 +53,30 @@ public class yajat_yellow_ball_test extends OpMode {
 
     private double horizontalDistance = Double.POSITIVE_INFINITY;
 
+  //best cluster
+    private double BestArea = 0;
+    private double BestDistance = Double.POSITIVE_INFINITY;
+    private Pose BestPose = null;
+
+    //cluster location
+    private double clusterX = 0;
+    private double clusterY = 0;
+
+    //360 scan
+    private double lastHeading = 0;
+    private double accumalatedRotation = 0;
+
 
     // STATE MACHINE
 
     private enum State {
-        SEARCH,
+        SPIN,
+        TURN_TO_TARGET,
         APPROACH,
         STOP
     }
 
-    private State state = State.SEARCH;
+    private State state = State.SPIN;
 
 
     @Override
@@ -92,7 +107,12 @@ public class yajat_yellow_ball_test extends OpMode {
 
         follower.startTeleopDrive();
 
-        state = State.SEARCH;
+        state = State.SPIN;
+        lastHeading = follower.getPose().getHeading();
+        accumalatedRotation = 0;
+        BestArea = 0;
+        BestDistance = Double.POSITIVE_INFINITY;
+        BestPose = null;
     }
 
 
@@ -146,7 +166,6 @@ public class yajat_yellow_ball_test extends OpMode {
 
         LLResult result = limelight.getLatestResult();
 
-
         targetDetected = false;
 
         tx = 0;
@@ -179,20 +198,44 @@ public class yajat_yellow_ball_test extends OpMode {
             // SEARCH FOR BALL
             // =============================================
 
-            case SEARCH:
+            case SPIN:
+                //how much has the bot rotated
+               double currentHeading = follower.getPose().getHeading();
 
-                if (targetDetected) {
-
-                    // Stop spinning
-                    follower.setTeleOpDrive(0,0,0,true );
-
-                    state = State.APPROACH;
-
-                } else {
-
-                    // Spin counterclockwise
-                    follower.setTeleOpDrive(0,0, SEARCH_TURN_POWER,true );
+               double delta = currentHeading - lastHeading;
+               //deal with the rotation wrapping
+                while (delta > Math.PI){
+                    delta-= 2 * Math.PI;
                 }
+                while (delta < Math.PI){
+                    delta+= 2 * Math.PI;
+                }
+                accumalatedRotation += Math.abs(delta);
+                lastHeading = currentHeading;
+
+                //look for clusters
+                LLResult result = limelight.getLatestResult();
+                if(result !=null && result.isValid() && !result.getColorResults().isEmpty()) {
+                    for (LLResultTypes.ColorResult color : result.getColorResults() ) {
+                        double area = color.getTargetArea();
+                        double distance =
+                                calculateHorizontalDistance(color.getTargetYDegrees());
+                            //is this the most grande cluster?
+                        if(area > BestArea && distance != Double.POSITIVE_INFINITY) {
+                            BestArea = area;
+                            BestDistance = distance;
+                            //save bot position when we saw it
+                            BestPose = follower.getPose();
+                        }
+                    }
+                }
+                // KEEP SPINNING
+                follower.setTeleOpDrive(
+                        0,
+                        0,
+                        SEARCH_TURN_POWER,
+                        true
+                );
 
                 break;
 
