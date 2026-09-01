@@ -72,7 +72,7 @@ public class yajat_yellow_ball_test extends OpMode {
     private enum State {
         SPIN,
         TURN_TO_TARGET,
-        APPROACH,
+        DriveToCluster,
         STOP
     }
 
@@ -236,32 +236,50 @@ public class yajat_yellow_ball_test extends OpMode {
                         SEARCH_TURN_POWER,
                         true
                 );
+                //have WE completed a full rotation
+                if(accumalatedRotation >= 2 * Math.PI){
 
+                    follower.setTeleOpDrive(
+                            0,
+                            0,
+                            0,
+                            true
+                    );
+
+                    if(BestPose !=null) {
+                        calculateClusterPosition();
+
+                        state = State.DriveToCluster;
+                    }
+                }
                 break;
 
             // DRIVE TOWARD BALL
-            case APPROACH:
+            case DriveToCluster:
+                Pose currentpose = follower.getPose();
+                //difference between bot and target
+                double dx = clusterX - currentpose.getX();
+                double dy = clusterY - currentpose.getY();
+                double distanceToCluster = Math.hypot(dx, dy);
 
-                // Ball disappeared
-                if (!targetDetected) {
+                //is the bot close enough yet
+                if(distanceToCluster <= STOP_DISTANCE) {
+                    follower.setTeleOpDrive(
+                            0,
+                            0,
+                            0,
+                            true
+                    );
 
-                    state = State.SEARCH;
-
-                    follower.setTeleOpDrive(0,0, SEARCH_TURN_POWER,true);
-
+                    state= State.STOP;
                     break;
                 }
 
+                //convert the field coords to robot coords
 
-                // Stop 6 inches away horizontally
-                if (horizontalDistance <= STOP_DISTANCE) {
 
-                    follower.setTeleOpDrive(0,0,0,true );
 
-                    state = State.STOP;
 
-                    break;
-                }
 
 
                 // -------------------------
