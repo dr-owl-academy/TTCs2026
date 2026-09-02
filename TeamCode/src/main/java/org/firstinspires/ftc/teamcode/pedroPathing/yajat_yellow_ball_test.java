@@ -41,6 +41,7 @@ public class yajat_yellow_ball_test extends OpMode {
     private static final double SLOW_FORWARD = 0.12;
 
     private static final double TURN_KP = 0.015;
+    private static final double MIN_Turn_Power = 0.08;
 
     private static final double MAX_TURN_POWER = 0.20;
 
@@ -283,6 +284,7 @@ public class yajat_yellow_ball_test extends OpMode {
 
                 double turnPower =
                         TURN_KP * Math.toDegrees(headingError);
+
                 turnPower = Math.max(
                         -MAX_TURN_POWER, Math.min(MAX_TURN_POWER, turnPower)
                 );
@@ -291,6 +293,10 @@ public class yajat_yellow_ball_test extends OpMode {
                     follower.setTeleOpDrive(0, 0, 0, true);
                     state = State.DriveToCluster;
                     break;
+                }
+
+                if(Math.abs(turnPower)<MIN_Turn_Power){
+                    turnPower = Math.copySign(MIN_Turn_Power,turnPower);
                 }
 
                 follower.setTeleOpDrive(
