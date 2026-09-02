@@ -53,6 +53,7 @@ public class Daniel_YellowBall_Limelight extends OpMode {
 
     private double tx = 0;
     private double ty = 0;
+    private double ta = 0;
 
     private double horizontalDistance = Double.POSITIVE_INFINITY;
 
