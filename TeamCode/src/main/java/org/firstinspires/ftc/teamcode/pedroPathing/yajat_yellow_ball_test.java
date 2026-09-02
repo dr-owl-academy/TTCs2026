@@ -56,7 +56,9 @@ public class yajat_yellow_ball_test extends OpMode {
   //best cluster
     private double BestArea = 0;
     private double BestDistance = Double.POSITIVE_INFINITY;
+    private double BestTx = 0;
     private Pose BestPose = null;
+
 
     //cluster location
     private double clusterX = 0;
@@ -112,6 +114,7 @@ public class yajat_yellow_ball_test extends OpMode {
         accumalatedRotation = 0;
         BestArea = 0;
         BestDistance = Double.POSITIVE_INFINITY;
+        BestTx = 0;
         BestPose = null;
     }
 
@@ -208,7 +211,7 @@ public class yajat_yellow_ball_test extends OpMode {
                 while (delta > Math.PI) {
                     delta -= 2 * Math.PI;
                 }
-                while (delta < Math.PI) {
+                while (delta < -Math.PI) {
                     delta += 2 * Math.PI;
                 }
                 accumalatedRotation += Math.abs(delta);
@@ -225,8 +228,13 @@ public class yajat_yellow_ball_test extends OpMode {
                         if (area > BestArea && distance != Double.POSITIVE_INFINITY) {
                             BestArea = area;
                             BestDistance = distance;
+                            BestTx = color.getTargetXDegrees();
                             //save bot position when we saw it
-                            BestPose = follower.getPose();
+                            BestPose = new Pose(
+                                    follower.getPose().getX(),
+                                    follower.getPose().getY(),
+                                    follower.getPose().getHeading()
+                            );
                         }
                     }
                 }
@@ -250,7 +258,7 @@ public class yajat_yellow_ball_test extends OpMode {
                     if (BestPose != null) {
                         calculateClusterPosition();
 
-                        state = State.DriveToCluster;
+                        state = State.TURN_TO_TARGET;
                     }
                 }
                 break;
@@ -284,6 +292,16 @@ public class yajat_yellow_ball_test extends OpMode {
                     state = State.DriveToCluster;
                     break;
                 }
+
+                follower.setTeleOpDrive(
+                        0,
+                        0,
+                        turnPower,
+                        true
+
+                );
+
+                break;
             }
 
             // DRIVE TOWARD BALL
@@ -366,13 +384,15 @@ public class yajat_yellow_ball_test extends OpMode {
         double roboty = BestPose.getY();
         double robotHeading = BestPose.getHeading();
 
+        double targetbearing =
+                robotHeading + Math.toRadians(BestTx);
 
         clusterX =
                 robotX
-                + BestDistance * Math.cos(robotHeading);
+                + BestDistance * Math.cos(targetbearing);
         clusterY =
                 roboty
-                + BestDistance * Math.sin(robotHeading);
+                + BestDistance * Math.sin(targetbearing);
     }
 
     // =====================================================
