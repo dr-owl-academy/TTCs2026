@@ -41,6 +41,8 @@ public class JeremyLimelightSpinned extends OpMode {
     private double ta = 0;
     private double horizontalDistance = Double.POSITIVE_INFINITY;
 
+    private boolean firstTrackingFrame = true;
+
     // ROTATION TRACKING & BEST TARGET
     private double lastHeading = 0;
     private double accumulatedHeading = 0;
@@ -79,6 +81,7 @@ public class JeremyLimelightSpinned extends OpMode {
         follower.startTeleopDrive();
 
         resetSearchSweep();
+        firstTrackingFrame = true; // Flag that we need to anchor the initial heading
         state = State.SEARCH;
     }
 
@@ -123,6 +126,15 @@ public class JeremyLimelightSpinned extends OpMode {
         if (searchCircleComplete) return;
 
         double currentHeading = follower.getPose().getHeading();
+
+        // If it's the first frame of the state, anchor lastHeading to current position
+        // to prevent any massive delta jumps from initialization
+        if (firstTrackingFrame) {
+            lastHeading = currentHeading;
+            firstTrackingFrame = false;
+            return;
+        }
+
         double deltaHeading = currentHeading - lastHeading;
 
         // Normalize delta to be between -PI and PI
@@ -132,7 +144,9 @@ public class JeremyLimelightSpinned extends OpMode {
         accumulatedHeading += Math.abs(deltaHeading);
         lastHeading = currentHeading;
 
-        if (accumulatedHeading >= 2 * Math.PI) {
+        // Added a small buffer (e.g., 5.9 radians instead of exactly 6.28)
+        // to ensure an imperfect robot turn registers a full rotation.
+        if (accumulatedHeading >= (2 * Math.PI - 0.3)) {
             searchCircleComplete = true;
         }
     }
@@ -140,6 +154,7 @@ public class JeremyLimelightSpinned extends OpMode {
     private void updateLimelight() {
         LLResult result = limelight.getLatestResult();
 
+        targetDetected = false;
         tx = 0;
         ty = 0;
         ta = 0;
@@ -151,8 +166,6 @@ public class JeremyLimelightSpinned extends OpMode {
             ty = result.getTy();
             ta = result.getTa(); // Area of the target
             horizontalDistance = calculateHorizontalDistance(ty);
-        } else {
-            targetDetected = false;
         }
     }
 
