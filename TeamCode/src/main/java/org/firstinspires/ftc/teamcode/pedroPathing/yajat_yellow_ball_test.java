@@ -134,6 +134,7 @@ public class yajat_yellow_ball_test extends OpMode {
                 state
         );
 
+
         telemetry.addData("Ball Detected",targetDetected );
 
 
@@ -198,30 +199,30 @@ public class yajat_yellow_ball_test extends OpMode {
             // SEARCH FOR BALL
             // =============================================
 
-            case SPIN:
+            case SPIN: {
                 //how much has the bot rotated
-               double currentHeading = follower.getPose().getHeading();
+                double currentHeading = follower.getPose().getHeading();
 
-               double delta = currentHeading - lastHeading;
-               //deal with the rotation wrapping
-                while (delta > Math.PI){
-                    delta-= 2 * Math.PI;
+                double delta = currentHeading - lastHeading;
+                //deal with the rotation wrapping
+                while (delta > Math.PI) {
+                    delta -= 2 * Math.PI;
                 }
-                while (delta < Math.PI){
-                    delta+= 2 * Math.PI;
+                while (delta < Math.PI) {
+                    delta += 2 * Math.PI;
                 }
                 accumalatedRotation += Math.abs(delta);
                 lastHeading = currentHeading;
 
                 //look for clusters
                 LLResult result = limelight.getLatestResult();
-                if(result !=null && result.isValid() && !result.getColorResults().isEmpty()) {
-                    for (LLResultTypes.ColorResult color : result.getColorResults() ) {
+                if (result != null && result.isValid() && !result.getColorResults().isEmpty()) {
+                    for (LLResultTypes.ColorResult color : result.getColorResults()) {
                         double area = color.getTargetArea();
                         double distance =
                                 calculateHorizontalDistance(color.getTargetYDegrees());
-                            //is this the most grande cluster?
-                        if(area > BestArea && distance != Double.POSITIVE_INFINITY) {
+                        //is this the most grande cluster?
+                        if (area > BestArea && distance != Double.POSITIVE_INFINITY) {
                             BestArea = area;
                             BestDistance = distance;
                             //save bot position when we saw it
@@ -237,7 +238,7 @@ public class yajat_yellow_ball_test extends OpMode {
                         true
                 );
                 //have WE completed a full rotation
-                if(accumalatedRotation >= 2 * Math.PI){
+                if (accumalatedRotation >= 2 * Math.PI) {
 
                     follower.setTeleOpDrive(
                             0,
@@ -246,13 +247,44 @@ public class yajat_yellow_ball_test extends OpMode {
                             true
                     );
 
-                    if(BestPose !=null) {
+                    if (BestPose != null) {
                         calculateClusterPosition();
 
                         state = State.DriveToCluster;
                     }
                 }
                 break;
+            }
+
+                //turn to the ball
+            case TURN_TO_TARGET: {
+                Pose currentpose = follower.getPose();
+
+                double dx = clusterX - currentpose.getX();
+                double dy = clusterY - currentpose.getY();
+
+                double targetHeading = Math.atan2(dy, dx);
+
+                double headingError = targetHeading - currentpose.getHeading();
+
+                while (headingError > Math.PI)
+                    headingError -= 2 * Math.PI;
+
+                while (headingError < -Math.PI)
+                    headingError += 2 * Math.PI;
+
+                double turnPower =
+                        TURN_KP * Math.toDegrees(headingError);
+                turnPower = Math.max(
+                        -MAX_TURN_POWER, Math.min(MAX_TURN_POWER, turnPower)
+                );
+
+                if (Math.abs(Math.toDegrees(headingError)) < 2.0) {
+                    follower.setTeleOpDrive(0, 0, 0, true);
+                    state = State.DriveToCluster;
+                    break;
+                }
+            }
 
             // DRIVE TOWARD BALL
             case DriveToCluster:
@@ -275,48 +307,41 @@ public class yajat_yellow_ball_test extends OpMode {
                     break;
                 }
 
+
                 //convert the field coords to robot coords
+                double heading = currentpose.getHeading();
+                double forward =
+                        dx * Math.cos(heading)
+                        + dy * Math.sin(heading);
+                double strafe =
+                        -dx * Math.sin(heading)
+                        + dy * Math.cos(heading);
 
-
-
-
-
-
-                // -------------------------
-                // STEERING
-                // -------------------------
-
-                double turnPower = TURN_KP * tx;
-
-
-                turnPower = Math.max(-MAX_TURN_POWER, Math.min( MAX_TURN_POWER, turnPower ) );
-
-
-                // -------------------------
-                // FORWARD SPEED
-                // -------------------------
-
-                double forwardPower;
-
-
-                if (horizontalDistance > 12.0) {
-
-                    forwardPower =  FAST_FORWARD;
-
+                //normalize movement
+                double magnitude = Math.hypot(forward,strafe);
+                if(magnitude > 0){
+                    forward /= magnitude;
+                    strafe /= magnitude;
+                }
+                //robot go vroom now
+                double drivePower;
+                if(distanceToCluster > 12.0) {
+                    drivePower = FAST_FORWARD;
                 } else {
-
-                    forwardPower =  SLOW_FORWARD;
+                    drivePower = SLOW_FORWARD;
                 }
 
-
                 follower.setTeleOpDrive(
-                        forwardPower,
+                        forward * drivePower,
+                        strafe * drivePower,
                         0,
-                        turnPower,
                         true
                 );
 
                 break;
+
+
+
 
 
             // =============================================
@@ -325,12 +350,30 @@ public class yajat_yellow_ball_test extends OpMode {
 
             case STOP:
 
-                follower.setTeleOpDrive(0,0,0,true );
+                follower.setTeleOpDrive(
+                        0,
+                        0,
+                        0,
+                        true
+                );
 
                 break;
         }
     }
 
+    private void calculateClusterPosition() {
+        double robotX = BestPose.getX();
+        double roboty = BestPose.getY();
+        double robotHeading = BestPose.getHeading();
+
+
+        clusterX =
+                robotX
+                + BestDistance * Math.cos(robotHeading);
+        clusterY =
+                roboty
+                + BestDistance * Math.sin(robotHeading);
+    }
 
     // =====================================================
     // DISTANCE CALCULATION
