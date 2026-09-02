@@ -176,28 +176,26 @@ public class JeremyLimelightSpinned extends OpMode {
             // SEARCH FOR BALL (FULL 360)
             // =============================================
             case SEARCH:
-                // Record the largest ball seen during the sweep
                 if (targetDetected) {
                     if (ta > maxArea) {
                         maxArea = ta;
-                        // Calculate absolute field heading of the target
                         bestHeading = follower.getPose().getHeading() - Math.toRadians(tx);
                         foundAnyBall = true;
                     }
                 }
 
                 if (searchCircleComplete) {
-                    follower.setTeleOpDrive(0, 0, 0, true);
+                    follower.setTeleOpDrive(0, 0, 0, true); // Absolute stop
 
                     if (foundAnyBall) {
                         state = State.TURN_TO_BEST;
                     } else {
-                        // If no ball was seen during the entire 360, reset and sweep again
                         resetSearchSweep();
                     }
                 } else {
-                    // Spin counterclockwise
-                    follower.setTeleOpDrive(0, 0, SEARCH_TURN_POWER, true);
+                    // FIX: Ensure strafe (1st) and forward (2nd) are absolutely 0.
+                    // Try increasing SEARCH_TURN_POWER to 0.35 if wheels are stalling.
+                    follower.setTeleOpDrive(0.0, 0.0, SEARCH_TURN_POWER, true);
                 }
                 break;
 
