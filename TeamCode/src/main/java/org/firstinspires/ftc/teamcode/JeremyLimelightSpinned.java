@@ -140,7 +140,6 @@ public class JeremyLimelightSpinned extends OpMode {
     private void updateLimelight() {
         LLResult result = limelight.getLatestResult();
 
-        targetDetected = false;
         tx = 0;
         ty = 0;
         ta = 0;
@@ -152,6 +151,8 @@ public class JeremyLimelightSpinned extends OpMode {
             ty = result.getTy();
             ta = result.getTa(); // Area of the target
             horizontalDistance = calculateHorizontalDistance(ty);
+        } else {
+            targetDetected = false;
         }
     }
 
