@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import java.util.List;
 import java.util.ArrayList;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
 // wsp
 @Autonomous
 public class river_yellowball_limelight extends OpMode {
@@ -25,6 +24,8 @@ public class river_yellowball_limelight extends OpMode {
     private final Pose startPose = new Pose(72, 72, Math.PI / 2);
     //limelight pipeline used to tune green ball
     private static final int YELLOW_BALL_PIPELINE = 9;
+    private double totalTurned = 0;
+    private double previousHeading = 0;
 
     // CAMERA GEOMETRY
     //relative height camera to ball center
@@ -53,6 +54,10 @@ public class river_yellowball_limelight extends OpMode {
 
     private double tx = 0;
     private double ty = 0;
+    private double ta = 0;
+    private double bestArea = 0;
+    private double bestFieldAngle = 0;
+    private double targetFieldAngle = 0;
 
     private double horizontalDistance = Double.POSITIVE_INFINITY;
 
@@ -61,6 +66,7 @@ public class river_yellowball_limelight extends OpMode {
 
     private enum State {
         SEARCH,
+        TURN_TO_TARGET,
         APPROACH,
         STOP
     }
@@ -167,6 +173,8 @@ public class river_yellowball_limelight extends OpMode {
 
             ty = result.getTy();
 
+            ta = result.getTa();
+
             horizontalDistance = calculateHorizontalDistance(ty);
         }
     }
@@ -187,19 +195,35 @@ public class river_yellowball_limelight extends OpMode {
                 double heading = Math.toDegrees(follower.getPose().getHeading());
 
                 if (fieldAngles.isEmpty() && lastSampleHeading == 0) {
-                    scanStartHeading = heading;
+                    previousHeading = heading;
+                    totalTurned = 0;
+                    bestArea = 0;
+                    bestFieldAngle = 0;
                 }
+                double delta = heading - previousHeading;
+
+                if (delta > 180) delta -= 360;
+                if (delta < -180) delta += 360;
+
+                totalTurned += Math.abs(delta);
+                previousHeading = heading;
+
                 if (Math.abs(heading - lastSampleHeading) >= 10) {
 
                     if (targetDetected) {
                         double ballLocation = heading + tx;
                         fieldAngles.add(ballLocation);
+
+                        if (ta > bestArea) {
+                            bestArea = ta;
+                            bestFieldAngle = ballLocation;
+                        }
                     }
 
                     lastSampleHeading = heading;
                 }
 
-                if (Math.abs(heading - scanStartHeading) < 360) {
+                if (totalTurned < 360) {
 
                         follower.setTeleOpDrive(0, 0, SEARCH_TURN_POWER, true);
 
@@ -207,15 +231,10 @@ public class river_yellowball_limelight extends OpMode {
 
                     follower.setTeleOpDrive(0, 0, 0, true);
 
-                    if (!fieldAngles.isEmpty()) {
+                    if (bestArea > 0) {
 
-                        double sum = 0;
-                        for (double angle : fieldAngles) {
-                            sum += angle;
-                        }
-                        double targetFieldAngle = sum / fieldAngles.size();
-
-                        state = State.APPROACH;
+                        targetFieldAngle = bestFieldAngle;
+                        state = State.TURN_TO_TARGET;
 
                     } else {
 
@@ -223,6 +242,22 @@ public class river_yellowball_limelight extends OpMode {
                     }
                 }
                 break;
+
+            case TURN_TO_TARGET:
+
+                double currentHeading = Math.toDegrees((follower.getPose().getHeading()));
+                double error = targetFieldAngle - currentHeading;
+
+                while (error > 180) error -= 360;
+                while (error < -180) error += 360;
+
+                if (Math.abs(error) < 3) {
+                    follower.setTeleOpDrive(0,0,0, true);
+                    state = State.APPROACH;
+                } else {
+                    double turn = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, TURN_KP * error * 10));
+                    follower.setTeleOpDrive(0, 0, turn, true);
+                }
 
             // DRIVE TOWARD BALL
             case APPROACH:
