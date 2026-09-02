@@ -204,7 +204,7 @@ public class Daniel_YellowBall_Limelight extends OpMode {
 
         tx = 0;
         ty = 0;
-        ta = 0;
+        ta = 0; //Resets the TA each frame
 
         horizontalDistance = Double.POSITIVE_INFINITY;
 
