@@ -143,6 +143,9 @@ public class river_yellowball_limelight extends OpMode {
 
         telemetry.addData("Pose", follower.getPose());
 
+        telemetry.addData("Total Turned", totalTurned);
+        telemetry.addData("Best Aread", bestArea);
+
 
         telemetry.update();
     }
@@ -161,6 +164,7 @@ public class river_yellowball_limelight extends OpMode {
 
         tx = 0;
         ty = 0;
+        ta = 0;
 
         horizontalDistance = Double.POSITIVE_INFINITY;
 
@@ -258,6 +262,8 @@ public class river_yellowball_limelight extends OpMode {
                     double turn = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, TURN_KP * error * 10));
                     follower.setTeleOpDrive(0, 0, turn, true);
                 }
+
+                break;
 
             // DRIVE TOWARD BALL
             case APPROACH:
