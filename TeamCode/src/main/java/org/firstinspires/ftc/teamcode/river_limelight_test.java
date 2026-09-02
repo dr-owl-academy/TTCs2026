@@ -12,7 +12,7 @@ public class river_limelight_test extends OpMode {
 private DcMotor testMotor;
 private Limelight3A limelight;
 //CHANGE THIS to the pipeline used to tune for green balls
-private static final int GREEN_BALL_PIPELINE = 2;
+private static final int GREEN_BALL_PIPELINE = 9;
 
 private static final double MOTOR_POWER = 0.2;
 

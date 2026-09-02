@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 
@@ -8,7 +9,8 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
+import java.util.List;
+import java.util.ArrayList;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 
@@ -17,10 +19,12 @@ public class river_yellowball_limelight extends OpMode {
 
     private Follower follower;
     private Limelight3A limelight;
-
+    private List<Double> fieldAngles = new ArrayList<>();
+    private double lastSampleHeading = 0;
+    private double scanStartHeading = 0;
     private final Pose startPose = new Pose(72, 72, Math.PI / 2);
     //limelight pipeline used to tune green ball
-    private static final int YELLOW_BALL_PIPELINE = 2;
+    private static final int YELLOW_BALL_PIPELINE = 9;
 
     // CAMERA GEOMETRY
     //relative height camera to ball center
@@ -180,20 +184,44 @@ public class river_yellowball_limelight extends OpMode {
             // =============================================
 
             case SEARCH:
+                double heading = Math.toDegrees(follower.getPose().getHeading());
 
-                if (targetDetected) {
+                if (fieldAngles.isEmpty() && lastSampleHeading == 0) {
+                    scanStartHeading = heading;
+                }
+                if (Math.abs(heading - lastSampleHeading) >= 10) {
 
-                    // Stop spinning
-                    follower.setTeleOpDrive(0,0,0,true );
+                    if (targetDetected) {
+                        double ballLocation = heading + tx;
+                        fieldAngles.add(ballLocation);
+                    }
 
-                    state = State.APPROACH;
+                    lastSampleHeading = heading;
+                }
+
+                if (Math.abs(heading - scanStartHeading) < 360) {
+
+                        follower.setTeleOpDrive(0, 0, SEARCH_TURN_POWER, true);
 
                 } else {
 
-                    // Spin counterclockwise
-                    follower.setTeleOpDrive(0,0, SEARCH_TURN_POWER,true );
-                }
+                    follower.setTeleOpDrive(0, 0, 0, true);
 
+                    if (!fieldAngles.isEmpty()) {
+
+                        double sum = 0;
+                        for (double angle : fieldAngles) {
+                            sum += angle;
+                        }
+                        double targetFieldAngle = sum / fieldAngles.size();
+
+                        state = State.APPROACH;
+
+                    } else {
+
+                            state = State.STOP;
+                    }
+                }
                 break;
 
             // DRIVE TOWARD BALL
