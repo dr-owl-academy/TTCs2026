@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+/*package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
@@ -42,7 +42,10 @@ public class Daniel_YellowBall_Limelight extends OpMode {
     private static final double TURN_KP = 0.015;
 
     private static final double MAX_TURN_POWER = 0.20;
-
+    private double maxTargetAreaFound = 0;   // Peak 'ta' spotted during sweep
+    private double bestHeadingHeading = 0;   // Saved heading where peak 'ta' occurred
+    private double lastHeading = 0;         // Tracks robot heading from previous loop frame
+    private double totalRotatedAngle = 0;   // Accumulates total radians turned
 
     // LIMELIGHT DATA
 
@@ -59,7 +62,11 @@ public class Daniel_YellowBall_Limelight extends OpMode {
     private enum State {
         SEARCH,
         APPROACH,
-        STOP
+        STOP,
+        START_SEARCH_360,     // <--- ADD THIS
+        SCANNING_360,         // <--- ADD THIS
+        ALIGN_TO_BEST_TARGET, // <--- ADD THIS
+
     }
 
     private State state = State.SEARCH;
@@ -94,6 +101,7 @@ public class Daniel_YellowBall_Limelight extends OpMode {
         follower.startTeleopDrive();
 
         state = State.SEARCH;
+        state = State.START_SEARCH_360;
     }
 
 
@@ -104,7 +112,50 @@ public class Daniel_YellowBall_Limelight extends OpMode {
         updateLimelight();
 
         // Run autonomous state machine
-        updateStateMachine();
+        updateStateMachine(); {
+            switch (state) {
+                // Setup state - resets tracking variables before starting the spin
+                case START_SEARCH_360:
+                    maxTargetAreaFound = 0;
+                    totalRotatedAngle = 0;
+                    lastHeading = follower.getPose().getHeading();
+                    state = State.SCANNING_360;
+                    break;
+
+                case SCANNING_360:
+                    follower.setTeleOpDrive(0, 0, SEARCH_TURN_POWER, true);
+
+                    double currentHeading = follower.getPose().getHeading();
+
+                    // 1. Calculate frame-to-frame delta
+                    double deltaHeading = currentHeading - lastHeading;
+
+                    // 2. Wrap angle boundary [-PI, PI]
+                    deltaHeading = Math.atan2(Math.sin(deltaHeading), Math.cos(deltaHeading));
+
+                    // 3. Accumulate absolute rotation amount
+                    totalRotatedAngle += Math.abs(deltaHeading);
+                    lastHeading = currentHeading;
+
+                    // 4. Save peak target area & heading
+                    if (targetDetected && ta > maxTargetAreaFound) {
+                        maxTargetAreaFound = ta;
+                        bestHeadingHeading = currentHeading;
+                    }
+
+                    // 5. Complete sweep at 2*PI radians (360 degrees)
+                    if (totalRotatedAngle >= (2.0 * Math.PI)) {
+                        follower.setTeleOpDrive(0, 0, 0, true);
+
+                        if (maxTargetAreaFound > 0) {
+                            state = State.ALIGN_TO_BEST_TARGET;
+                        } else {
+                            state = State.START_SEARCH_360; // Retry if no target seen
+                        }
+                    }
+                    break;
+            }
+        }
 
         // Pedro updates motors + localization
         follower.update();
@@ -299,4 +350,4 @@ public class Daniel_YellowBall_Limelight extends OpMode {
 
         limelight.stop();
     }
-}
+}*/
