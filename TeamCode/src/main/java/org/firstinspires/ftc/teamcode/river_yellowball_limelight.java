@@ -144,7 +144,7 @@ public class river_yellowball_limelight extends OpMode {
         telemetry.addData("Pose", follower.getPose());
 
         telemetry.addData("Total Turned", totalTurned);
-        telemetry.addData("Best Aread", bestArea);
+        telemetry.addData("Best Area", bestArea);
 
 
         telemetry.update();
