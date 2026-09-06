@@ -158,6 +158,10 @@ public class yajat_yellow_ball_test extends OpMode {
         telemetry.addData("BestArea",BestArea);
         telemetry.addData("BestDistance",BestDistance);
         telemetry.addData("BestTx",BestTx);
+        telemetry.addData(
+                "TargetBearing",
+                Math.toDegrees(BestPose.getHeading()+Math.toRadians(BestTx))
+        );
 
         telemetry.addData("clusterX",clusterX);
         telemetry.addData("clustery",clusterY);
