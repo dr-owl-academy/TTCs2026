@@ -27,7 +27,7 @@ public class yajat_yellow_ball_test extends OpMode {
     //relative height camera to ball center
     private static final double HEIGHT_DIFFERENCE = 5.8;   // 9.5 inches
 
-    private static final double CAMERA_DOWN_ANGLE =37.8;
+    private static final double CAMERA_DOWN_ANGLE =19.9;
 
     private static final double STOP_DISTANCE = 4.5;
 
