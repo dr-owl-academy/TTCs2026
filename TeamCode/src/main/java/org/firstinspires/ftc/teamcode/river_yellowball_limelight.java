@@ -35,7 +35,7 @@ public class river_yellowball_limelight extends OpMode {
 
     private static final double STOP_DISTANCE = 6.0;
 
-    private static final double CAMERA_HEADING_OFFSET = 5.5;
+    private static final double CAMERA_HEADING_OFFSET = -2.5;
 
     // MOVEMENT SETTINGS
 
@@ -273,7 +273,11 @@ public class river_yellowball_limelight extends OpMode {
                 if (!targetDetected) {
 
                     state = State.SEARCH;
-
+                    fieldAngles.clear();
+                    totalTurned = 0;
+                    bestArea = 0;
+                    bestFieldAngle = 0;
+                    lastSampleHeading = 0;
                     follower.setTeleOpDrive(0,0, SEARCH_TURN_POWER,true);
 
                     break;
