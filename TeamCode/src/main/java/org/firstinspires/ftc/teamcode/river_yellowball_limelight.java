@@ -212,7 +212,7 @@ public class river_yellowball_limelight extends OpMode {
                 totalTurned += Math.abs(delta);
                 previousHeading = heading;
 
-                if (Math.abs(heading - lastSampleHeading) >= 10) {
+                if (Math.abs(heading - lastSampleHeading) >= 2) {
 
                     if (targetDetected) {
                         double ballLocation = heading + tx;
