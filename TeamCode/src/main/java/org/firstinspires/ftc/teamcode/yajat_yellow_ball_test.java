@@ -403,7 +403,7 @@ public class yajat_yellow_ball_test extends OpMode {
         double robotHeading = BestPose.getHeading();
 
         double targetbearing =
-                robotHeading + Math.toRadians(BestTx);
+                robotHeading + Math.toRadians(BestTx) - Math.toRadians(22);
 
         clusterX =
                 robotX
