@@ -35,6 +35,7 @@ public class river_yellowball_limelight extends OpMode {
 
     private static final double STOP_DISTANCE = 6.0;
 
+    private static final double CAMERA_HEADING_OFFSET = 5.5;
 
     // MOVEMENT SETTINGS
 
@@ -215,7 +216,7 @@ public class river_yellowball_limelight extends OpMode {
                 if (Math.abs(heading - lastSampleHeading) >= 2) {
 
                     if (targetDetected) {
-                        double ballLocation = heading + tx;
+                        double ballLocation = heading + tx + CAMERA_HEADING_OFFSET;
                         fieldAngles.add(ballLocation);
 
                         if (ta > bestArea) {
