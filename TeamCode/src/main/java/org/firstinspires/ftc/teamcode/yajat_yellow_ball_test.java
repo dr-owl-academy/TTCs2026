@@ -25,9 +25,9 @@ public class yajat_yellow_ball_test extends OpMode {
 
     // CAMERA GEOMETRY
     //relative height camera to ball center
-    private static final double HEIGHT_DIFFERENCE = 9.5;   // 9.5 inches
+    private static final double HEIGHT_DIFFERENCE = 5.8;   // 9.5 inches
 
-    private static final double CAMERA_DOWN_ANGLE = 45.0;
+    private static final double CAMERA_DOWN_ANGLE =37.8;
 
     private static final double STOP_DISTANCE = 4.5;
 
@@ -155,6 +155,12 @@ public class yajat_yellow_ball_test extends OpMode {
             telemetry.addData("Horizontal Distance","No target" );
         }
 
+        telemetry.addData("BestArea",BestArea);
+        telemetry.addData("BestDistance",BestDistance);
+        telemetry.addData("BestTx",BestTx);
+
+        telemetry.addData("clusterX",clusterX);
+        telemetry.addData("clustery",clusterY);
 
         telemetry.addData("Pose", follower.getPose());
 
@@ -288,6 +294,8 @@ public class yajat_yellow_ball_test extends OpMode {
                 turnPower = Math.max(
                         -MAX_TURN_POWER, Math.min(MAX_TURN_POWER, turnPower)
                 );
+
+
 
                 if (Math.abs(Math.toDegrees(headingError)) < 2.0) {
                     follower.setTeleOpDrive(0, 0, 0, true);
