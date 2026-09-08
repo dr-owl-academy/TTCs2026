@@ -21,11 +21,20 @@ public class river_yellowball_limelight extends OpMode {
     private List<Double> fieldAngles = new ArrayList<>();
     private double lastSampleHeading = 0;
     private double scanStartHeading = 0;
+    private double turnIntegral = 0;
+    private double lastTurnError = 0;
+    private long lastTurnTimeNs = 0;
+    private long turnStartTimeNs = 0;
     private final Pose startPose = new Pose(72, 72, Math.PI / 2);
     //limelight pipeline used to tune green ball
     private static final int YELLOW_BALL_PIPELINE = 9;
     private double totalTurned = 0;
     private double previousHeading = 0;
+    private static final double TURN_KP_PID = 1.0;
+    private static final double TURN_KI = 0.0;
+    private static final double TURN_KD = 0.01;
+    private static final double TURN_KF = 0.02;
+
 
     // CAMERA GEOMETRY
     //relative height camera to ball center
@@ -33,7 +42,7 @@ public class river_yellowball_limelight extends OpMode {
 
     private static final double CAMERA_DOWN_ANGLE = 45.0;
 
-    private static final double STOP_DISTANCE = 6.0;
+    private static final double STOP_DISTANCE = 4.0;
 
     private static final double CAMERA_HEADING_OFFSET = -42;
 
@@ -239,6 +248,7 @@ public class river_yellowball_limelight extends OpMode {
                     if (bestArea > 0) {
 
                         targetFieldAngle = bestFieldAngle;
+                        turnStartTimeNs = System.nanoTime();
                         state = State.TURN_TO_TARGET;
 
                     } else {
@@ -256,10 +266,26 @@ public class river_yellowball_limelight extends OpMode {
                 while (error > 180) error -= 360;
                 while (error < -180) error += 360;
 
+                double turnElapsedSec = (System.nanoTime() - turnStartTimeNs) / 1e9;
+
                 if (Math.abs(error) < 3) {
                     follower.setTeleOpDrive(0,0,0, true);
+                    turnIntegral = 0;
+                    lastTurnError = 0;
+                    lastTurnTimeNs = System.nanoTime();
                     state = State.APPROACH;
+                } else if (turnElapsedSec > 3.0) {
+                    // Give up and re-scan
+                    follower.setTeleOpDrive(0,0,0, true);
+                    state = State.SEARCH;
+                    fieldAngles.clear();
+                    totalTurned = 0;
+                    bestArea = 0;
+                    bestFieldAngle = 0;
+                    lastSampleHeading = 0;
+
                 } else {
+
                     double turn = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, TURN_KP * error * 10));
                     follower.setTeleOpDrive(0, 0, turn, true);
                 }
@@ -296,13 +322,25 @@ public class river_yellowball_limelight extends OpMode {
 
 
                 // -------------------------
-                // STEERING
+                // STEERING (PIDF)
                 // -------------------------
 
-                double turnPower = TURN_KP * tx;
+                long now = System.nanoTime();
+                double dt = (now - lastTurnTimeNs) / 1e9;
+                if (dt <= 0) dt = 0.001;
 
+                double errorRad = Math.toRadians(tx);
 
-                turnPower = Math.max(-MAX_TURN_POWER, Math.min( MAX_TURN_POWER, turnPower ) );
+                turnIntegral += errorRad * dt;
+                turnIntegral = Math.max(-1.0, Math.min(1.0, turnIntegral));
+                double derivative = (errorRad - lastTurnError) / dt;
+
+                double turnpower = (TURN_KP_PID * errorRad) + (TURN_KI * turnIntegral) + (TURN_KD * derivative) + TURN_KF;
+
+                turnpower = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, turnpower));
+
+                lastTurnError = errorRad;
+                lastTurnTimeNs = now;
 
 
                 // -------------------------
@@ -325,7 +363,7 @@ public class river_yellowball_limelight extends OpMode {
                 follower.setTeleOpDrive(
                         forwardPower,
                         0,
-                        turnPower,
+                        turnpower,
                         true
                 );
 
