@@ -34,6 +34,7 @@ public class river_yellowball_limelight extends OpMode {
     private static final double TURN_KI = 0.0;
     private static final double TURN_KD = 0.01;
     private static final double TURN_KF = 0.02;
+    private static final double FAST_TURN_POWER = 0.5;
 
 
     // CAMERA GEOMETRY
@@ -261,7 +262,7 @@ public class river_yellowball_limelight extends OpMode {
             case TURN_TO_TARGET:
 
                 double currentHeading = Math.toDegrees((follower.getPose().getHeading()));
-                double error = targetFieldAngle - currentHeading;
+                double error = (targetFieldAngle - CAMERA_HEADING_OFFSET) - currentHeading;
 
                 while (error > 180) error -= 360;
                 while (error < -180) error += 360;
@@ -274,7 +275,7 @@ public class river_yellowball_limelight extends OpMode {
                     lastTurnError = 0;
                     lastTurnTimeNs = System.nanoTime();
                     state = State.APPROACH;
-                } else if (turnElapsedSec > 3.0) {
+                } else if (turnElapsedSec > 4.0) {
                     // Give up and re-scan
                     follower.setTeleOpDrive(0,0,0, true);
                     state = State.SEARCH;
@@ -286,7 +287,7 @@ public class river_yellowball_limelight extends OpMode {
 
                 } else {
 
-                    double turn = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, TURN_KP * error * 10));
+                    double turn = Math.max(-FAST_TURN_POWER, Math.min(FAST_TURN_POWER, TURN_KP * error * 10));
                     follower.setTeleOpDrive(0, 0, turn, true);
                 }
 
