@@ -58,6 +58,7 @@ public class river_yellowball_limelight extends OpMode {
     private static final double TURN_KP = 0.015;
 
     private static final double MAX_TURN_POWER = 0.20;
+    private int missedFrames = 0;
 
     // LIMELIGHT DATA
 
@@ -287,7 +288,7 @@ public class river_yellowball_limelight extends OpMode {
 
                 } else {
 
-                    double turn = Math.max(-FAST_TURN_POWER, Math.min(FAST_TURN_POWER, TURN_KP * error * 10));
+                    double turn = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, TURN_KP * error * 10));
                     follower.setTeleOpDrive(0, 0, turn, true);
                 }
 
@@ -299,15 +300,23 @@ public class river_yellowball_limelight extends OpMode {
                 // Ball disappeared
                 if (!targetDetected) {
 
-                    state = State.SEARCH;
-                    fieldAngles.clear();
-                    totalTurned = 0;
-                    bestArea = 0;
-                    bestFieldAngle = 0;
-                    lastSampleHeading = 0;
-                    follower.setTeleOpDrive(0,0, SEARCH_TURN_POWER,true);
+                    missedFrames++;
+
+                    if (missedFrames > 10) {
+                        state = State.SEARCH;
+                        fieldAngles.clear();
+                        totalTurned = 0;
+                        bestArea = 0;
+                        bestFieldAngle = 0;
+                        lastSampleHeading = 0;
+                        follower.setTeleOpDrive(0, 0, SEARCH_TURN_POWER, true);
+
+                    }
 
                     break;
+
+                } else {
+                    missedFrames = 0;
                 }
 
 
