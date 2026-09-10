@@ -58,6 +58,7 @@ public class river_yellowball_limelight extends OpMode {
     private static final double TURN_KP = 0.015;
 
     private static final double MAX_TURN_POWER = 0.20;
+    private static final double MIN_TURN_POWR = 0.08;
     private int missedFrames = 0;
 
     // LIMELIGHT DATA
@@ -287,9 +288,16 @@ public class river_yellowball_limelight extends OpMode {
                     lastSampleHeading = 0;
 
                 } else {
+                    double rawTurn = TURN_KP * error * 10;
+                    double turn;
 
-                    double turn = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, TURN_KP * error * 10));
-                    follower.setTeleOpDrive(0, 0, turn, true);
+                    if (Math.abs(rawTurn) < MIN_TURN_POWR) {
+                        turn = Math.copySign(MIN_TURN_POWR, error);
+                    } else {
+                        turn = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, rawTurn));
+                    }
+
+                    follower.setTeleOpDrive(0,0, turn, true);
                 }
 
                 break;
