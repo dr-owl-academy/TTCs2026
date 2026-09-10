@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import java.util.List;
 import java.util.ArrayList;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-// hi
+//
 @Autonomous
 public class river_yellowball_limelight extends OpMode {
 
