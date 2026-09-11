@@ -313,7 +313,7 @@ public class river_yellowball_limelight extends OpMode {
 
                     missedFrames++;
 
-                    if (missedFrames > 10) {
+                    if (missedFrames > 40) {
                         state = State.SEARCH;
                         fieldAngles.clear();
                         totalTurned = 0;
