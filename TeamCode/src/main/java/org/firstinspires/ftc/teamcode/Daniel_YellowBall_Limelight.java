@@ -1,4 +1,4 @@
-/*package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
@@ -156,19 +156,11 @@ public class Daniel_YellowBall_Limelight extends OpMode {
                         } else {
                             state = State.START_SEARCH_360; // Retry if no target seen
                         }
-                        //When a is pressed, get heading
-                        if (gamepad1.a) {
-                            headingOffset = follower.getPose().getHeading();
-                        }
 
-                        follower.setTeleOpDrive(
-                                -gamepad1.left_stick_y,  // Forward / Backward
-                                -gamepad1.left_stick_x,  // Strafe Left / Right
-                                -gamepad1.right_stick_x, // Turn Left / Right
-                                headingOffset             // Passes offset directly to Pedro Pathing
-                        );
+
                     }
                     break;
+                case ALIGN_TO_BEST_TARGET:
             }
         }
 
@@ -366,4 +358,4 @@ public class Daniel_YellowBall_Limelight extends OpMode {
 
         limelight.stop();
     }
-}*/
+}
