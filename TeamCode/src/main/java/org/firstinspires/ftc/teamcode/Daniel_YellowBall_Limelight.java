@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+/*package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
@@ -24,9 +24,9 @@ public class Daniel_YellowBall_Limelight extends OpMode {
 
     // CAMERA GEOMETRY
     //relative height camera to ball center
-    private static final double HEIGHT_DIFFERENCE = 9.5;   // 3.6 inches
+    private static final double HEIGHT_DIFFERENCE = 5.8;   // 3.6 inches
 
-    private static final double CAMERA_DOWN_ANGLE = 45.0;
+    private static final double CAMERA_DOWN_ANGLE = 19.9;
 
     private static final double STOP_DISTANCE = 4.5;
 
@@ -46,6 +46,7 @@ public class Daniel_YellowBall_Limelight extends OpMode {
     private double bestHeadingHeading = 0;   // Saved heading where peak 'ta' occurred
     private double lastHeading = 0;         // Tracks robot heading from previous loop frame
     private double totalRotatedAngle = 0;   // Accumulates total radians turned
+    private double headingOffset = 0;
 
     // LIMELIGHT DATA
 
@@ -123,6 +124,8 @@ public class Daniel_YellowBall_Limelight extends OpMode {
                     state = State.SCANNING_360;
                     break;
 
+
+
                 case SCANNING_360:
                     follower.setTeleOpDrive(0, 0, SEARCH_TURN_POWER, true);
 
@@ -153,6 +156,17 @@ public class Daniel_YellowBall_Limelight extends OpMode {
                         } else {
                             state = State.START_SEARCH_360; // Retry if no target seen
                         }
+                        //When a is pressed, get heading
+                        if (gamepad1.a) {
+                            headingOffset = follower.getPose().getHeading();
+                        }
+
+                        follower.setTeleOpDrive(
+                                -gamepad1.left_stick_y,  // Forward / Backward
+                                -gamepad1.left_stick_x,  // Strafe Left / Right
+                                -gamepad1.right_stick_x, // Turn Left / Right
+                                headingOffset             // Passes offset directly to Pedro Pathing
+                        );
                     }
                     break;
             }
@@ -352,4 +366,4 @@ public class Daniel_YellowBall_Limelight extends OpMode {
 
         limelight.stop();
     }
-}
+}*/
