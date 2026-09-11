@@ -50,6 +50,9 @@ public class Karim_Limelight extends OpMode {
     private double bestHeading = 0;
     private boolean foundAnyBall = false;
 
+    private int lostTargetFrames = 0;
+    private static final int MAX_LOST_FRAMES = 25; // ~0.5s grace period before restarting search
+
     // STATE MACHINE
     private enum State {
         SEARCH,
@@ -102,7 +105,7 @@ public class Karim_Limelight extends OpMode {
             telemetry.addData("ta", ta);
             telemetry.addData("Horizontal Distance", horizontalDistance);
         } else {
-            telemetry.addData("Horizontal Distance", "No target");
+            telemetry.addData("Horizontal Distance", "No target (lost frames: " + lostTargetFrames + ")");
         }
 
         telemetry.addData("Current Heading (deg)", Math.toDegrees(follower.getPose().getHeading()));
@@ -117,6 +120,7 @@ public class Karim_Limelight extends OpMode {
         maxArea = 0;
         bestHeading = 0;
         foundAnyBall = false;
+        lostTargetFrames = 0;
     }
 
     private void updateRotationTracking() {
@@ -162,12 +166,15 @@ public class Karim_Limelight extends OpMode {
             // SEARCH FOR BALL (FULL 360)
             // =============================================
             case SEARCH:
-                // Record the largest ball seen during the sweep
+                // Record the largest ball/cluster seen during the sweep
                 if (targetDetected) {
                     if (ta > maxArea) {
                         maxArea = ta;
                         // Calculate absolute field heading of the target
-                        bestHeading = follower.getPose().getHeading() - Math.toRadians(tx);
+                        double rawHeading = follower.getPose().getHeading() - Math.toRadians(tx);
+                        while (rawHeading > Math.PI) rawHeading -= 2 * Math.PI;
+                        while (rawHeading < -Math.PI) rawHeading += 2 * Math.PI;
+                        bestHeading = rawHeading;
                         foundAnyBall = true;
                     }
                 }
@@ -176,6 +183,7 @@ public class Karim_Limelight extends OpMode {
                     follower.setTeleOpDrive(0, 0, 0, true);
 
                     if (foundAnyBall) {
+                        lostTargetFrames = 0;
                         state = State.TURN_TO_BEST;
                     } else {
                         // If no ball was seen during the entire 360, reset and sweep again
@@ -198,9 +206,10 @@ public class Karim_Limelight extends OpMode {
                 while (error > Math.PI) error -= 2 * Math.PI;
                 while (error < -Math.PI) error += 2 * Math.PI;
 
-                // If we are facing the target within ~3 degrees, approach it
-                if (Math.abs(error) < Math.toRadians(3.0)) {
+                // If facing the target within ~3 degrees (or centered on camera), switch to approach
+                if (Math.abs(error) < Math.toRadians(3.0) || (targetDetected && Math.abs(tx) < 4.0)) {
                     follower.setTeleOpDrive(0, 0, 0, true);
+                    lostTargetFrames = 0;
                     state = State.APPROACH;
                 } else {
                     double turnPower = error * HEADING_KP;
@@ -221,30 +230,46 @@ public class Karim_Limelight extends OpMode {
             // DRIVE TOWARD BALL
             // =============================================
             case APPROACH:
-                // Ball disappeared, lost tracking
+                // Debounce temporary camera frame drops
                 if (!targetDetected) {
-                    resetSearchSweep();
-                    state = State.SEARCH;
+                    lostTargetFrames++;
+                    if (lostTargetFrames > MAX_LOST_FRAMES) {
+                        resetSearchSweep();
+                        state = State.SEARCH;
+                    } else {
+                        // Briefly coast gently while waiting for next camera frame
+                        follower.setTeleOpDrive(SLOW_FORWARD * 0.5, 0, 0, true);
+                    }
                     break;
                 }
 
-                // Stop 4.5 inches away horizontally
+                lostTargetFrames = 0;
+
+                // Stop at desired distance
                 if (horizontalDistance <= STOP_DISTANCE) {
                     follower.setTeleOpDrive(0, 0, 0, true);
                     state = State.STOP;
                     break;
                 }
 
-                // STEERING
-                double turnPower = TURN_KP * tx;
+                // STEERING:
+                // tx > 0 means target is to the right of crosshair.
+                // In Pedro Pathing, positive turn is CCW (turn left), negative turn is CW (turn right).
+                // So turn power must be negative (-TURN_KP * tx) to steer right towards the target.
+                double turnPower = -TURN_KP * tx;
                 turnPower = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, turnPower));
 
-                // FORWARD SPEED
+                // FORWARD SPEED:
                 double forwardPower;
                 if (horizontalDistance > 12.0) {
                     forwardPower = FAST_FORWARD;
                 } else {
                     forwardPower = SLOW_FORWARD;
+                }
+
+                // If significantly misaligned (|tx| > 8 deg), slow forward speed so it turns first
+                if (Math.abs(tx) > 8.0) {
+                    forwardPower *= 0.1;
                 }
 
                 follower.setTeleOpDrive(forwardPower, 0, turnPower, true);
