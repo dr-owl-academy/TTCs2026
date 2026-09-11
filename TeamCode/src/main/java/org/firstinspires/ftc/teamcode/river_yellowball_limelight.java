@@ -270,6 +270,9 @@ public class river_yellowball_limelight extends OpMode {
                 while (error < -180) error += 360;
 
                 double turnElapsedSec = (System.nanoTime() - turnStartTimeNs) / 1e9;
+                telemetry.addData("TT Current Heading", currentHeading);
+                telemetry.addData("TT Target Field Angle", targetFieldAngle);
+                telemetry.addData("TT Error", error);
 
                 if (Math.abs(error) < 3) {
                     follower.setTeleOpDrive(0,0,0, true);
