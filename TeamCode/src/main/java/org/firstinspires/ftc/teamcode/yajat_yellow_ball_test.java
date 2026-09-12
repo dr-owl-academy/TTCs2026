@@ -29,7 +29,7 @@ public class yajat_yellow_ball_test extends OpMode {
 
     private static final double CAMERA_DOWN_ANGLE =19.9;
 
-    private static final double STOP_DISTANCE = 4.5;
+    private static final double STOP_DISTANCE = 2.5;
 
 
     // MOVEMENT SETTINGS
