@@ -44,6 +44,11 @@ public class yajat_yellow_ball_test extends OpMode {
     private static final double MIN_Turn_Power = 0.08;
 
     private static final double MAX_TURN_POWER = 0.20;
+    private static final double Correction_KP = 0.015;
+    private static final double Max_Correction = 0.15;
+
+    private static final long Target_Lost_Wait_time = 500; //ms
+    private long LastTargetSeenTime = 0;
 
     // LIMELIGHT DATA
 
@@ -359,6 +364,20 @@ public class yajat_yellow_ball_test extends OpMode {
                     forward /= magnitude;
                     strafe /= magnitude;
                 }
+
+                double correction = 0;
+                if(targetDetected) {
+                    //pos = ball is on one side
+                    //neg = ball is on other side
+                    correction = Correction_KP * tx;
+
+                    //limit the correction
+                    correction = Math.max(
+                            -Max_Correction,
+                            Math.min(Max_Correction,correction)
+                    );
+
+                }
                 //robot go vroom now
                 double drivePower;
                 if(distanceToCluster > 12.0) {
@@ -369,7 +388,7 @@ public class yajat_yellow_ball_test extends OpMode {
 
                 follower.setTeleOpDrive(
                         forward * drivePower,
-                        strafe * drivePower,
+                        strafe * drivePower + correction,
                         0,
                         true
                 );
