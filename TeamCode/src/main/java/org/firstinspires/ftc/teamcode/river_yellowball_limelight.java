@@ -20,7 +20,6 @@ public class river_yellowball_limelight extends OpMode {
     private Limelight3A limelight;
     private List<Double> fieldAngles = new ArrayList<>();
     private double lastSampleHeading = 0;
-    private double scanStartHeading = 0;
     private double turnIntegral = 0;
     private double lastTurnError = 0;
     private long lastTurnTimeNs = 0;
@@ -34,7 +33,6 @@ public class river_yellowball_limelight extends OpMode {
     private static final double TURN_KI = 0.0;
     private static final double TURN_KD = 0.01;
     private static final double TURN_KF = 0.02;
-    private static final double FAST_TURN_POWER = 0.5;
 
 
     // CAMERA GEOMETRY
@@ -49,7 +47,7 @@ public class river_yellowball_limelight extends OpMode {
 
     // MOVEMENT SETTINGS
 
-    private static final double SEARCH_TURN_POWER = 0.20;
+    private static final double SEARCH_TURN_POWER = 0.70;
 
     private static final double FAST_FORWARD = 0.25;
 
@@ -60,6 +58,8 @@ public class river_yellowball_limelight extends OpMode {
     private static final double MAX_TURN_POWER = 0.20;
     private static final double MIN_TURN_POWR = 0.08;
     private int missedFrames = 0;
+    private double lastSeenArea = 0;
+    private static final double CLOSE_AREA = 5.0;
 
     // LIMELIGHT DATA
 
@@ -274,14 +274,16 @@ public class river_yellowball_limelight extends OpMode {
                 telemetry.addData("TT Target Field Angle", targetFieldAngle);
                 telemetry.addData("TT Error", error);
 
-                if (Math.abs(error) < 3) {
+                if (targetDetected && Math.abs(tx) < 3) {
                     follower.setTeleOpDrive(0,0,0, true);
                     turnIntegral = 0;
                     lastTurnError = 0;
                     lastTurnTimeNs = System.nanoTime();
                     state = State.APPROACH;
-                } else if (turnElapsedSec > 4.0) {
-                    // Give up and re-scan
+                    break;
+                }
+
+                if (turnElapsedSec > 4.0) {
                     follower.setTeleOpDrive(0,0,0, true);
                     state = State.SEARCH;
                     fieldAngles.clear();
@@ -289,19 +291,30 @@ public class river_yellowball_limelight extends OpMode {
                     bestArea = 0;
                     bestFieldAngle = 0;
                     lastSampleHeading = 0;
+                    break;
+                }
 
+                double turn;
+
+                if (targetDetected) {
+
+                    double rawTurn = tx * TURN_KP * 10;
+                    if (Math.abs(rawTurn) < MIN_TURN_POWR) {
+                        turn = Math.copySign(MIN_TURN_POWR, tx);
+                    } else {
+                        turn = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, rawTurn));
+                    }
                 } else {
+                    // Redo
                     double rawTurn = TURN_KP * error * 10;
-                    double turn;
-
                     if (Math.abs(rawTurn) < MIN_TURN_POWR) {
                         turn = Math.copySign(MIN_TURN_POWR, error);
                     } else {
                         turn = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, rawTurn));
                     }
-
-                    follower.setTeleOpDrive(0,0, turn, true);
                 }
+
+                follower.setTeleOpDrive(0,0,turn, true);
 
                 break;
 
@@ -312,6 +325,12 @@ public class river_yellowball_limelight extends OpMode {
                 if (!targetDetected) {
 
                     missedFrames++;
+
+                    if (lastSeenArea >= CLOSE_AREA) {
+                        follower.setTeleOpDrive(0,0,0, true);
+                        state = State.STOP;
+                        break;
+                    }
 
                     if (missedFrames > 40) {
                         state = State.SEARCH;
@@ -328,6 +347,7 @@ public class river_yellowball_limelight extends OpMode {
 
                 } else {
                     missedFrames = 0;
+                    lastSeenArea = ta;
                 }
 
 
