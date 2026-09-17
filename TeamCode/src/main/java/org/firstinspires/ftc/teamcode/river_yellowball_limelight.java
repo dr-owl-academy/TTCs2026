@@ -43,7 +43,7 @@ public class river_yellowball_limelight extends OpMode {
 
     private static final double STOP_DISTANCE = 1.0;
 
-    private static final double CAMERA_HEADING_OFFSET = -42;
+    private static final double CAMERA_HEADING_OFFSET = 42;
 
     // MOVEMENT SETTINGS
 
@@ -60,7 +60,7 @@ public class river_yellowball_limelight extends OpMode {
     private static final double FINE_MIN_TURN_POWER = 0.04;
     private int missedFrames = 0;
     private double lastSeenArea = 0;
-    private static final double CLOSE_AREA = 5.0;
+    private static final double CLOSE_AREA = 0.6;
 
     // LIMELIGHT DATA
 
@@ -145,6 +145,7 @@ public class river_yellowball_limelight extends OpMode {
             telemetry.addData("tx",  tx  );
 
             telemetry.addData("ty", ty  );
+            telemetry.addData("ta", ta);
 
             telemetry.addData("Horizontal Distance", horizontalDistance );
 
@@ -337,7 +338,7 @@ public class river_yellowball_limelight extends OpMode {
                         break;
                     }
 
-                    if (missedFrames > 40) {
+                    if (missedFrames > 100) {
                         state = State.SEARCH;
                         fieldAngles.clear();
                         totalTurned = 0;
@@ -357,14 +358,14 @@ public class river_yellowball_limelight extends OpMode {
 
 
                 // Stop 6 inches away horizontally
-                if (horizontalDistance <= STOP_DISTANCE) {
+               // if (horizontalDistance <= STOP_DISTANCE) {
 
-                    follower.setTeleOpDrive(0,0,0,true );
+                 //   follower.setTeleOpDrive(0,0,0,true );
 
-                    state = State.STOP;
+                   // state = State.STOP;
 
-                    break;
-                }
+                   // break;
+                // }
 
 
                 // -------------------------
