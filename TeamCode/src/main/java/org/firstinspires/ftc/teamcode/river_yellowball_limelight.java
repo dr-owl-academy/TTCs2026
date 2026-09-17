@@ -307,12 +307,15 @@ public class river_yellowball_limelight extends OpMode {
                         turn = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, rawTurn));
                     }
                 } else {
-                    // Redo
-                    double rawTurn = TURN_KP * error * 10;
-                    if (Math.abs(rawTurn) < MIN_TURN_POWR) {
-                        turn = Math.copySign(MIN_TURN_POWR, error);
+                    if (Math.abs(error) < 1) {
+                        turn = 0;
                     } else {
-                        turn = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, rawTurn));
+                    double rawTurn = TURN_KP * error * 4;
+                        if (Math.abs(rawTurn) < MIN_TURN_POWR) {
+                        turn = Math.copySign(MIN_TURN_POWR, error);
+                        } else {
+                            turn = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, rawTurn));
+                        }
                     }
                 }
 
