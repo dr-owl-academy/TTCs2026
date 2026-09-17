@@ -47,7 +47,7 @@ public class river_yellowball_limelight extends OpMode {
 
     // MOVEMENT SETTINGS
 
-    private static final double SEARCH_TURN_POWER = 0.70;
+    private static final double SEARCH_TURN_POWER = 0.20;
 
     private static final double FAST_FORWARD = 0.25;
 
@@ -57,6 +57,7 @@ public class river_yellowball_limelight extends OpMode {
 
     private static final double MAX_TURN_POWER = 0.20;
     private static final double MIN_TURN_POWR = 0.08;
+    private static final double FINE_MIN_TURN_POWER = 0.04;
     private int missedFrames = 0;
     private double lastSeenArea = 0;
     private static final double CLOSE_AREA = 5.0;
@@ -299,8 +300,9 @@ public class river_yellowball_limelight extends OpMode {
                 if (targetDetected) {
 
                     double rawTurn = tx * TURN_KP * 10;
-                    if (Math.abs(rawTurn) < MIN_TURN_POWR) {
-                        turn = Math.copySign(MIN_TURN_POWR, tx);
+                    double minPower = (Math.abs(tx) < 3) ? FINE_MIN_TURN_POWER : MIN_TURN_POWR;
+                    if (Math.abs(rawTurn) < minPower) {
+                        turn = Math.copySign(minPower, tx);
                     } else {
                         turn = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, rawTurn));
                     }
