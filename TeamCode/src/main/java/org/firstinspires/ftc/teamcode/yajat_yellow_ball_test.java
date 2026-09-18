@@ -41,9 +41,9 @@ public class yajat_yellow_ball_test extends OpMode {
     private static final double SLOW_FORWARD = 0.12;
 
     private static final double TURN_KP = 0.015;
-    private static final double MIN_Turn_Power = 0.08;
+    private static final double MIN_Turn_Power = 0.20;
 
-    private static final double MAX_TURN_POWER = 0.20;
+    private static final double MAX_TURN_POWER = 0.25;
     private static final double Correction_KP = 0.015;
     private static final double Max_Correction = 0.15;
 
@@ -369,7 +369,7 @@ public class yajat_yellow_ball_test extends OpMode {
                 if(targetDetected) {
                     //pos = ball is on one side
                     //neg = ball is on other side
-                    correction = Correction_KP * tx;
+                    correction = -Correction_KP * tx;
 
                     //limit the correction
                     correction = Math.max(
