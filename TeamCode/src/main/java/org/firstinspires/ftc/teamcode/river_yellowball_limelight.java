@@ -35,11 +35,11 @@ public class river_yellowball_limelight extends OpMode {
 
     private static final double STOP_DISTANCE = 1.0;
 
-    private static final double CAMERA_HEADING_OFFSET = 0;
+    private static final double CAMERA_HEADING_OFFSET = -42;
 
     // MOVEMENT SETTINGS
 
-    private static final double SEARCH_TURN_POWER = 0.20;
+    private static final double SEARCH_TURN_POWER = 0.7;
 
     private static final double FAST_FORWARD = 0.25;
 
@@ -367,7 +367,7 @@ public class river_yellowball_limelight extends OpMode {
 
                 double correction = 0;
                 if (targetDetected) {
-                    correction = -TURN_KP * tx;
+                    correction = -TURN_KP * tx * 4;
                     correction = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, correction));
                 }
 
