@@ -325,60 +325,39 @@ public class river_yellowball_limelight extends OpMode {
             // DRIVE TOWARD BALL
             case APPROACH: {
 
-                Pose approachPose = follower.getPose();
-                double adx = targetX - approachPose.getX();
-                double ady = targetY - approachPose.getY();
-                double distanceToTarget = Math.hypot(adx, ady);
+                if (!targetDetected) {
+                    missedFrames++;
 
-                if (distanceToTarget <= STOP_DISTANCE) {
-                    follower.setTeleOpDrive(0,0,0,true);
+                    if (missedFrames > MISSED_FRAMES_LIMIT) {
+                        follower.setTeleOpDrive(0, 0, 0, true);
+                        state = State.SEARCH;
+                        totalTurned = 0;
+                        bestArea = 0;
+                        bestPose = null;
+                        lastSampleHeading = 0;
+                        missedFrames = 0;
+                        break;
+                    }
+                } else {
+                    missedFrames = 0;
+                }
+
+                if (horizontalDistance <= STOP_DISTANCE) {
+                    follower.setTeleOpDrive(0, 0, 0, true);
                     state = State.STOP;
                     break;
                 }
-                    if (!targetDetected) {
-                        missedFrames++;
-                        if (missedFrames > MISSED_FRAMES_LIMIT && distanceToTarget > STOP_DISTANCE * 3) {
-                            follower.setTeleOpDrive(0,0,0,true);
-                            state = State.SEARCH;
-                            totalTurned = 0;
-                            bestArea = 0;
-                            bestPose = null;
-                            lastSampleHeading = 0;
-                            missedFrames = 0;
-                            break;
-                        }
-                    } else {
-                        missedFrames = 0;
-                    }
 
-                double approachHeading = approachPose.getHeading();
-                double forward = adx * Math.cos(approachHeading) + ady * Math.sin(approachHeading);
-                double strafe = -adx * Math.sin(approachHeading) + ady * Math.cos(approachHeading);
+                double forwardPower =
+                        (horizontalDistance > 12) ? FAST_FORWARD : SLOW_FORWARD;
 
-                double magnitude = Math.hypot(forward, strafe);
-                if (magnitude > 0) {
-                    forward /= magnitude;
-                    strafe /= magnitude;
-                }
+                double turn = -TURN_KP * tx * 4;
 
-                telemetry.addData("AP forward", forward);
-                telemetry.addData("AP strafe", strafe);
-
-
-                double correction = 0;
-                if (targetDetected) {
-                    correction = -TURN_KP * tx * 4;
-                    correction = Math.max(-MIN_TURN_POWER, Math.min(MIN_TURN_POWER, correction));
-                }
-
-                double forwardPower = (distanceToTarget > 12.0) ? FAST_FORWARD : SLOW_FORWARD;
+                turn = Math.max(-MAX_TURN_POWER,
+                        Math.min(MAX_TURN_POWER, turn));
 
                 follower.setTeleOpDrive(
-                        forward * forwardPower,
-                        strafe * forwardPower + correction,
-                        0,
-                        true
-                );
+                        forwardPower, 0, turn, true);
 
                 break;
             }
