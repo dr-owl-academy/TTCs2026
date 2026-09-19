@@ -5,12 +5,11 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import java.util.List;
-import java.util.ArrayList;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 //
 @Autonomous
@@ -18,22 +17,15 @@ public class river_yellowball_limelight extends OpMode {
 
     private Follower follower;
     private Limelight3A limelight;
-    private List<Double> fieldAngles = new ArrayList<>();
     private double lastSampleHeading = 0;
-    private double turnIntegral = 0;
-    private double lastTurnError = 0;
-    private long lastTurnTimeNs = 0;
     private long turnStartTimeNs = 0;
     private final Pose startPose = new Pose(72, 72, Math.PI / 2);
     //limelight pipeline used to tune green ball
     private static final int YELLOW_BALL_PIPELINE = 9;
     private double totalTurned = 0;
     private double previousHeading = 0;
-    private static final double TURN_KP_PID = 1.0;
-    private static final double TURN_KI = 0.0;
-    private static final double TURN_KD = 0.01;
-    private static final double TURN_KF = 0.02;
-
+    private int missedFrames = 0;
+    private static final int MISSED_FRAMES_LIMIT = 40;
 
     // CAMERA GEOMETRY
     //relative height camera to ball center
@@ -56,11 +48,7 @@ public class river_yellowball_limelight extends OpMode {
     private static final double TURN_KP = 0.015;
 
     private static final double MAX_TURN_POWER = 0.20;
-    private static final double MIN_TURN_POWR = 0.08;
-    private static final double FINE_MIN_TURN_POWER = 0.04;
-    private int missedFrames = 0;
-    private double lastSeenArea = 0;
-    private static final double CLOSE_AREA = 0.6;
+    private static final double MIN_TURN_POWER = 0.08;
 
     // LIMELIGHT DATA
 
@@ -70,10 +58,17 @@ public class river_yellowball_limelight extends OpMode {
     private double ty = 0;
     private double ta = 0;
     private double bestArea = 0;
-    private double bestFieldAngle = 0;
-    private double targetFieldAngle = 0;
 
     private double horizontalDistance = Double.POSITIVE_INFINITY;
+
+    // BEST BALL OBSERVATION (captured during SEARCH)
+    private double bestDistance = Double.POSITIVE_INFINITY;
+    private double bestTx = 0;
+    private Pose bestPose = null;
+
+    // CALCULATED FIELD TARGET
+    private double targetX = 0;
+    private double targetY = 0;
 
 
     // STATE MACHINE
@@ -213,11 +208,10 @@ public class river_yellowball_limelight extends OpMode {
             case SEARCH:
                 double heading = Math.toDegrees(follower.getPose().getHeading());
 
-                if (fieldAngles.isEmpty() && lastSampleHeading == 0) {
+                if (totalTurned == 0 && lastSampleHeading == 0) {
                     previousHeading = heading;
-                    totalTurned = 0;
                     bestArea = 0;
-                    bestFieldAngle = 0;
+                    bestPose = null;
                 }
                 double delta = heading - previousHeading;
 
@@ -227,15 +221,31 @@ public class river_yellowball_limelight extends OpMode {
                 totalTurned += Math.abs(delta);
                 previousHeading = heading;
 
-                if (Math.abs(heading - lastSampleHeading) >= 2) {
+                if (Math.abs(heading - lastSampleHeading) >= 1) {
 
                     if (targetDetected) {
-                        double ballLocation = heading + tx + CAMERA_HEADING_OFFSET;
-                        fieldAngles.add(ballLocation);
 
-                        if (ta > bestArea) {
-                            bestArea = ta;
-                            bestFieldAngle = ballLocation;
+                        LLResult scanResult = limelight.getLatestResult();
+
+                        if (scanResult != null && scanResult.isValid()) {
+
+                            for (LLResultTypes.ColorResult color : scanResult.getColorResults()) {
+
+                                double candidateArea = color.getTargetArea();
+                                double candidateDistance = calculateHorizontalDistance(color.getTargetYDegrees());
+
+                                if (candidateArea > bestArea && candidateDistance != Double.POSITIVE_INFINITY) {
+                                    bestArea = candidateArea;
+                                    bestTx = color.getTargetXDegrees();
+                                    bestDistance = candidateDistance;
+                                    bestPose = new Pose(
+                                            follower.getPose().getX(),
+                                            follower.getPose().getY(),
+                                            follower.getPose().getHeading()
+                                    );
+                                }
+
+                            };
                         }
                     }
 
@@ -244,43 +254,43 @@ public class river_yellowball_limelight extends OpMode {
 
                 if (totalTurned < 360) {
 
-                        follower.setTeleOpDrive(0, 0, SEARCH_TURN_POWER, true);
+                    follower.setTeleOpDrive(0, 0, SEARCH_TURN_POWER, true);
 
                 } else {
 
                     follower.setTeleOpDrive(0, 0, 0, true);
 
-                    if (bestArea > 0) {
+                    if (bestArea > 0 && bestPose != null) {
 
-                        targetFieldAngle = bestFieldAngle;
+                        calculateTargetPosition();
                         turnStartTimeNs = System.nanoTime();
                         state = State.TURN_TO_TARGET;
 
                     } else {
 
-                            state = State.STOP;
+                        state = State.STOP;
                     }
                 }
                 break;
 
-            case TURN_TO_TARGET:
+            case TURN_TO_TARGET: {
 
-                double currentHeading = Math.toDegrees((follower.getPose().getHeading()));
-                double error = (targetFieldAngle - CAMERA_HEADING_OFFSET) - currentHeading;
+                Pose currentPose = follower.getPose();
+                double dx = targetX - currentPose.getX();
+                double dy = targetY - currentPose.getY();
 
-                while (error > 180) error -= 360;
-                while (error < -180) error += 360;
+                double targetHeadingRad = Math.atan2(dy, dx);
+                double headingErrorRad = targetHeadingRad - currentPose.getHeading();
 
+                while (headingErrorRad > Math.PI) headingErrorRad -= 2 * Math.PI;
+                while (headingErrorRad < -Math.PI) headingErrorRad += 2 * Math.PI;
+
+                double error = Math.toDegrees(headingErrorRad);
                 double turnElapsedSec = (System.nanoTime() - turnStartTimeNs) / 1e9;
-                telemetry.addData("TT Current Heading", currentHeading);
-                telemetry.addData("TT Target Field Angle", targetFieldAngle);
                 telemetry.addData("TT Error", error);
 
-                if (targetDetected && Math.abs(tx) < 3) {
+                if (Math.abs(error) < 3) {
                     follower.setTeleOpDrive(0,0,0, true);
-                    turnIntegral = 0;
-                    lastTurnError = 0;
-                    lastTurnTimeNs = System.nanoTime();
                     state = State.APPROACH;
                     break;
                 }
@@ -288,133 +298,86 @@ public class river_yellowball_limelight extends OpMode {
                 if (turnElapsedSec > 4.0) {
                     follower.setTeleOpDrive(0,0,0, true);
                     state = State.SEARCH;
-                    fieldAngles.clear();
                     totalTurned = 0;
                     bestArea = 0;
-                    bestFieldAngle = 0;
+                    bestPose = null;
                     lastSampleHeading = 0;
                     break;
                 }
 
                 double turn;
-
-                if (targetDetected) {
-
-                    double rawTurn = tx * TURN_KP * 10;
-                    double minPower = (Math.abs(tx) < 3) ? FINE_MIN_TURN_POWER : MIN_TURN_POWR;
-                    if (Math.abs(rawTurn) < minPower) {
-                        turn = Math.copySign(minPower, tx);
+                if (Math.abs(error) < 1) {
+                    turn = 0;
+                } else {
+                    double rawTurn = TURN_KP * error * 4;
+                    if (Math.abs(rawTurn) < MIN_TURN_POWER) {
+                        turn = Math.copySign(MIN_TURN_POWER, error);
                     } else {
                         turn = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, rawTurn));
-                    }
-                } else {
-                    if (Math.abs(error) < 1) {
-                        turn = 0;
-                    } else {
-                    double rawTurn = TURN_KP * error * 4;
-                        if (Math.abs(rawTurn) < MIN_TURN_POWR) {
-                        turn = Math.copySign(MIN_TURN_POWR, error);
-                        } else {
-                            turn = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, rawTurn));
-                        }
                     }
                 }
 
                 follower.setTeleOpDrive(0,0,turn, true);
 
                 break;
+            }
 
             // DRIVE TOWARD BALL
-            case APPROACH:
+            case APPROACH: {
 
-                // Ball disappeared
-                if (!targetDetected) {
+                Pose approachPose = follower.getPose();
+                double adx = targetX - approachPose.getX();
+                double ady = targetY - approachPose.getY();
+                double distanceToTarget = Math.hypot(adx, ady);
 
-                    missedFrames++;
-
-                    if (lastSeenArea >= CLOSE_AREA) {
-                        follower.setTeleOpDrive(0,0,0, true);
-                        state = State.STOP;
-                        break;
-                    }
-
-                    if (missedFrames > 100) {
-                        state = State.SEARCH;
-                        fieldAngles.clear();
-                        totalTurned = 0;
-                        bestArea = 0;
-                        bestFieldAngle = 0;
-                        lastSampleHeading = 0;
-                        follower.setTeleOpDrive(0, 0, SEARCH_TURN_POWER, true);
-
-                    }
-
+                if (distanceToTarget <= STOP_DISTANCE) {
+                    follower.setTeleOpDrive(0,0,0,true);
+                    state = State.STOP;
                     break;
+                }
+                    if (!targetDetected) {
+                        missedFrames++;
+                        if (missedFrames > MISSED_FRAMES_LIMIT && distanceToTarget > STOP_DISTANCE * 3) {
+                            follower.setTeleOpDrive(0,0,0,true);
+                            state = State.SEARCH;
+                            totalTurned = 0;
+                            bestArea = 0;
+                            bestPose = null;
+                            lastSampleHeading = 0;
+                            missedFrames = 0;
+                            break;
+                        }
+                    } else {
+                        missedFrames = 0;
+                    }
 
-                } else {
-                    missedFrames = 0;
-                    lastSeenArea = ta;
+                double approachHeading = approachPose.getHeading();
+                double forward = adx * Math.cos(approachHeading) + ady * Math.sin(approachHeading);
+                double strafe = -adx * Math.sin(approachHeading) + ady * Math.cos(approachHeading);
+
+                double magnitude = Math.hypot(forward, strafe);
+                if (magnitude > 0) {
+                    forward /= magnitude;
+                    strafe /= magnitude;
                 }
 
-
-                // Stop 6 inches away horizontally
-               // if (horizontalDistance <= STOP_DISTANCE) {
-
-                 //   follower.setTeleOpDrive(0,0,0,true );
-
-                   // state = State.STOP;
-
-                   // break;
-                // }
-
-
-                // -------------------------
-                // STEERING (PIDF)
-                // -------------------------
-
-                long now = System.nanoTime();
-                double dt = (now - lastTurnTimeNs) / 1e9;
-                if (dt <= 0) dt = 0.001;
-
-                double errorRad = Math.toRadians(tx);
-
-                turnIntegral += errorRad * dt;
-                turnIntegral = Math.max(-1.0, Math.min(1.0, turnIntegral));
-                double derivative = (errorRad - lastTurnError) / dt;
-
-                double turnpower = (TURN_KP_PID * errorRad) + (TURN_KI * turnIntegral) + (TURN_KD * derivative) + TURN_KF;
-
-                turnpower = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, turnpower));
-
-                lastTurnError = errorRad;
-                lastTurnTimeNs = now;
-
-
-                // -------------------------
-                // FORWARD SPEED
-                // -------------------------
-
-                double forwardPower;
-
-
-                if (horizontalDistance > 12.0) {
-
-                    forwardPower =  FAST_FORWARD;
-
-                } else {
-
-                    forwardPower =  SLOW_FORWARD;
+                double correction = 0;
+                if (targetDetected) {
+                    correction = -TURN_KP * tx;
+                    correction = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, correction));
                 }
 
+                double forwardPower = (distanceToTarget > 12.0) ? FAST_FORWARD : SLOW_FORWARD;
 
                 follower.setTeleOpDrive(
-                        forwardPower,
+                        forward * forwardPower,
+                        strafe * forwardPower + correction,
                         0,
-                        turnpower,
                         true
                 );
 
                 break;
+            }
 
 
             // =============================================
@@ -427,6 +390,19 @@ public class river_yellowball_limelight extends OpMode {
 
                 break;
         }
+    }
+
+    // =====================================================
+    // TARGET POSITION CALCULATION
+    // =====================================================
+
+    private void calculateTargetPosition() {
+        double robotHeadingDeg = Math.toDegrees(bestPose.getHeading());
+        double bearingDeg = robotHeadingDeg + bestTx + CAMERA_HEADING_OFFSET;
+        double bearingRad = Math.toRadians(bearingDeg);
+
+        targetX = bestPose.getX() + bestDistance * Math.cos(bearingRad);
+        targetY = bestPose.getY() + bestDistance * Math.sin(bearingRad);
     }
 
 
