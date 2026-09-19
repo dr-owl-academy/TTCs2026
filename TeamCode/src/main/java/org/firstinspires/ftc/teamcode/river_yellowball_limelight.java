@@ -361,6 +361,10 @@ public class river_yellowball_limelight extends OpMode {
                     strafe /= magnitude;
                 }
 
+                telemetry.addData("AP forward", forward);
+                telemetry.addData("AP strafe", strafe);
+
+
                 double correction = 0;
                 if (targetDetected) {
                     correction = -TURN_KP * tx;
