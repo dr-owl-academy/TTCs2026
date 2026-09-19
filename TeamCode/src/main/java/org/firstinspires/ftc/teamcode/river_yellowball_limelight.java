@@ -43,7 +43,7 @@ public class river_yellowball_limelight extends OpMode {
 
     private static final double STOP_DISTANCE = 1.0;
 
-    private static final double CAMERA_HEADING_OFFSET = 42;
+    private static final double CAMERA_HEADING_OFFSET = 0;
 
     // MOVEMENT SETTINGS
 
