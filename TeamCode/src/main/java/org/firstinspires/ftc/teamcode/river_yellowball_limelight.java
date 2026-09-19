@@ -368,7 +368,7 @@ public class river_yellowball_limelight extends OpMode {
                 double correction = 0;
                 if (targetDetected) {
                     correction = -TURN_KP * tx * 4;
-                    correction = Math.max(-MAX_TURN_POWER, Math.min(MAX_TURN_POWER, correction));
+                    correction = Math.max(-MIN_TURN_POWER, Math.min(MIN_TURN_POWER, correction));
                 }
 
                 double forwardPower = (distanceToTarget > 12.0) ? FAST_FORWARD : SLOW_FORWARD;
