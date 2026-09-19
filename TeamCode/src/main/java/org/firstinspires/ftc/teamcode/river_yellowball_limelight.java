@@ -328,7 +328,7 @@ public class river_yellowball_limelight extends OpMode {
                 if (!targetDetected) {
                     missedFrames++;
 
-                    if (missedFrames > MISSED_FRAMES_LIMIT) {
+                    if (missedFrames > 10) {
                         follower.setTeleOpDrive(0, 0, 0, true);
                         state = State.SEARCH;
                         totalTurned = 0;
