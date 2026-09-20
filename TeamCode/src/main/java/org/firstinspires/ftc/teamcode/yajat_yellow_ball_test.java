@@ -330,6 +330,29 @@ public class yajat_yellow_ball_test extends OpMode {
             // DRIVE TOWARD BALL
             case DriveToCluster:
                 Pose currentpose = follower.getPose();
+                //update pos from Current view
+                if (targetDetected) {
+
+                    double currentDistance = calculateHorizontalDistance(ty);
+
+                    if (currentDistance != Double.POSITIVE_INFINITY) {
+
+                        double targetBearing =
+                                currentpose.getHeading()
+                                        + Math.toRadians(tx)
+                                        - Math.toRadians(42);
+
+                        clusterX =
+                                currentpose.getX()
+                                        + currentDistance * Math.cos(targetBearing);
+
+                        clusterY =
+                                currentpose.getY()
+                                        + currentDistance * Math.sin(targetBearing);
+                    }
+                }
+
+
                 //difference between bot and target
                 double dx = clusterX - currentpose.getX();
                 double dy = clusterY - currentpose.getY();
