@@ -351,7 +351,7 @@ public class river_yellowball_limelight extends OpMode {
                 double forwardPower =
                         (horizontalDistance > 12) ? FAST_FORWARD : SLOW_FORWARD;
 
-                double turn = -TURN_KP * tx * 4;
+                double turn = -TURN_KP * tx * 2;
 
                 turn = Math.max(-MAX_TURN_POWER,
                         Math.min(MAX_TURN_POWER, turn));
