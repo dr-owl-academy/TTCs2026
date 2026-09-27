@@ -21,10 +21,10 @@ public class ShoootCode extends OpMode {
     @Override
     public void loop() {
        if (gamepad1.dpad_up){
-           shooterpower +=0.01;
+           shooterpower +=0.05;
        }
        if (gamepad1.dpad_down){
-           shooterpower -=0.01;
+           shooterpower -=0.05;
        }
        shooterpower = Math.max(
                0.0,
