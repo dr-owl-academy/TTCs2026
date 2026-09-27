@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name= "River_intake_speed")
 public class river_intake_speed extends OpMode {
@@ -18,6 +19,7 @@ public class river_intake_speed extends OpMode {
     public void init() {
 
         intake = hardwareMap.get(DcMotor.class, "intake");
+        intake.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Intake Power", "%.1f", intakePower);
         telemetry.update();
