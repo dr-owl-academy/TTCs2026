@@ -1,45 +1,43 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.linearOpMode;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
-public class river_intake_speed extends LinearOpMode {
+@TeleOp(name= "River_intake_speed")
+public class river_intake_speed extends OpMode {
 
     DcMotor intake;
 
+    double intakePower = 0.0;
+
+    boolean lastUp = false;
+    boolean lastDown = false;
+
     @Override
-    public void runOpMode() {
+    public void init() {
 
         intake = hardwareMap.get(DcMotor.class, "intake");
 
-        double intakePower = 0.0;
-
-        telemetry.addData("Intake Power", intakePower);
+        telemetry.addData("Intake Power", "%.1f", intakePower);
         telemetry.update();
+    }
 
-        waitForStart();
+    @Override
+    public void loop() {
 
-        while (opModeIsActive()) {
-
-            // Increase power
-            if (gamepad1.dpad_up) {
-                intakePower += 0.1;
-                sleep(150);
-            }
-
-            intakePower = Math.max(-1.0, Math.min(1.0, intakePower));
-
-            intake.setPower(intakePower);
-
-            telemetry.addData("Intake Power", "%.If", intakePower);
-            telemetry.update();
+        if (gamepad1.dpad_up && !lastUp) {
+            intakePower -= 0.1;
         }
 
+        intakePower = Math.max(-1.0, Math.min(1.0, intakePower));
+
+        intake.setPower(intakePower);
+
+        lastUp = gamepad1.dpad_up;
+        lastDown = gamepad1.dpad_down;
+
+        telemetry.addData("Intake Power", "%1f", intakePower);
+        telemetry.update();
     }
 }
