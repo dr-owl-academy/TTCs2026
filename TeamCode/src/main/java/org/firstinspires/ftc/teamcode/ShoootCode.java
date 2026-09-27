@@ -5,9 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name = "shooter_code")
+@TeleOp(name = "yajat_shooter_code")
 public class ShoootCode extends OpMode {
     DcMotor shooterflywheel;
+    double shooterpower = 0.5;
 
     @Override
     public void init() {
@@ -19,8 +20,17 @@ public class ShoootCode extends OpMode {
 
     @Override
     public void loop() {
-        double power = gamepad1.right_trigger;
-        shooterflywheel.setPower(power);
+       if (gamepad1.dpad_up){
+           shooterpower +=0.01;
+       }
+       if (gamepad1.dpad_down){
+           shooterpower -=0.01;
+       }
+       shooterpower = Math.max(
+               0.0,
+               Math.min(1.0,shooterpower)
+       );
+        shooterflywheel.setPower(shooterpower);
     }
 }
 
