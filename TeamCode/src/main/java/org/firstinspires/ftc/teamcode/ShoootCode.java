@@ -31,6 +31,8 @@ public class ShoootCode extends OpMode {
                Math.min(1.0,shooterpower)
        );
         shooterflywheel.setPower(shooterpower);
+        telemetry.addData( "shooter power",shooterpower);
+        telemetry.update();
     }
 }
 
