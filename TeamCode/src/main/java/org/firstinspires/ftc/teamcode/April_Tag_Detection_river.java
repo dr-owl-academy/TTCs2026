@@ -24,7 +24,7 @@ public class April_Tag_Detection_river extends OpMode {
 
     private long lastPipelineSwitchTime = 0;
 
-    private static final long PIPELINE_SWITCH_TIME = 500;
+    private static final long PIPELINE_SWITCH_TIME = 100;
 
     @Override
     public void init() {
