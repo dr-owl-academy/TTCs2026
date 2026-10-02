@@ -87,14 +87,14 @@ public class April_Tag_Detection_river extends OpMode {
 
         if (cell30to33Detected && !cell34to37Detected) {
 
-            telemetry.addLine("34-37 CELL: UP");
-            telemetry.addLine("30-33 CELL: DOWN");
+            telemetry.addLine("34-37 CELL: Tilted Away");
+            telemetry.addLine("30-33 CELL: Tilted Toward");
         }
 
         else if (cell34to37Detected && !cell30to33Detected) {
 
-            telemetry.addLine("34-37 CELL: DOWN");
-            telemetry.addLine("30-33 CELL: UP");
+            telemetry.addLine("34-37 CELL: Tilted Toward");
+            telemetry.addLine("30-33 CELL: Tilted Away");
         }
 
         else {
