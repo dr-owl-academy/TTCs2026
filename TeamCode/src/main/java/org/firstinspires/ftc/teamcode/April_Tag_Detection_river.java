@@ -53,6 +53,10 @@ public class April_Tag_Detection_river extends OpMode {
 
         Pose currentPose = follower.getPose();
 
+        telemetry.addData("Odometry X", currentPose.getX());
+        telemetry.addData("Odometry Y", currentPose.getY());
+        telemetry.addData("Odometry Heading", currentPose.getHeading());
+
         LLResult result = limelight.getLatestResult();
 
         if (result != null && result.isValid()) {
@@ -75,7 +79,7 @@ public class April_Tag_Detection_river extends OpMode {
                     redCell30to33 = true;
 
                     if (area > largest30to33Area){
-                        largest34to37Area = area;
+                        largest30to33Area = area;
                     }
                 }
 
