@@ -36,7 +36,7 @@ public class April_Tag_Detection_river extends OpMode {
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose());
+        follower.setStartingPose(new Pose(-60.77, -10.24, -3.1242));
 
         limelight.pipelineSwitch(PIPELINE_30_TO_33);
 
@@ -53,9 +53,11 @@ public class April_Tag_Detection_river extends OpMode {
 
         Pose currentPose = follower.getPose();
 
-        telemetry.addData("Odometry X", currentPose.getX());
-        telemetry.addData("Odometry Y", currentPose.getY());
-        telemetry.addData("Odometry Heading", currentPose.getHeading());
+        boolean odometryConfirmed =
+                Math.abs(currentPose.getX() - (-60.77)) <= 3 &&
+                Math.abs(currentPose.getY() - (-10.24)) <= 3;
+
+        telemetry.addData("Confirmed", odometryConfirmed);
 
         LLResult result = limelight.getLatestResult();
 
@@ -92,30 +94,33 @@ public class April_Tag_Detection_river extends OpMode {
                 }
             }
 
-            if (redCell30to33 && !redCell34to37) {
+            if (odometryConfirmed) {
 
-                cell30to33Detected = true;
-                cell34to37Detected = false;
-            }
-
-            else if (redCell34to37 && !redCell30to33) {
-
-                cell30to33Detected = false;
-                cell34to37Detected = true;
-            }
-
-            else if (redCell30to33 && redCell34to37) {
-
-                if (largest30to33Area > largest34to37Area) {
+                if (redCell30to33 && !redCell34to37) {
 
                     cell30to33Detected = true;
                     cell34to37Detected = false;
                 }
 
-                else {
+                else if (redCell34to37 && !redCell30to33) {
 
                     cell30to33Detected = false;
                     cell34to37Detected = true;
+                }
+
+                else if (redCell30to33 && redCell34to37) {
+
+                    if (largest30to33Area > largest34to37Area) {
+
+                        cell30to33Detected = true;
+                        cell34to37Detected = false;
+                    }
+
+                    else {
+
+                        cell30to33Detected = false;
+                        cell34to37Detected = true;
+                    }
                 }
             }
 
