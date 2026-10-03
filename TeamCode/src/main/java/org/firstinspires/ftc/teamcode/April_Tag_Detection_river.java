@@ -28,7 +28,7 @@ public class April_Tag_Detection_river extends OpMode {
 
     private long lastPipelineSwitchTime = 0;
 
-    private static final long PIPELINE_SWITCH_TIME = 100;
+    private static final long PIPELINE_SWITCH_TIME = 150;
 
 
     @Override
@@ -94,7 +94,7 @@ public class April_Tag_Detection_river extends OpMode {
                 }
             }
 
-            if (odometryConfirmed) {
+
 
                 if (redCell30to33 && !redCell34to37) {
 
@@ -122,7 +122,7 @@ public class April_Tag_Detection_river extends OpMode {
                         cell34to37Detected = true;
                     }
                 }
-            }
+
 
             telemetry.addData("Total Tags", tags.size());
         }
