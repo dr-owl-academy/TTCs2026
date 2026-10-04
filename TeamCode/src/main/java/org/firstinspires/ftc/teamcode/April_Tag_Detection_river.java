@@ -11,20 +11,24 @@ import com.pedropathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.List;
-
+// THIS IS A TEST: START AT 0, 0, 90 AND MOVE TO POSITION
 @Autonomous(name = "april_tag_detection_river", group = "Vision")
 public class April_Tag_Detection_river extends OpMode {
 
     private Limelight3A limelight;
     private Follower follower;
 
+    private Pose startingPose;
+    private double startX;
+    private double startY;
+
     private static final int PIPELINE_30_TO_33 = 7;
     private static final int PIPELINE_34_TO_37 = 8;
 
     private int currentPipeline = PIPELINE_30_TO_33;
 
-    private boolean cell30to33Detected = false;
-    private boolean cell34to37Detected = false;
+   // private boolean cell30to33Detected = false;
+   // private boolean cell34to37Detected = false;
 
     private long lastPipelineSwitchTime = 0;
 
@@ -36,7 +40,11 @@ public class April_Tag_Detection_river extends OpMode {
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(-60.77, -10.24, -3.1242));
+        follower.setStartingPose(new Pose(0,0, Math.PI / 2));
+        follower.update();
+        startingPose = follower.getPose();
+        startX = startingPose.getX();
+        startY = startingPose.getY();
 
         limelight.pipelineSwitch(PIPELINE_30_TO_33);
 
@@ -53,11 +61,15 @@ public class April_Tag_Detection_river extends OpMode {
 
         Pose currentPose = follower.getPose();
 
-        boolean odometryConfirmed =
-                Math.abs(currentPose.getX() - (-60.77)) <= 3 &&
-                Math.abs(currentPose.getY() - (-10.24)) <= 3;
+        telemetry.addData("X", currentPose.getX());
+        telemetry.addData("Y", currentPose.getY());
+        telemetry.addData("Heading", currentPose.getHeading());
 
-        telemetry.addData("Confirmed", odometryConfirmed);
+        // boolean odometryConfirmed =
+              //  Math.abs(currentPose.getX() - (-60.77)) <= 3 &&
+                // Math.abs(currentPose.getY() - (-10.24)) <= 3;
+
+      //  telemetry.addData("Confirmed", odometryConfirmed);
 
         LLResult result = limelight.getLatestResult();
 
@@ -95,58 +107,38 @@ public class April_Tag_Detection_river extends OpMode {
             }
 
 
+            if (redCell30to33 && !redCell34to37) {
 
-                if (redCell30to33 && !redCell34to37) {
+                telemetry.addLine("30-33 CELL: Tilted Toward");
+                telemetry.addLine("34-37 CELL: Tilted Away");
+            }
 
-                    cell30to33Detected = true;
-                    cell34to37Detected = false;
+            else if (redCell34to37 && !redCell30to33) {
+
+                telemetry.addLine("30-33 CELL: Tilted Away");
+                telemetry.addLine("34-37 CELL: Tilted Toward");
+            }
+
+            else if (redCell30to33 && redCell34to37) {
+
+                if (largest30to33Area > largest34to37Area) {
+
+                    telemetry.addLine("30-33 CELL: Tilted Toward");
+                    telemetry.addLine("34-37 CELL: Tilted Away");
                 }
 
-                else if (redCell34to37 && !redCell30to33) {
+                else {
 
-                    cell30to33Detected = false;
-                    cell34to37Detected = true;
+                    telemetry.addLine("30-33 CELL: Tilted Away");
+                    telemetry.addLine("34-37 CELL: Tilted Toward");
                 }
+            }
 
-                else if (redCell30to33 && redCell34to37) {
-
-                    if (largest30to33Area > largest34to37Area) {
-
-                        cell30to33Detected = true;
-                        cell34to37Detected = false;
-                    }
-
-                    else {
-
-                        cell30to33Detected = false;
-                        cell34to37Detected = true;
-                    }
-                }
-
+            else {
+                telemetry.addLine("No Cell Detected");
+            }
 
             telemetry.addData("Total Tags", tags.size());
-        }
-
-        else {
-
-            telemetry.addLine("No Valid Result");
-        }
-
-        if (cell30to33Detected && !cell34to37Detected) {
-
-            telemetry.addLine("34-37 CELL: Tilted Away");
-            telemetry.addLine("30-33 CELL: Tilted Toward");
-        }
-
-        else if (cell34to37Detected && !cell30to33Detected) {
-
-            telemetry.addLine("34-37 CELL: Tilted Toward");
-            telemetry.addLine("30-33 CELL: Tilted Away");
-        }
-
-        else {
-
-            telemetry.addLine("No Red CELL Detected");
         }
 
         long currentTime = System.currentTimeMillis();
