@@ -18,7 +18,7 @@ public class ShoootCode extends OpMode {
         shooterflywheel=hardwareMap.get
                 (DcMotor.class,"flywheel");
         shooterflywheel.setDirection(DcMotorSimple.Direction.REVERSE);
-        ShooterHood = hardwareMap.get(Servo.class,"");
+        ShooterHood = hardwareMap.get(Servo.class,"Servo");
         ShooterHood.setPosition(HoodPower);
 
     }
