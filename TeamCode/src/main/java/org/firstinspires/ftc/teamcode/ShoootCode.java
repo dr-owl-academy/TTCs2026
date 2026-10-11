@@ -11,7 +11,7 @@ public class ShoootCode extends OpMode {
     DcMotor shooterflywheel;
     Servo ShooterHood;
     double shooterpower = 0.5;
-    double HoodPower = 0.5;
+    double HoodPos = 0.0;
 
     @Override
     public void init() {
@@ -19,7 +19,7 @@ public class ShoootCode extends OpMode {
                 (DcMotor.class,"flywheel");
         shooterflywheel.setDirection(DcMotorSimple.Direction.REVERSE);
         ShooterHood = hardwareMap.get(Servo.class,"Servo");
-        ShooterHood.setPosition(HoodPower);
+        ShooterHood.setPosition(HoodPos);
 
     }
 
@@ -36,18 +36,18 @@ public class ShoootCode extends OpMode {
                Math.min(1.0,shooterpower)
        );
        if (gamepad1.dpad_right){
-           HoodPower +=0.02;
+           HoodPos +=0.02;
        }
        if (gamepad1.dpad_left){
-           HoodPower -=0.02;
+           HoodPos -=0.02;
        }
-       HoodPower = Math.max(0.0,Math.min(1.0,HoodPower));
-       ShooterHood.setPosition(HoodPower);
+       HoodPos = Math.max(0.0,Math.min(1.0, HoodPos));
+       ShooterHood.setPosition(HoodPos);
 
 
        shooterflywheel.setPower(shooterpower);
         telemetry.addData( "shooter power",shooterpower);
-        telemetry.addData("Hood Pos",HoodPower);
+        telemetry.addData("Hood Pos", HoodPos);
         telemetry.update();
     }
 }
