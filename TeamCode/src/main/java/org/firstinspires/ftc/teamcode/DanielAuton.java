@@ -14,10 +14,10 @@ public class DanielAuton extends OpMode {
 
     // Finite state machine states.
     private enum AutoState {
-        START_TURN_TO_180,
-        WAIT_FOR_TURN_TO_180,
-        START_DRIVE_TO_TARGET,
-        WAIT_FOR_DRIVE_TO_TARGET,
+        PATH1,
+        PATH2,
+        PATH3,
+        PATH4,
         COMPLETE
     }
 
@@ -27,11 +27,18 @@ public class DanielAuton extends OpMode {
     private PathChain driveToTarget;
 
     // Starting FSM state.
-    private AutoState autoState = AutoState.START_TURN_TO_180;
+    private AutoState autoState = AutoState.PATH1;
 // Movements for FSM
-    private static final Pose START_POSE = new Pose(72,72,Math.toRadians(90) );
-    private static final Pose DRIVE_START_POSE = new Pose(72,72,Math.toRadians(180));
-    private static final Pose TARGET_POSE = new Pose(24,72, Math.toRadians(180));
+    private static final Pose START_POSE = new Pose(104,132,Math.toRadians(-90) );
+    private static final Pose DRIVE_START_POSE = new Pose(72,72,Math.toRadians(-90));
+    private static final Pose TARGET_POSE = new Pose(129.587,130.006, Math.toRadians(103));
+    private static final Pose FOURTH_POSE = new Pose(129.587,130.006, Math.toRadians(103));
+    private static final Pose FIFTH_POSE = new Pose(129.587,130.006, Math.toRadians(103));
+    private static final Pose SIXTH_POSE = new Pose(129.587,130.006, Math.toRadians(103));
+    private static final Pose SEVENTH_POSE = new Pose(129.587,130.006, Math.toRadians(103));
+    private static final Pose EIGHTH_POSE = new Pose(129.587,130.006, Math.toRadians(103));
+    private static final Pose NINTH_POSE = new Pose(129.587,130.006, Math.toRadians(103));
+    private static final Pose TENTH_POSE = new Pose(129.587,130.006, Math.toRadians(103));
 
     @Override
     public void init() {
@@ -95,28 +102,28 @@ public class DanielAuton extends OpMode {
 
         switch (autoState) {
 
-            case START_TURN_TO_180:
+            case PATH1:
                 // Turn in place from 90 degrees to 0 degrees.
                 follower.turnTo( Math.toRadians(180));
-                autoState = AutoState.WAIT_FOR_TURN_TO_180;
+                autoState = AutoState.PATH2;
                 break;
 
-            case WAIT_FOR_TURN_TO_180:
+            case PATH2:
                 // Wait for the turn to finish.
                 if (!follower.isBusy()) {
-                    autoState = AutoState.START_DRIVE_TO_TARGET;
+                    autoState = AutoState.PATH3;
                 }
                 break;
 
-            case START_DRIVE_TO_TARGET:
+            case PATH3:
                 /* Start driving to the target.
                  * true tells Pedro to hold the final pose.
                  */
                 follower.followPath(driveToTarget,true);
-                autoState = AutoState.WAIT_FOR_DRIVE_TO_TARGET;
+                autoState = AutoState.PATH4;
                 break;
 
-            case WAIT_FOR_DRIVE_TO_TARGET:
+            case PATH4:
                 // Wait for the driving path to finish.
                 if (!follower.isBusy()) {
                     autoState = AutoState.COMPLETE;
