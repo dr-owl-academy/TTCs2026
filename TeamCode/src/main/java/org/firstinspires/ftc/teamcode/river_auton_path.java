@@ -38,10 +38,10 @@ public class river_auton_path extends OpMode {
     // =========================================
 
     private static final Pose START_POSE =
-            new Pose(7.9659, 82.2141, Math.toRadians(-90));
+            new Pose(7.9659, 82.2141, Math.toRadians(90));
 
     private static final Pose DRIVE_START_POSE =
-            new Pose(56.1675, 27.2415, Math.toRadians(16.4466));
+            new Pose(56.1674, 27.2415, Math.toRadians(16.4466));
 
     private static final Pose TARGET_POSE =
             new Pose(7.6548, 58.7622, Math.toRadians(0));
@@ -50,13 +50,13 @@ public class river_auton_path extends OpMode {
             new Pose(30.8644, 19.3067, Math.toRadians(0));
 
     private static final Pose FIFTH_POSE =
-            new Pose(8.8052, 9.5052, Math.toRadians(-178.8225));
+            new Pose(8.8052, 9.5052, Math.toRadians(178.8225));
 
     private static final Pose SIXTH_POSE =
             new Pose(41.5807, 8.737, Math.toRadians(0));
 
     private static final Pose SEVENTH_POSE =
-            new Pose(18.4474, 29.5971, Math.toRadians(-64.3634));
+            new Pose(18.4474, 29.5971, Math.toRadians(64.3634));
 
     private static final Pose EIGHTH_POSE =
             new Pose(10.1652, 46.5415, Math.toRadians(-177.4424));
@@ -64,8 +64,8 @@ public class river_auton_path extends OpMode {
     private static final Pose NINTH_POSE =
             new Pose(38.323, 47.8867, Math.toRadians(0));
 
-   // private static final Pose TENTH_POSE =
- //           new Pose(126.679, 47.832, Math.toRadians(-82));
+    //private static final Pose TENTH_POSE =
+      //      new Pose(126.679, 47.832, Math.toRadians(-82));
 
 
     @Override
