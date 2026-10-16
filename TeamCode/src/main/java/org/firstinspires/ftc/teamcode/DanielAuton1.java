@@ -41,7 +41,7 @@ public class DanielAuton1 extends OpMode {
             new Pose(104, 132, Math.toRadians(-90));
 
     private static final Pose DRIVE_START_POSE =
-            new Pose(72, 72, Math.toRadians(-90));
+            new Pose(104, 132, Math.toRadians(103));
 
     private static final Pose TARGET_POSE =
             new Pose(129.587, 130.006, Math.toRadians(103));
