@@ -38,7 +38,7 @@ public class river_auton_path extends OpMode {
     // =========================================
 
     private static final Pose START_POSE =
-            new Pose(7.9659, 82.2141, Math.toRadians(90));
+            new Pose(7.9659, 82.2141, Math.toRadians(-90));
 
     private static final Pose DRIVE_START_POSE =
             new Pose(56.1675, 27.2415, Math.toRadians(16.4466));
