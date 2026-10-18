@@ -15,12 +15,12 @@ public class ShoootCode extends OpMode {
 
 
     // Hood servo position constraints
-    final double MIN_HOOD_POS = 0.0;
-    final double MAX_HOOD_POS = 1.0;
+    final double MIN_HOOD_POS = 0.00278;
+    final double MAX_HOOD_POS = 0.02778;
 
     // Adjustment increments
     final double SHOOTER_STEP = 0.05;
-    final double HOOD_STEP = 0.02;
+    final double HOOD_STEP = 0.00278;
 
     boolean lastDpadUp = false;
     boolean lastDpadDown = false;
@@ -55,6 +55,9 @@ public class ShoootCode extends OpMode {
         if (gamepad1.dpad_left && !lastDpadLeft) {
             HoodPos -= HOOD_STEP;
         }
+        HoodPos = Math.max(
+                MIN_HOOD_POS,
+                Math.min(MAX_HOOD_POS, HoodPos));
 
 // Save current button states for the next loop
         lastDpadUp = gamepad1.dpad_up;
