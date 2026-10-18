@@ -13,6 +13,20 @@ public class ShoootCode extends OpMode {
     double shooterpower = 0.5;
     double HoodPos = 0.0;
 
+
+    // Hood servo position constraints
+    final double MIN_HOOD_POS = 0.0;
+    final double MAX_HOOD_POS = 1.0;
+
+    // Adjustment increments
+    final double SHOOTER_STEP = 0.05;
+    final double HOOD_STEP = 0.02;
+
+    boolean lastDpadUp = false;
+    boolean lastDpadDown = false;
+    boolean lastDpadRight = false;
+    boolean lastDpadLeft = false;
+
     @Override
     public void init() {
         shooterflywheel=hardwareMap.get
@@ -25,29 +39,34 @@ public class ShoootCode extends OpMode {
 
     @Override
     public void loop() {
-       if (gamepad1.dpad_up){
-           shooterpower +=0.05;
-       }
-       if (gamepad1.dpad_down){
-           shooterpower -=0.05;
-       }
-       shooterpower = Math.max(
-               0.0,
-               Math.min(1.0,shooterpower)
-       );
-       if (gamepad1.dpad_right){
-           HoodPos +=0.02;
-       }
-       if (gamepad1.dpad_left){
-           HoodPos -=0.02;
-       }
-       HoodPos = Math.max(0.0,Math.min(1.0, HoodPos));
-       ShooterHood.setPosition(HoodPos);
+        if (gamepad1.dpad_up && !lastDpadUp) {
+            shooterpower += SHOOTER_STEP;
+        }
+
+        if (gamepad1.dpad_down && !lastDpadDown) {
+            shooterpower -= SHOOTER_STEP;
+        }
+
+// Hood position
+        if (gamepad1.dpad_right && !lastDpadRight) {
+            HoodPos += HOOD_STEP;
+        }
+
+        if (gamepad1.dpad_left && !lastDpadLeft) {
+            HoodPos -= HOOD_STEP;
+        }
+
+// Save current button states for the next loop
+        lastDpadUp = gamepad1.dpad_up;
+        lastDpadDown = gamepad1.dpad_down;
+        lastDpadRight = gamepad1.dpad_right;
+        lastDpadLeft = gamepad1.dpad_left;
 
 
        shooterflywheel.setPower(shooterpower);
         telemetry.addData( "shooter power",shooterpower);
         telemetry.addData("Hood Pos", HoodPos);
+        telemetry.addData("servo position",ShooterHood.getPosition());
         telemetry.update();
     }
 }
