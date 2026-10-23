@@ -16,7 +16,7 @@ public class river_shooter_code extends OpMode {
 
     // Hood servo position constraints
     final double MIN_HOOD_POS = 0.10;
-    final double MAX_HOOD_POS = 0.5;
+    final double MAX_HOOD_POS = 0.46;
 
     // Adjustment increments
     final double SHOOTER_STEP = 0.05;
