@@ -24,12 +24,9 @@ public class AI_identification_Test_yajat extends OpMode {
 
     boolean aiming = false;
     boolean LastA = false;
-    final double TARGET_X = 72;
-    final double TARGET_Y = 72;
     final int AI_pipeline = 0;
     final double AIM_KP = 0.02;
     final double AIM_TOLERENCE=1.5;
-    final double TURN_KP = 0.8;
     final double MAX_TURN = 0.5;
 
     DcMotor frontLeft;
@@ -49,7 +46,7 @@ public class AI_identification_Test_yajat extends OpMode {
         follower.setStartingPose(new Pose(72, 72, Math.PI / 2));
 
         limelight=hardwareMap.get(Limelight3A.class,"limelight");
-        limelight.pipelineSwitch(0);
+        limelight.pipelineSwitch(AI_pipeline);
         limelight.start();
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
