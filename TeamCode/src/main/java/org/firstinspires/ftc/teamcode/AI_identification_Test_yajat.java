@@ -57,6 +57,11 @@ public class AI_identification_Test_yajat extends OpMode {
     @Override
     public void loop(){
         follower.update();
+        if (follower.getPose() == null) {
+            telemetry.addData("Error", "Pedro Pathing pose is null");
+            telemetry.update();
+            return;
+        }
 
         // Detect a new press of A
         if (gamepad1.a && !LastA) {
