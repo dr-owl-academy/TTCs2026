@@ -14,25 +14,13 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import java.util.List;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 
 
 @TeleOp(name = "AI_identification_Test_yajat")
 public class AI_identification_Test_yajat extends OpMode {
-
+    Follower follower;
     Limelight3A limelight;
-    IMU imu;
-    int aimStage = 0;
-// 0 = manual driving
-// 1 = turn to initial heading
-// 2 = Limelight AI aiming
-
-    final double INITIAL_HEADING = 0.0; // degrees
-    final double HEADING_KP = 0.015;
-    final double HEADING_TOLERANCE = 2.0;
 
     boolean aiming = false;
     boolean LastA = false;
@@ -54,6 +42,8 @@ public class AI_identification_Test_yajat extends OpMode {
         backLeft=hardwareMap.get(DcMotor.class,"motorLB");
         backRight=hardwareMap.get(DcMotor.class,"motorRB");
 
+        follower = Constants.createFollower(hardwareMap);
+        follower.setStartingPose(new Pose(72, 72, Math.PI / 2));
 
         limelight=hardwareMap.get(Limelight3A.class,"limelight");
         limelight.pipelineSwitch(AI_pipeline);
@@ -61,23 +51,17 @@ public class AI_identification_Test_yajat extends OpMode {
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        imu = hardwareMap.get(IMU.class, "imu");
-
-        imu.initialize(new IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
-                )
-        ));
-
-        imu.resetYaw();
         }
 
 
     @Override
     public void loop(){
-
+        follower.update();
+        if (follower.getPose() == null) {
+            telemetry.addData("Error", "Pedro Pathing pose is null");
+            telemetry.update();
+            return;
+        }
 
         // Detect a new press of A
         if (gamepad1.a && !LastA) {
@@ -111,7 +95,7 @@ public class AI_identification_Test_yajat extends OpMode {
                     // Stop when the target is centered
                     if (Math.abs(tx) < AIM_TOLERENCE) {
 
-                        driveRobot(0, 0, 0);
+                        follower.setTeleOpDrive(0, 0, 0, true);
                         aiming = false;
 
                     } else {
@@ -123,7 +107,7 @@ public class AI_identification_Test_yajat extends OpMode {
                                 Math.min(MAX_TURN, turn)
                         );
 
-                        driveRobot(0, 0, turn);
+                        follower.setTeleOpDrive(0, 0, turn, true);
                     }
 
                     telemetry.addData("AI Target", best.getClassName());
@@ -131,43 +115,25 @@ public class AI_identification_Test_yajat extends OpMode {
                     telemetry.addData("Horizontal Offset", tx);
 
                 } else {
-                    driveRobot(0, 0, 0);
+                    follower.setTeleOpDrive(0, 0, 0, true);
                     telemetry.addData("AI", "No detections");
                 }
 
             } else {
-                driveRobot(0, 0, 0);
+                follower.setTeleOpDrive(0, 0, 0, true);
                 telemetry.addData("AI", "No valid result");
             }
 
         } else {
 
-            driveRobot(
+            follower.setTeleOpDrive(
                     -gamepad1.left_stick_y,
                     gamepad1.left_stick_x,
-                    gamepad1.right_stick_x
+                    gamepad1.right_stick_x,
+                    true
             );
         }
         telemetry.update();
 
-    }
-    private void driveRobot(double forward, double strafe, double turn) {
-        double frontLeftPower = forward + strafe + turn;
-        double frontRightPower = forward - strafe - turn;
-        double backLeftPower = forward - strafe + turn;
-        double backRightPower = forward + strafe - turn;
-
-        double max = Math.max(
-                1.0,
-                Math.max(
-                        Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
-                        Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))
-                )
-        );
-
-        frontLeft.setPower(frontLeftPower / max);
-        frontRight.setPower(frontRightPower / max);
-        backLeft.setPower(backLeftPower / max);
-        backRight.setPower(backRightPower / max);
     }
 }
