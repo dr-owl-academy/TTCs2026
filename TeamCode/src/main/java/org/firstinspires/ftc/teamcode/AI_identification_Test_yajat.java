@@ -40,10 +40,10 @@ public class AI_identification_Test_yajat extends OpMode {
     @Override
     public void init() {
 
-        frontLeft=hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight=hardwareMap.get(DcMotor.class,"frontRight");
-        backLeft=hardwareMap.get(DcMotor.class,"backLeft");
-        backRight=hardwareMap.get(DcMotor.class,"backRight");
+        frontLeft=hardwareMap.get(DcMotor.class, "motorLF");
+        frontRight=hardwareMap.get(DcMotor.class,"motorRF");
+        backLeft=hardwareMap.get(DcMotor.class,"motorLB");
+        backRight=hardwareMap.get(DcMotor.class,"motorRB");
 
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(72, 72, Math.PI / 2));
