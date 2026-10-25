@@ -80,7 +80,7 @@ public class DanielAuton extends OpMode {
             telemetry.addLine("Autonomous complete" );
         }
 
-        telemetry.update();
+        telemetry.update(); //all the telemetry shown on the driver hub
     }
 
 
