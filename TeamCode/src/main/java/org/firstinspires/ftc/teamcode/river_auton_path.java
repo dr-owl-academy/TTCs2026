@@ -17,6 +17,9 @@ public class river_auton_path extends OpMode {
 
     private Pose[] route;
     private int currentPath = 0;
+    private Pose pathStart;
+    private Pose pathEnd;
+    private int activePath = -1;
 
 
 
@@ -54,7 +57,11 @@ public class river_auton_path extends OpMode {
 
     @Override
     public void start() {
-     currentPath = 0;
+
+        currentPath = 0;
+        activePath = -1;
+        pathStart = null;
+        pathEnd = null;
     }
 
 
@@ -80,6 +87,15 @@ public class river_auton_path extends OpMode {
         telemetry.addData("Path segment", currentPath);
         telemetry.addData("Total segments", route.length - 1);
         telemetry.addData("Follower Busy", follower.isBusy());
+        telemetry.addData("Active Path", activePath);
+
+        if (pathStart != null && pathEnd != null) {
+            telemetry.addData("Start X", pathStart.getX());
+            telemetry.addData("Start Y", pathStart.getY());
+
+            telemetry.addData("End X", pathEnd.getX());
+            telemetry.addData("End Y", pathEnd.getY());
+        }
 //helps with debug, shows if robot is moving or not or if it is still running the path
         if (currentPath >= route.length - 1
             && !follower.isBusy()) {
@@ -129,7 +145,9 @@ public class river_auton_path extends OpMode {
         if (currentPath >= route.length - 1) {
             return;
         }
-
+        activePath = currentPath;
+        pathStart = route[currentPath];
+        pathEnd = route[currentPath + 1];
         PathChain nextPath = follower.pathBuilder()
                 .addPath(new BezierLine(
                         route[currentPath],
