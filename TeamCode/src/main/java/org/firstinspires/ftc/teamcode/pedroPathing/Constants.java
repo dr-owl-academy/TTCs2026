@@ -28,8 +28,8 @@ public class Constants {public static FollowerConstants followerConstants = new 
             .leftRearMotorName("motorLB")
             .leftFrontMotorName("motorLF")
             .leftFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .xVelocity(67.34373766481095)
             .yVelocity(54.946288581908215);
