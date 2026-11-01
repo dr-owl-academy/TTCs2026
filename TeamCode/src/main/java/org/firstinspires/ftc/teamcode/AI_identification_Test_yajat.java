@@ -58,6 +58,7 @@ public class AI_identification_Test_yajat extends OpMode {
     public void loop(){
         follower.update();
         if (follower.getPose() == null) {
+            follower.setTeleOpDrive(0, 0, 0, true);
             telemetry.addData("Error", "Pedro Pathing pose is null");
             telemetry.update();
             return;
