@@ -45,7 +45,7 @@ public class river_auton_path extends OpMode {
 
         // Reduced power for testing.
         follower.setStartingPose(route[0]);
-        follower.setMaxPower(0.5);
+        follower.setMaxPower(0.6);
 
 
         currentPath = 0;
