@@ -36,7 +36,7 @@ public class DanielAuton1 extends OpMode {
 
     private Follower follower;
 
-    private PathChain[] paths = new PathChain[9]; //sets up pathchain for multiple paths
+    private PathChain[] paths = new PathChain[18]; //sets up pathchain for multiple paths
 //start FSM state
     private AutoState autoState = AutoState.PATH1;
 
