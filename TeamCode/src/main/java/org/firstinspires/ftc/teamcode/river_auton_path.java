@@ -26,14 +26,14 @@ public class river_auton_path extends OpMode {
     // All route coordinates, in order
     private void buildPaths() {
         route = new Pose[] {
-                new Pose(32.312, 6.323, Math.toRadians(90)),
-                new Pose(32.561, 10.260, Math.toRadians(86.3837)),
-                new Pose(7.564, 9.559, Math.toRadians(-178.3922)),
-                new Pose(26.111, 32.723, Math.toRadians(51.3174)),
-                new Pose(8.720, 47.890, Math.toRadians(138.9085)),
-                new Pose(38.349, 31.224, Math.toRadians(-29.3562)),
-                new Pose(9.004, 99.407, Math.toRadians(113.2865)),
-                new Pose(11.533, 98.744, Math.toRadians(-14.6857))
+                new Pose(32.3119, 6.323, Math.toRadians(90)),
+                new Pose(32.5607, 10.2601, Math.toRadians(86.3837)),
+                new Pose(7.5644, 9.5585, Math.toRadians(-178.3922)),
+                new Pose(26.1111, 32.723, Math.toRadians(51.3174)),
+                new Pose(8.72, 47.8896, Math.toRadians(138.9085)),
+                new Pose(38.3489, 31.2244, Math.toRadians(-29.3562)),
+                new Pose(9.0037, 99.4074, Math.toRadians(113.2865)),
+                new Pose(11.5333, 98.7444, Math.toRadians(-14.6857))
         };
     }
     @Override
