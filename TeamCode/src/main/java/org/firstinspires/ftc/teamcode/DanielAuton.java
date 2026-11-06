@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "DanielSimpleAuton")
+@Autonomous(name = "DanielSimpleAutonPrototype")
 public class DanielAuton extends OpMode {
 
     // Finite state machine states.

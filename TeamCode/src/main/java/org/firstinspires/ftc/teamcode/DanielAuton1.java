@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "DanielSimpleAuton")
+@Autonomous(name = "DanielSimpleAuton1")
 public class DanielAuton1 extends OpMode {
 
     private enum AutoState {
