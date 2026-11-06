@@ -28,12 +28,12 @@ public class river_auton_path extends OpMode {
         route = new Pose[] {
                 new Pose(32.3119, 6.323, Math.toRadians(90)),
                 new Pose(32.5607, 10.2601, Math.toRadians(86.3837)),
-                new Pose(7.5644, 9.5585, Math.toRadians(-178.3922)),
-                new Pose(26.1111, 32.723, Math.toRadians(51.3174)),
-                new Pose(8.72, 47.8896, Math.toRadians(138.9085)),
-                new Pose(38.3489, 31.2244, Math.toRadians(-29.3562)),
-                new Pose(9.0037, 99.4074, Math.toRadians(113.2865)),
-                new Pose(11.5333, 98.7444, Math.toRadians(-14.6857))
+                new Pose(12.7213, 12.091, Math.toRadians(174.7275)),
+                new Pose(26.1111, 32.723, Math.toRadians(57.017)),
+                new Pose(21.8256, 48.855, Math.toRadians(104.8771)),
+                new Pose(38.3489, 31.2244, Math.toRadians(-46.8569)),
+                new Pose(17.2518, 100.395, Math.toRadians(106.9617)),
+                new Pose(11.5333, 98.7444, Math.toRadians(-163.9003))
         };
     }
     @Override
@@ -121,16 +121,16 @@ public class river_auton_path extends OpMode {
 
 
     // Creates a path that interpolates heading between poses.
-    private PathChain makePath(Pose start, Pose end) {
+    //private PathChain makePath(Pose start, Pose end) {
 
-        return follower.pathBuilder()
-                .addPath(new BezierLine(start, end))
-                .setLinearHeadingInterpolation(
-                        start.getHeading(),
-                        end.getHeading()
-                )
-                .build();
-    }//designs the path builder for auton instead of writing same code for every path
+      //  return follower.pathBuilder()
+        //        .addPath(new BezierLine(start, end))
+          //      .setLinearHeadingInterpolation(
+            //            start.getHeading(),
+              //          end.getHeading()
+                //)
+                // .build();
+  //  }//designs the path builder for auton instead of writing same code for every path
 
 
     // =========================================
