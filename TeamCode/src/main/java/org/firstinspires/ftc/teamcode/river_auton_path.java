@@ -45,7 +45,7 @@ public class river_auton_path extends OpMode {
 
         // Reduced power for testing.
         follower.setStartingPose(route[0]);
-        follower.setMaxPower(0.6);
+        follower.setMaxPower(0.35);
 
 
         currentPath = 0;
@@ -87,6 +87,26 @@ public class river_auton_path extends OpMode {
         telemetry.addData("Path segment", currentPath);
         telemetry.addData("Total segments", route.length - 1);
         telemetry.addData("Follower Busy", follower.isBusy());
+        if (pathEnd != null) {
+            double distance = Math.hypot(
+                    pathEnd.getX() - currentPose.getX(),
+                    pathEnd.getY() - currentPose.getY()
+            );
+
+            telemetry.addData("Distance to Target", "%2f", distance);
+
+        }
+        if (pathEnd != null) {
+            double headingError = Math.toDegrees(
+                    Math.atan2(
+                            Math.sin(pathEnd.getHeading() - currentPose.getHeading()),
+                            Math.cos(pathEnd.getHeading() - currentPose.getHeading())
+                    )
+            );
+
+            telemetry.addData("Heading Error", headingError);
+        }
+
         telemetry.addData("Active Path", activePath);
 
         if (pathStart != null && pathEnd != null) {
