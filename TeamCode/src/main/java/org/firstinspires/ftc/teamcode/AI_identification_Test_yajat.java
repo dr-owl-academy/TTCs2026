@@ -117,11 +117,13 @@ public class AI_identification_Test_yajat extends OpMode {
 
                 } else {
                     follower.setTeleOpDrive(0, 0, 0, true);
+                    aiming=false;
                     telemetry.addData("AI", "No detections");
                 }
 
             } else {
                 follower.setTeleOpDrive(0, 0, 0, true);
+                aiming=false;
                 telemetry.addData("AI", "No valid result");
             }
 
