@@ -81,6 +81,10 @@ public class AI_identification_Test_yajat extends OpMode {
             LLResult result = limelight.getLatestResult();
 
             if (result != null && result.isValid()) {
+                telemetry.addData("Result Valid", true);
+                telemetry.addData("Detection Count",
+                        result.getDetectorResults().size());
+
 
                 List<LLResultTypes.DetectorResult> detections =
                         result.getDetectorResults();
@@ -125,6 +129,7 @@ public class AI_identification_Test_yajat extends OpMode {
                     follower.setTeleOpDrive(0, 0, 0, true);
                     aiming=false;
                     telemetry.addData("AI", "No detections");
+                    telemetry.addData("Result Valid", false);
                 }
 
             } else {
@@ -137,7 +142,7 @@ public class AI_identification_Test_yajat extends OpMode {
 
             follower.setTeleOpDrive(
                     -gamepad1.left_stick_y,
-                    gamepad1.left_stick_x,
+                    -gamepad1.left_stick_x,
                     gamepad1.right_stick_x,
                     true
             );
