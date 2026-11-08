@@ -53,6 +53,12 @@ public class AI_identification_Test_yajat extends OpMode {
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         }
 
+        @Override
+        public void start(){
+            follower.startTeleopDrive();
+            follower.update();
+        }
+
 
     @Override
     public void loop(){
