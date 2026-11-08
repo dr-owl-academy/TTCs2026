@@ -35,6 +35,8 @@ public class DanielAuton1 extends OpMode {
     }
 
     private Follower follower;
+    private Pose debugTarget = START_POSE;
+    private String debugAction = "Waiting to Start";
 
     private PathChain[] paths = new PathChain[18]; //sets up pathchain for multiple paths
 //start FSM state
@@ -234,7 +236,7 @@ public class DanielAuton1 extends OpMode {
 
             case PATH2:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths[1], true);
+                    follower.turnTo(Math.toRadians(-1));
                     autoState = AutoState.PATH3;
                 }
                 break;
@@ -248,7 +250,7 @@ public class DanielAuton1 extends OpMode {
 
             case PATH4:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths[3], true);
+                    follower.turnTo(Math.toRadians(-108));
                     autoState = AutoState.PATH5;
                 }
                 break;
@@ -262,7 +264,7 @@ public class DanielAuton1 extends OpMode {
 
             case PATH6:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths[5], true);
+                    follower.turnTo(Math.toRadians(113));
                     autoState = AutoState.PATH7;
                 }
                 break;
@@ -276,7 +278,7 @@ public class DanielAuton1 extends OpMode {
 
             case PATH8:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths[7], true);
+                    follower.turnTo(Math.toRadians(116));
                     autoState = AutoState.PATH9;
                 }
                 break;
@@ -289,7 +291,7 @@ public class DanielAuton1 extends OpMode {
                 break;
             case PATH10:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths[9], true);
+                    follower.turnTo(Math.toRadians(70));
                     autoState = AutoState.PATH11;
                 }
                 break;
@@ -301,7 +303,7 @@ public class DanielAuton1 extends OpMode {
                 break;
             case PATH12:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths[11], true);
+                    follower.turnTo(Math.toRadians(104));
                     autoState = AutoState.PATH13;
                 }
                 break;
@@ -313,7 +315,7 @@ public class DanielAuton1 extends OpMode {
                 break;
                 case PATH14:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths[13], true);
+                    follower.turnTo(Math.toRadians(119));
                     autoState = AutoState.PATH15;
                 }
                 break;
@@ -325,7 +327,7 @@ public class DanielAuton1 extends OpMode {
                 break;
                 case PATH16:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths[15], true);
+                    follower.turnTo(Math.toRadians(-68));
                     autoState = AutoState.PATH17;
                 }
                 break;
