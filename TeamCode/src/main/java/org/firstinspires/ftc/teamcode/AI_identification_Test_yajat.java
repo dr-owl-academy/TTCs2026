@@ -77,75 +77,58 @@ public class AI_identification_Test_yajat extends OpMode {
         LastA = gamepad1.a;
 
         if (aiming) {
+            telemetry.addData("Mode", "Aiming Mode");
 
             LLResult result = limelight.getLatestResult();
 
             if (result != null && result.isValid()) {
+
+                List<LLResultTypes.ClassifierResult> detections =
+                        result.getClassifierResults();
+
                 telemetry.addData("Result Valid", true);
                 telemetry.addData("Detection Count",
-                        result.getDetectorResults().size());
-
-
-                List<LLResultTypes.DetectorResult> detections =
-                        result.getDetectorResults();
+                        detections == null ? 0 : detections.size());
 
                 if (detections != null && !detections.isEmpty()) {
 
-                    // Choose the detection with the highest confidence
-                    LLResultTypes.DetectorResult best = detections.get(0);
+                    // Find the classification with the highest confidence
+                    LLResultTypes.ClassifierResult best = detections.get(0);
 
-                    for (LLResultTypes.DetectorResult detection : detections) {
+                    for (LLResultTypes.ClassifierResult detection : detections) {
                         if (detection.getConfidence() > best.getConfidence()) {
                             best = detection;
                         }
                     }
 
-                    // Horizontal angle from the camera crosshair to target
-                    double tx = best.getTargetXDegrees();
-
-                    // Stop when the target is centered
-                    if (Math.abs(tx) < AIM_TOLERENCE) {
-
-                        follower.setTeleOpDrive(0, 0, 0, true);
-                        aiming = false;
-
-                    } else {
-
-                        double turn = AIM_KP * tx;
-
-                        turn = Math.max(
-                                -MAX_TURN,
-                                Math.min(MAX_TURN, turn)
-                        );
-
-                        follower.setTeleOpDrive(0, 0, turn, true);
-                    }
-
-                    telemetry.addData("AI Target", best.getClassName());
+                    telemetry.addData("AI Class", best.getClassName());
                     telemetry.addData("Confidence", best.getConfidence());
-                    telemetry.addData("Horizontal Offset", tx);
+
+                    // Classifier cannot provide target direction
+                    follower.setTeleOpDrive(0, 0, 0, true);
 
                 } else {
                     follower.setTeleOpDrive(0, 0, 0, true);
-                    aiming=false;
-                    telemetry.addData("AI", "No detections");
-                    telemetry.addData("Result Valid", false);
+                    aiming = false;
+                    telemetry.addData("AI", "No classifications");
                 }
 
             } else {
                 follower.setTeleOpDrive(0, 0, 0, true);
-                aiming=false;
+                aiming = false;
+                telemetry.addData("Result Valid", false);
                 telemetry.addData("AI", "No valid result");
             }
 
         } else {
-
             follower.setTeleOpDrive(
                     -gamepad1.left_stick_y,
                     -gamepad1.left_stick_x,
                     gamepad1.right_stick_x,
                     true
             );
+
+            telemetry.addData("Mode", "Driving Mode");
         }
         telemetry.update();
 
