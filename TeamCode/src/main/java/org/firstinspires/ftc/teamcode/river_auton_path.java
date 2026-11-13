@@ -10,126 +10,99 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "River Red Auton")
+@Autonomous(name = "River Red Auton", group = "Red")
 public class river_auton_path extends OpMode {
 
-    // The robot's PedroPathing follower.
+    // PedroPathing follower controls the robot's movement.
     private Follower follower;
 
-    // All eight red-side positions, in the order the robot visits them.
-    // Pose format: X position, Y position, heading in radians.
+    // All of the red-side positions, in order.
+    // Heading values must be in radians.
     private static final Pose[] RED_SIDE_POINTS = {
-
             new Pose(32.3119, 6.323, Math.toRadians(90)),
-
             new Pose(32.5607, 10.2601, Math.toRadians(86.3837)),
-
             new Pose(12.7213, 12.091, Math.toRadians(174.7275)),
-
             new Pose(26.1111, 32.723, Math.toRadians(57.017)),
-
             new Pose(21.8256, 48.855, Math.toRadians(104.8771)),
-
             new Pose(38.3489, 31.2244, Math.toRadians(-46.8569)),
-
             new Pose(17.2518, 100.395, Math.toRadians(106.9617)),
-
             new Pose(11.5333, 98.7444, Math.toRadians(-163.9003))
     };
 
-    // There is one path between each pair of consecutive points.
-    private PathChain[] paths =
-            new PathChain[RED_SIDE_POINTS.length - 1];
+    // One path connects each point to the next point.
+    private PathChain[] paths;
 
-    // Tracks which path should be started next.
+    // Tracks which path should start next.
     private int nextPathIndex = 0;
 
-    // Becomes true after the final path finishes.
+    // Becomes true after every path has finished.
     private boolean autoComplete = false;
-
 
     @Override
     public void init() {
 
-        // Create the follower using your existing Constants.java.
+        // Create the PedroPathing follower using your Constants file.
         follower = Constants.createFollower(hardwareMap);
 
-        // Tell PedroPathing where the robot starts.
-        follower.setStartingPose(RED_SIDE_POINTS[0]);
-
-        // Keep the reduced power setting for initial testing.
+        // Limit the robot's maximum movement power.
         follower.setMaxPower(0.5);
 
-        // Create all seven paths.
+        // Build all paths before autonomous starts.
         buildPaths();
 
         telemetry.addLine("Red Autonomous Ready");
-        telemetry.addData("Number of Points", RED_SIDE_POINTS.length);
-        telemetry.addData("Number of Paths", paths.length);
+        telemetry.addData("Points", RED_SIDE_POINTS.length);
+        telemetry.addData("Paths", paths.length);
         telemetry.update();
     }
+
     @Override
     public void init_loop() {
 
-        telemetry.addData("Before Update X", follower.getPose().getX());
-        telemetry.addData("Before Update Y", follower.getPose().getY());
-
+        // Keep the localizer updated while waiting for PLAY.
         follower.update();
-
-        telemetry.addData("After Update X", follower.getPose().getX());
-        telemetry.addData("After Update Y", follower.getPose().getY());
-
-        telemetry.addData("Heading", Math.toDegrees(follower.getPose().getHeading()));
-
-        telemetry.update();
     }
-
 
     @Override
     public void start() {
 
-        // Reset the autonomous tracking variables.
+        // Update the localizer once more before starting movement.
+        follower.update();
+
+        // Set the robot's known starting position after localization updates.
+        follower.setStartingPose(RED_SIDE_POINTS[0]);
+
+        // Reset the autonomous progress.
         nextPathIndex = 0;
         autoComplete = false;
 
         // Start the first path.
-        if (paths.length > 0) {
-            follower.followPath(paths[nextPathIndex], true);
-            nextPathIndex++;
-        }
+        startNextPath();
     }
-
 
     @Override
     public void loop() {
 
-        // Update PedroPathing every loop.
+        // Update PedroPathing every active loop.
         follower.update();
 
-        // If the current path has finished, start the next one.
+        // Only start another path after the current one finishes.
         if (!autoComplete && !follower.isBusy()) {
 
             if (nextPathIndex < paths.length) {
 
-                follower.followPath(paths[nextPathIndex], true);
-                nextPathIndex++;
+                startNextPath();
 
             } else {
 
+                // No paths remain.
                 autoComplete = true;
             }
         }
 
-        // Get the robot's current estimated position.
-        Pose currentPose = follower.getPose();
-
-        // Display useful information on the Driver Hub.
-        telemetry.addData("X", currentPose.getX());
-        telemetry.addData("Y", currentPose.getY());
-
         telemetry.addData(
-                "Heading (degrees)",
-                Math.toDegrees(currentPose.getHeading())
+                "Autonomous",
+                autoComplete ? "Complete" : "Running"
         );
 
         telemetry.addData(
@@ -137,36 +110,48 @@ public class river_auton_path extends OpMode {
                 nextPathIndex + " / " + paths.length
         );
 
-        telemetry.addData("Follower Busy", follower.isBusy());
-
-        telemetry.addData("Autonomous Complete", autoComplete);
-
         telemetry.update();
     }
 
+    // Starts the next path in the array.
+    private void startNextPath() {
 
-    // Builds every path using the points in RED_SIDE_POINTS.
-    private void buildPaths() {
+        if (nextPathIndex < paths.length) {
 
-        for (int i = 0; i < paths.length; i++) {
+            follower.followPath(paths[nextPathIndex], true);
 
-            paths[i] = makePath(
-                    RED_SIDE_POINTS[i],
-                    RED_SIDE_POINTS[i + 1]
-            );
+            nextPathIndex++;
         }
     }
 
+    // Creates a path between every pair of consecutive points.
+    private void buildPaths() {
 
-    // Creates one straight Bezier path between two poses.
-    private PathChain makePath(Pose start, Pose end) {
+        paths = new PathChain[RED_SIDE_POINTS.length - 1];
+
+        for (int i = 0; i < paths.length; i++) {
+
+            Pose startPoint = RED_SIDE_POINTS[i];
+            Pose endPoint = RED_SIDE_POINTS[i + 1];
+
+            paths[i] = makePath(startPoint, endPoint);
+        }
+    }
+
+    // Creates one straight-line path with a gradual heading change.
+    private PathChain makePath(Pose startPoint, Pose endPoint) {
 
         return follower.pathBuilder()
-                .addPath(new BezierLine(start, end))
+
+                // Draw a straight line between the two positions.
+                .addPath(new BezierLine(startPoint, endPoint))
+
+                // Gradually rotate from the starting heading to the ending heading.
                 .setLinearHeadingInterpolation(
-                        start.getHeading(),
-                        end.getHeading()
+                        startPoint.getHeading(),
+                        endPoint.getHeading()
                 )
+
                 .build();
     }
 }
