@@ -68,6 +68,21 @@ public class river_auton_path extends OpMode {
         telemetry.addData("Number of Paths", paths.length);
         telemetry.update();
     }
+    @Override
+    public void init_loop() {
+
+        telemetry.addData("Before Update X", follower.getPose().getX());
+        telemetry.addData("Before Update Y", follower.getPose().getY());
+
+        follower.update();
+
+        telemetry.addData("After Update X", follower.getPose().getX());
+        telemetry.addData("After Update Y", follower.getPose().getY());
+
+        telemetry.addData("Heading", Math.toDegrees(follower.getPose().getHeading()));
+
+        telemetry.update();
+    }
 
 
     @Override
