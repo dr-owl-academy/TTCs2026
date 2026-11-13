@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
@@ -13,12 +14,13 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Autonomous(name = "River Red Auton", group = "Red")
 public class river_auton_path extends OpMode {
 
-    // PedroPathing follower controls the robot's movement.
     private Follower follower;
+    private PathChain redRoute;
 
-    // All of the red-side positions, in order.
-    // Heading values must be in radians.
-    private static final Pose[] RED_SIDE_POINTS = {
+    private boolean autoComplete = false;
+
+    // All original red-side points. Headings are in radians.
+    private static final Pose[] POINTS = {
             new Pose(32.3119, 6.323, Math.toRadians(90)),
             new Pose(32.5607, 10.2601, Math.toRadians(86.3837)),
             new Pose(12.7213, 12.091, Math.toRadians(174.7275)),
@@ -29,128 +31,85 @@ public class river_auton_path extends OpMode {
             new Pose(11.5333, 98.7444, Math.toRadians(-163.9003))
     };
 
-    // One path connects each point to the next point.
-    private PathChain[] paths;
-
-    // Tracks which path should start next.
-    private int nextPathIndex = 0;
-
-    // Becomes true after every path has finished.
-    private boolean autoComplete = false;
-
     @Override
     public void init() {
-
-        // Create the PedroPathing follower using your Constants file.
         follower = Constants.createFollower(hardwareMap);
 
-        // Limit the robot's maximum movement power.
         follower.setMaxPower(0.5);
+        follower.setStartingPose(POINTS[0]);
 
-        // Build all paths before autonomous starts.
-        buildPaths();
+        buildRoute();
 
         telemetry.addLine("Red Autonomous Ready");
-        telemetry.addData("Points", RED_SIDE_POINTS.length);
-        telemetry.addData("Paths", paths.length);
+        telemetry.addData("Number of Points", POINTS.length);
         telemetry.update();
     }
 
     @Override
     public void init_loop() {
-
-        // Keep the localizer updated while waiting for PLAY.
         follower.update();
     }
 
     @Override
     public void start() {
-
-        // Update the localizer once more before starting movement.
-        follower.update();
-
-        // Set the robot's known starting position after localization updates.
-        follower.setStartingPose(RED_SIDE_POINTS[0]);
-
-        // Reset the autonomous progress.
-        nextPathIndex = 0;
         autoComplete = false;
-
-        // Start the first path.
-        startNextPath();
+        follower.followPath(redRoute, true);
     }
 
     @Override
     public void loop() {
-
-        // Update PedroPathing every active loop.
         follower.update();
 
-        // Only start another path after the current one finishes.
-        if (!autoComplete && !follower.isBusy()) {
-
-            if (nextPathIndex < paths.length) {
-
-                startNextPath();
-
-            } else {
-
-                // No paths remain.
-                autoComplete = true;
-            }
+        if (!follower.isBusy()) {
+            autoComplete = true;
         }
 
-        telemetry.addData(
-                "Autonomous",
-                autoComplete ? "Complete" : "Running"
-        );
+        Pose current = follower.getPose();
 
-        telemetry.addData(
-                "Paths Started",
-                nextPathIndex + " / " + paths.length
-        );
+        telemetry.addData("Status",
+                autoComplete ? "Complete" : "Running");
+
+        telemetry.addData("X", "%.1f", current.getX());
+        telemetry.addData("Y", "%.1f", current.getY());
+
+        telemetry.addData("Heading (deg)", "%.1f",
+                Math.toDegrees(current.getHeading()));
+
+        telemetry.addData("Busy", follower.isBusy());
 
         telemetry.update();
     }
 
-    // Starts the next path in the array.
-    private void startNextPath() {
+    private void buildRoute() {
+        redRoute = follower.pathBuilder()
 
-        if (nextPathIndex < paths.length) {
-
-            follower.followPath(paths[nextPathIndex], true);
-
-            nextPathIndex++;
-        }
-    }
-
-    // Creates a path between every pair of consecutive points.
-    private void buildPaths() {
-
-        paths = new PathChain[RED_SIDE_POINTS.length - 1];
-
-        for (int i = 0; i < paths.length; i++) {
-
-            Pose startPoint = RED_SIDE_POINTS[i];
-            Pose endPoint = RED_SIDE_POINTS[i + 1];
-
-            paths[i] = makePath(startPoint, endPoint);
-        }
-    }
-
-    // Creates one straight-line path with a gradual heading change.
-    private PathChain makePath(Pose startPoint, Pose endPoint) {
-
-        return follower.pathBuilder()
-
-                // Draw a straight line between the two positions.
-                .addPath(new BezierLine(startPoint, endPoint))
-
-                // Gradually rotate from the starting heading to the ending heading.
+                .addPath(new BezierLine(POINTS[0], POINTS[1]))
                 .setLinearHeadingInterpolation(
-                        startPoint.getHeading(),
-                        endPoint.getHeading()
-                )
+                        POINTS[0].getHeading(), POINTS[1].getHeading())
+
+                .addPath(new BezierLine(POINTS[1], POINTS[2]))
+                .setLinearHeadingInterpolation(
+                        POINTS[1].getHeading(), POINTS[2].getHeading())
+
+                .addPath(new BezierLine(POINTS[2], POINTS[3]))
+                .setLinearHeadingInterpolation(
+                        POINTS[2].getHeading(), POINTS[3].getHeading())
+
+                .addPath(new BezierLine(POINTS[3], POINTS[4]))
+                .setLinearHeadingInterpolation(
+                        POINTS[3].getHeading(), POINTS[4].getHeading())
+
+                .addPath(new BezierLine(POINTS[4], POINTS[5]))
+                .setLinearHeadingInterpolation(
+                        POINTS[4].getHeading(), POINTS[5].getHeading())
+
+                .addPath(new BezierLine(POINTS[5], POINTS[6]))
+                .setLinearHeadingInterpolation(
+                        POINTS[5].getHeading(), POINTS[6].getHeading())
+
+                .addPath(new BezierLine(POINTS[6], POINTS[7]))
+                .setLinearHeadingInterpolation(
+                        POINTS[6].getHeading(), POINTS[7].getHeading())
 
                 .build();
     }
