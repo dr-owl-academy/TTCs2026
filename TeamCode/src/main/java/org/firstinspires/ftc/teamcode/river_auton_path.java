@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
@@ -17,31 +16,28 @@ public class river_auton_path extends OpMode {
     private Follower follower;
     private PathChain redRoute;
 
-    private boolean autoComplete = false;
-
-    // All original red-side points. Headings are in radians.
     private static final Pose[] POINTS = {
-            new Pose(32.3119, 6.323, Math.toRadians(90)),
-            new Pose(32.5607, 10.2601, Math.toRadians(86.3837)),
-            new Pose(12.7213, 12.091, Math.toRadians(174.7275)),
-            new Pose(26.1111, 32.723, Math.toRadians(57.017)),
-            new Pose(21.8256, 48.855, Math.toRadians(104.8771)),
-            new Pose(38.3489, 31.2244, Math.toRadians(-46.8569)),
-            new Pose(17.2518, 100.395, Math.toRadians(106.9617)),
-            new Pose(11.5333, 98.7444, Math.toRadians(-163.9003))
+            new Pose(32.3, 6.3, Math.toRadians(90)),
+            new Pose(32.6, 10.3, Math.toRadians(86)),
+
+            // Far from left wall
+            new Pose(30.0, 12.1, Math.toRadians(175)),
+
+            new Pose(26.1, 32.7, Math.toRadians(57)),
+            new Pose(21.8, 48.9, Math.toRadians(105)),
+            new Pose(38.3, 31.2, Math.toRadians(-47)),
+            new Pose(17.3, 100.4, Math.toRadians(107)),
+            new Pose(11.5, 98.7, Math.toRadians(-164))
     };
 
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-
-        follower.setMaxPower(0.5);
+        follower.setMaxPower(0.3);
         follower.setStartingPose(POINTS[0]);
-
         buildRoute();
 
-        telemetry.addLine("Red Autonomous Ready");
-        telemetry.addData("Number of Points", POINTS.length);
+        telemetry.addLine("Ready - place robot on first point");
         telemetry.update();
     }
 
@@ -52,7 +48,7 @@ public class river_auton_path extends OpMode {
 
     @Override
     public void start() {
-        autoComplete = false;
+        follower.setStartingPose(POINTS[0]);
         follower.followPath(redRoute, true);
     }
 
@@ -60,23 +56,11 @@ public class river_auton_path extends OpMode {
     public void loop() {
         follower.update();
 
-        if (!follower.isBusy()) {
-            autoComplete = true;
-        }
-
-        Pose current = follower.getPose();
-
-        telemetry.addData("Status",
-                autoComplete ? "Complete" : "Running");
-
-        telemetry.addData("X", "%.1f", current.getX());
-        telemetry.addData("Y", "%.1f", current.getY());
-
-        telemetry.addData("Heading (deg)", "%.1f",
-                Math.toDegrees(current.getHeading()));
-
-        telemetry.addData("Busy", follower.isBusy());
-
+        Pose p = follower.getPose();
+        telemetry.addData("Status", follower.isBusy() ? "Running" : "Done");
+        telemetry.addData("X", "%.1f", p.getX());
+        telemetry.addData("Y", "%.1f", p.getY());
+        telemetry.addData("Heading", "%.1f", Math.toDegrees(p.getHeading()));
         telemetry.update();
     }
 
@@ -84,32 +68,26 @@ public class river_auton_path extends OpMode {
         redRoute = follower.pathBuilder()
 
                 .addPath(new BezierLine(POINTS[0], POINTS[1]))
-                .setLinearHeadingInterpolation(
-                        POINTS[0].getHeading(), POINTS[1].getHeading())
+                .setLinearHeadingInterpolation(POINTS[0].getHeading(), POINTS[1].getHeading())
 
+                // Strafe left with almost no turn
                 .addPath(new BezierLine(POINTS[1], POINTS[2]))
-                .setLinearHeadingInterpolation(
-                        POINTS[1].getHeading(), POINTS[2].getHeading())
+                .setConstantHeadingInterpolation(POINTS[1].getHeading())
 
                 .addPath(new BezierLine(POINTS[2], POINTS[3]))
-                .setLinearHeadingInterpolation(
-                        POINTS[2].getHeading(), POINTS[3].getHeading())
+                .setLinearHeadingInterpolation(POINTS[2].getHeading(), POINTS[3].getHeading())
 
                 .addPath(new BezierLine(POINTS[3], POINTS[4]))
-                .setLinearHeadingInterpolation(
-                        POINTS[3].getHeading(), POINTS[4].getHeading())
+                .setLinearHeadingInterpolation(POINTS[3].getHeading(), POINTS[4].getHeading())
 
                 .addPath(new BezierLine(POINTS[4], POINTS[5]))
-                .setLinearHeadingInterpolation(
-                        POINTS[4].getHeading(), POINTS[5].getHeading())
+                .setLinearHeadingInterpolation(POINTS[4].getHeading(), POINTS[5].getHeading())
 
                 .addPath(new BezierLine(POINTS[5], POINTS[6]))
-                .setLinearHeadingInterpolation(
-                        POINTS[5].getHeading(), POINTS[6].getHeading())
+                .setLinearHeadingInterpolation(POINTS[5].getHeading(), POINTS[6].getHeading())
 
                 .addPath(new BezierLine(POINTS[6], POINTS[7]))
-                .setLinearHeadingInterpolation(
-                        POINTS[6].getHeading(), POINTS[7].getHeading())
+                .setLinearHeadingInterpolation(POINTS[6].getHeading(), POINTS[7].getHeading())
 
                 .build();
     }
