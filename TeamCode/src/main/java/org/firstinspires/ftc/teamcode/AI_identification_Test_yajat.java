@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.List;
 
-@TeleOp(name = "AI_identification_Test_yajat")
+@TeleOp(name = "AI_identification_and_auton_Test_yajat")
 public class AI_identification_Test_yajat extends OpMode {
 
     Follower follower;
@@ -266,6 +266,7 @@ public class AI_identification_Test_yajat extends OpMode {
         // =================================
 
         else if (aiming) {
+            telemetry.addData("AI Branch","Entered");
 
             follower.setTeleOpDrive(0, 0, 0, true);
 
@@ -307,7 +308,7 @@ public class AI_identification_Test_yajat extends OpMode {
                     telemetry.addData("Confidence", best.getConfidence());
 
 
-                    if (className.equalsIgnoreCase("tilted") && !autoRunning) {
+                    if (className.equalsIgnoreCase("0 Tilt Towards Blue") && !autoRunning) {
 
                         telemetry.addData(
                                 "AI Decision",
@@ -317,8 +318,7 @@ public class AI_identification_Test_yajat extends OpMode {
                         startSwitchSidePath();
 
                     } else if (
-                            className.equalsIgnoreCase("not_tilted")
-                                    || className.equalsIgnoreCase("not tilted")
+                            className.equalsIgnoreCase("1 Tilt Away Blue")
                     ) {
 
                         telemetry.addData(
