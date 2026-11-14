@@ -19,7 +19,7 @@ public class river_auton_path extends OpMode {
     private static final Pose[] POINTS = {
             new Pose(32.3, 6.3, Math.toRadians(90)),
             new Pose(32.6, 10.3, Math.toRadians(86)),
-            new Pose(34.0, 12.1, Math.toRadians(175)),   // farther from wall
+            new Pose(34.0, 12.1, Math.toRadians(175)),
             new Pose(26.1, 32.7, Math.toRadians(57)),
             new Pose(21.8, 48.9, Math.toRadians(105)),
             new Pose(38.3, 31.2, Math.toRadians(-47)),
