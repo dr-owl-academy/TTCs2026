@@ -21,8 +21,8 @@ public class Constants {
             .lateralZeroPowerAcceleration(-54.1272983576398125)
             .translationalPIDFCoefficients(new PIDFCoefficients(0.06,0,0.0034,0.07))
             .headingPIDFCoefficients(new PIDFCoefficients(1, 0, 0.01, 0.02))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.025,0,0.0001,0.6,0.01))
-           ;
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.025,0,0.0001,0.6,0.01));
+
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
             .rightFrontMotorName("motorRF")
@@ -34,8 +34,7 @@ public class Constants {
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
             .xVelocity(67.34373766481095)
-            .yVelocity(54.946288581908215)
-            ;
+            .yVelocity(54.946288581908215);
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(1.5)
@@ -43,12 +42,10 @@ public class Constants {
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
-            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)   // flipped
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
-    public static PathConstraints pathConstraints = new PathConstraints(0.99,
-            100,
-            1,
-            1);
+
+    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)

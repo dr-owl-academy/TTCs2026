@@ -19,10 +19,7 @@ public class river_auton_path extends OpMode {
     private static final Pose[] POINTS = {
             new Pose(32.3, 6.3, Math.toRadians(90)),
             new Pose(32.6, 10.3, Math.toRadians(86)),
-
-            // Far from left wall
-            new Pose(30.0, 12.1, Math.toRadians(175)),
-
+            new Pose(34.0, 12.1, Math.toRadians(175)),   // farther from wall
             new Pose(26.1, 32.7, Math.toRadians(57)),
             new Pose(21.8, 48.9, Math.toRadians(105)),
             new Pose(38.3, 31.2, Math.toRadians(-47)),
@@ -33,7 +30,7 @@ public class river_auton_path extends OpMode {
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        follower.setMaxPower(0.3);
+        follower.setMaxPower(0.25);
         follower.setStartingPose(POINTS[0]);
         buildRoute();
 
@@ -44,6 +41,11 @@ public class river_auton_path extends OpMode {
     @Override
     public void init_loop() {
         follower.update();
+        Pose p = follower.getPose();
+        telemetry.addData("X", "%.1f", p.getX());
+        telemetry.addData("Y", "%.1f", p.getY());
+        telemetry.addData("Heading", "%.1f", Math.toDegrees(p.getHeading()));
+        telemetry.update();
     }
 
     @Override
@@ -55,7 +57,6 @@ public class river_auton_path extends OpMode {
     @Override
     public void loop() {
         follower.update();
-
         Pose p = follower.getPose();
         telemetry.addData("Status", follower.isBusy() ? "Running" : "Done");
         telemetry.addData("X", "%.1f", p.getX());
@@ -66,11 +67,9 @@ public class river_auton_path extends OpMode {
 
     private void buildRoute() {
         redRoute = follower.pathBuilder()
-
                 .addPath(new BezierLine(POINTS[0], POINTS[1]))
                 .setLinearHeadingInterpolation(POINTS[0].getHeading(), POINTS[1].getHeading())
 
-                // Strafe left with almost no turn
                 .addPath(new BezierLine(POINTS[1], POINTS[2]))
                 .setConstantHeadingInterpolation(POINTS[1].getHeading())
 
