@@ -296,7 +296,12 @@ public class AI_identification_Test_yajat extends OpMode {
         else if (aiming) {
             telemetry.addData("AI Branch","Entered");
 
-            follower.setTeleOpDrive(0, 0, 0, true);
+            follower.setTeleOpDrive(
+                    -gamepad1.left_stick_y,
+                    -gamepad1.left_stick_x,
+                    -gamepad1.right_stick_x,
+                    true
+            );
 
             telemetry.addData("Mode", "AI Detection");
 
