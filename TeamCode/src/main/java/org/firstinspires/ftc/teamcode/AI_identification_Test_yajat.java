@@ -77,9 +77,9 @@ public class AI_identification_Test_yajat extends OpMode {
     // REPLACE THESE WITH ACTUAL FIELD COORDINATES
 
     final Route BLUE_UPPER = new Route(
-            107, 98,
-            107, 39,
-            86, 16
+            110, 98,
+            110, 39,
+            86, 20
     );
 
     final Route BLUE_LOWER = new Route(
