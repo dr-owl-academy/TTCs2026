@@ -214,6 +214,8 @@ public class AI_identification_Test_yajat extends OpMode {
                         Math.toRadians(selectedRoute.targetHeading)
                 )
                 .build();
+        //limit auton motor power
+        follower.setMaxPower(0.6);
 
         follower.followPath(switchSidePath, true);
 
@@ -277,6 +279,7 @@ public class AI_identification_Test_yajat extends OpMode {
                 autoRunning = false;
                 aiming = false;
 
+                follower.setMaxPower(1.0);
                 follower.startTeleopDrive();
 
                 telemetry.addData(
