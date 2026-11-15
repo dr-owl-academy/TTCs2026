@@ -84,8 +84,8 @@ public class AI_identification_Test_yajat extends OpMode {
     // REPLACE THESE WITH ACTUAL FIELD COORDINATES
 
     final Route BLUE_UPPER = new Route(
-            116, 99,
-            116, 30,
+            112, 99,
+            112, 30,
             86, 30, 90
     );
 
