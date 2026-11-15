@@ -48,11 +48,11 @@ public class AI_identification_Test_yajat extends OpMode {
 
         double waypoint1X, waypoint1Y;
         double waypoint2X, waypoint2Y;
-        double targetX, targetY;
+        double targetX, targetY,targetHeading;
 
         Route(double w1x, double w1y,
               double w2x, double w2y,
-              double tx, double ty) {
+              double tx, double ty,double tHeading) {
 
             waypoint1X = w1x;
             waypoint1Y = w1y;
@@ -62,6 +62,7 @@ public class AI_identification_Test_yajat extends OpMode {
 
             targetX = tx;
             targetY = ty;
+            targetHeading = tHeading;
         }
 
         boolean isConfigured() {
@@ -70,7 +71,8 @@ public class AI_identification_Test_yajat extends OpMode {
                     && Double.isFinite(waypoint2X)
                     && Double.isFinite(waypoint2Y)
                     && Double.isFinite(targetX)
-                    && Double.isFinite(targetY);
+                    && Double.isFinite(targetY)
+                    && Double.isFinite(targetHeading);
         }
     }
 
@@ -79,24 +81,24 @@ public class AI_identification_Test_yajat extends OpMode {
     final Route BLUE_UPPER = new Route(
             110, 98,
             110, 39,
-            86, 20
+            86, 20,180
     );
 
     final Route BLUE_LOWER = new Route(
             107, 39,
             107, 98,
-            86, 127
+            86, 127,180
     );
     final Route RED_UPPER = new Route(
             Double.NaN, Double.NaN,
             Double.NaN, Double.NaN,
-            Double.NaN, Double.NaN
+            Double.NaN, Double.NaN,Double.NaN
     );
 
     final Route RED_LOWER = new Route(
             Double.NaN, Double.NaN,
             Double.NaN, Double.NaN,
-            Double.NaN, Double.NaN
+            Double.NaN, Double.NaN,Double.NaN
     );
 
     // =====================================
@@ -178,19 +180,19 @@ public class AI_identification_Test_yajat extends OpMode {
         Pose waypoint1 = new Pose(
                 selectedRoute.waypoint1X,
                 selectedRoute.waypoint1Y,
-                startPose.getHeading()
+                Math.toRadians(selectedRoute.targetHeading)
         );
 
         Pose waypoint2 = new Pose(
                 selectedRoute.waypoint2X,
                 selectedRoute.waypoint2Y,
-                startPose.getHeading()
+                Math.toRadians(selectedRoute.targetHeading)
         );
 
         Pose targetPose = new Pose(
                 selectedRoute.targetX,
                 selectedRoute.targetY,
-                startPose.getHeading()
+                Math.toRadians(selectedRoute.targetHeading)
         );
 
         // Build path through prerequisite waypoints
@@ -359,7 +361,7 @@ public class AI_identification_Test_yajat extends OpMode {
             follower.setTeleOpDrive(
                     -gamepad1.left_stick_y,
                     -gamepad1.left_stick_x,
-                    gamepad1.right_stick_x,
+                    -gamepad1.right_stick_x,
                     true
             );
 
