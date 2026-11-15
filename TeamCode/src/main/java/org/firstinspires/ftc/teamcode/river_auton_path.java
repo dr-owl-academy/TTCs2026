@@ -35,11 +35,12 @@ public class river_auton_path extends OpMode {
     public void init() {
         follower = Constants.createFollower(hardwareMap);
 
+        // Stronger heading correction so it turns faster
         follower.setTranslationalPIDFCoefficients(new PIDFCoefficients(0.09, 0, 0.0034, 0.07));
-        follower.setHeadingPIDFCoefficients(new PIDFCoefficients(1.0, 0, 0.01, 0.02));
+        follower.setHeadingPIDFCoefficients(new PIDFCoefficients(2.5, 0, 0.02, 0.04));  // higher P
         follower.setDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.025, 0, 0.0001, 0.6, 0.01));
 
-        follower.setMaxPower(0.4);
+        follower.setMaxPower(0.4);   // same moving speed
         follower.setStartingPose(POINTS[0]);
         buildPaths();
 
@@ -69,12 +70,10 @@ public class river_auton_path extends OpMode {
     public void loop() {
         follower.update();
 
-        // Hard stop when the current path finishes
         if (!follower.isBusy() && !stopped) {
-            follower.breakFollowing();   // hard stop
+            follower.breakFollowing();
             stopped = true;
 
-            // Only start the next path if more paths exist
             if (currentPath < paths.length - 1) {
                 currentPath++;
                 stopped = false;
@@ -92,51 +91,20 @@ public class river_auton_path extends OpMode {
     }
 
     private void buildPaths() {
-        // Only the first path is active.
-        // Change the number and uncomment more blocks as you debug.
         paths = new PathChain[1];
 
-        // Path 1: start → point 1
+        // Path 1 only
         paths[0] = follower.pathBuilder()
                 .addPath(new BezierLine(POINTS[0], POINTS[1]))
                 .setLinearHeadingInterpolation(POINTS[0].getHeading(), POINTS[1].getHeading())
                 .build();
 
         /*
-        // Path 2: point 1 → point 2
+        // Uncomment these one at a time when path 1 works
+        paths = new PathChain[2];
         paths[1] = follower.pathBuilder()
                 .addPath(new BezierLine(POINTS[1], POINTS[2]))
                 .setLinearHeadingInterpolation(POINTS[1].getHeading(), POINTS[2].getHeading())
-                .build();
-
-        // Path 3: point 2 → point 3
-        paths[2] = follower.pathBuilder()
-                .addPath(new BezierLine(POINTS[2], POINTS[3]))
-                .setLinearHeadingInterpolation(POINTS[2].getHeading(), POINTS[3].getHeading())
-                .build();
-
-        // Path 4: point 3 → point 4
-        paths[3] = follower.pathBuilder()
-                .addPath(new BezierLine(POINTS[3], POINTS[4]))
-                .setLinearHeadingInterpolation(POINTS[3].getHeading(), POINTS[4].getHeading())
-                .build();
-
-        // Path 5: point 4 → point 5
-        paths[4] = follower.pathBuilder()
-                .addPath(new BezierLine(POINTS[4], POINTS[5]))
-                .setLinearHeadingInterpolation(POINTS[4].getHeading(), POINTS[5].getHeading())
-                .build();
-
-        // Path 6: point 5 → point 6
-        paths[5] = follower.pathBuilder()
-                .addPath(new BezierLine(POINTS[5], POINTS[6]))
-                .setLinearHeadingInterpolation(POINTS[5].getHeading(), POINTS[6].getHeading())
-                .build();
-
-        // Path 7: point 6 → point 7
-        paths[6] = follower.pathBuilder()
-                .addPath(new BezierLine(POINTS[6], POINTS[7]))
-                .setLinearHeadingInterpolation(POINTS[6].getHeading(), POINTS[7].getHeading())
                 .build();
         */
     }
