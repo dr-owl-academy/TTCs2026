@@ -166,39 +166,39 @@ public class DanielAuton1 extends OpMode {
 
     private void buildPaths() {
 
-        paths[0] = makePath(START_POSE, DRIVE_START_POSE);
+        paths[0] = makeConstantPath(START_POSE, DRIVE_START_POSE);
 
-        paths[1] = makePath(DRIVE_START_POSE, TARGET_POSE);
+        paths[1] = makeConstantPath(DRIVE_START_POSE, TARGET_POSE);
 
-        paths[2] = makePath(TARGET_POSE, FOURTH_POSE);
+        paths[2] = makeConstantPath(TARGET_POSE, FOURTH_POSE);
 
-        paths[3] = makePath(FOURTH_POSE, FIFTH_POSE);
+        paths[3] = makeConstantPath(FOURTH_POSE, FIFTH_POSE);
 
-        paths[4] = makePath(FIFTH_POSE, SIXTH_POSE);
+        paths[4] = makeConstantPath(FIFTH_POSE, SIXTH_POSE);
 
-        paths[5] = makePath(SIXTH_POSE, SEVENTH_POSE);
+        paths[5] = makeConstantPath(SIXTH_POSE, SEVENTH_POSE);
 
-        paths[6] = makePath(SEVENTH_POSE, EIGHTH_POSE);
+        paths[6] = makeConstantPath(SEVENTH_POSE, EIGHTH_POSE);
 
-        paths[7] = makePath(EIGHTH_POSE, NINTH_POSE);
+        paths[7] = makeConstantPath(EIGHTH_POSE, NINTH_POSE);
 
-        paths[8] = makePath(NINTH_POSE, TENTH_POSE);
+        paths[8] = makeConstantPath(NINTH_POSE, TENTH_POSE);
 
-        paths[9] = makePath(TENTH_POSE, ELEVENTH_POSE);
+        paths[9] = makeConstantPath(TENTH_POSE, ELEVENTH_POSE);
 
-        paths[10] = makePath(ELEVENTH_POSE, TWELFTH_POSE);
+        paths[10] = makeConstantPath(ELEVENTH_POSE, TWELFTH_POSE);
 
-        paths[11] = makePath(TWELFTH_POSE, THIRTEENTH_POSE);
+        paths[11] = makeConstantPath(TWELFTH_POSE, THIRTEENTH_POSE);
 
-        paths[12] = makePath(THIRTEENTH_POSE, FOURTEENTH_POSE);
+        paths[12] = makeConstantPath(THIRTEENTH_POSE, FOURTEENTH_POSE);
 
-        paths[13] = makePath(FOURTEENTH_POSE, FIFTEENTH_POSE);
+        paths[13] = makeConstantPath(FOURTEENTH_POSE, FIFTEENTH_POSE);
 
-        paths[14] = makePath(FIFTEENTH_POSE, SIXTEENTH_POSE);
+        paths[14] = makeConstantPath(FIFTEENTH_POSE, SIXTEENTH_POSE);
 
-        paths[15] = makePath(SIXTEENTH_POSE, SEVENTEENTH_POSE);
+        paths[15] = makeConstantPath(SIXTEENTH_POSE, SEVENTEENTH_POSE);
 
-        paths[16] = makePath(SEVENTEENTH_POSE, EIGHTEENTH_POSE);
+        paths[16] = makeConstantPath(SEVENTEENTH_POSE, EIGHTEENTH_POSE);
 
 
 
@@ -209,13 +209,12 @@ public class DanielAuton1 extends OpMode {
 
 
     // Creates a path that interpolates heading between poses.
-    private PathChain makePath(Pose start, Pose end) {
+    private PathChain makeConstantPath(Pose start, Pose end) {
 
         return follower.pathBuilder()
                 .addPath(new BezierLine(start, end))
-                .setLinearHeadingInterpolation(
-                        start.getHeading(),
-                        end.getHeading()
+                .setConstantHeadingInterpolation(
+                        start.getHeading()
                 )
                 .build();
     }//designs the path builder for auton instead of writing same code for every path
