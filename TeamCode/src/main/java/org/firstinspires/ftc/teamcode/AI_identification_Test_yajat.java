@@ -81,7 +81,7 @@ public class AI_identification_Test_yajat extends OpMode {
     final Route BLUE_UPPER = new Route(
             112, 99,
             112, 39,
-            86, 20,90
+            86, 30,90
     );
 
     final Route BLUE_LOWER = new Route(
