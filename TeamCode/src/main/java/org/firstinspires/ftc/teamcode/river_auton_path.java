@@ -34,12 +34,11 @@ public class river_auton_path extends OpMode {
     public void init() {
         follower = Constants.createFollower(hardwareMap);
 
-        // Set PIDF directly in the autonomous so it corrects while following
         follower.setTranslationalPIDFCoefficients(new PIDFCoefficients(0.09, 0, 0.0034, 0.07));
         follower.setHeadingPIDFCoefficients(new PIDFCoefficients(1.0, 0, 0.01, 0.02));
         follower.setDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.025, 0, 0.0001, 0.6, 0.01));
 
-        follower.setMaxPower(0.2);
+        follower.setMaxPower(0.4);   // faster than before
         follower.setStartingPose(POINTS[0]);
         buildPaths();
 
@@ -66,7 +65,7 @@ public class river_auton_path extends OpMode {
 
     @Override
     public void loop() {
-        follower.update();   // this is what makes the PIDF correct the robot
+        follower.update();
 
         if (!follower.isBusy() && currentPath < paths.length - 1) {
             currentPath++;
