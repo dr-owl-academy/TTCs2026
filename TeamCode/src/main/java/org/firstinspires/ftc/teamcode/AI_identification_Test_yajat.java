@@ -199,8 +199,20 @@ public class AI_identification_Test_yajat extends OpMode {
 
         switchSidePath = follower.pathBuilder()
                 .addPath(new BezierLine(startPose, waypoint1))
+                .setLinearHeadingInterpolation(
+                        startPose.getHeading(),
+                        Math.toRadians(selectedRoute.targetHeading)
+                )
                 .addPath(new BezierLine(waypoint1, waypoint2))
+                .setLinearHeadingInterpolation(
+                        Math.toRadians(selectedRoute.targetHeading),
+                        Math.toRadians(selectedRoute.targetHeading)
+                )
                 .addPath(new BezierLine(waypoint2, targetPose))
+                .setLinearHeadingInterpolation(
+                        Math.toRadians(selectedRoute.targetHeading),
+                        Math.toRadians(selectedRoute.targetHeading)
+                )
                 .build();
 
         follower.followPath(switchSidePath, true);
@@ -224,7 +236,7 @@ public class AI_identification_Test_yajat extends OpMode {
 
         Pose currentPose = follower.getPose();
 
-        if (follower.getPose() == null) {
+        if (currentPose == null) {
 
             follower.setTeleOpDrive(0, 0, 0, true);
 
@@ -264,6 +276,8 @@ public class AI_identification_Test_yajat extends OpMode {
 
                 autoRunning = false;
                 aiming = false;
+
+                follower.startTeleopDrive();
 
                 telemetry.addData(
                         "Autonomous",
