@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.pedropathing.control.PIDFCoefficients;
-import com.pedropathing.control.FilteredPIDFCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -15,105 +12,132 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Autonomous(name = "River Red Auton", group = "Red")
 public class river_auton_path extends OpMode {
 
-    private Follower follower;
-    private PathChain[] paths;
-    private int currentPath = 0;
-    private boolean stopped = false;
+    private enum AutoState {
+        PATH1, PATH2, PATH3, PATH4, PATH5, PATH6, PATH7, COMPLETE
+    }
 
-    // New points (start farther away)
-    private static final Pose[] POINTS = {
-            new Pose(46.4165, 8.3509, Math.toRadians(90)),
-            new Pose(46.3568, 23.9845, Math.toRadians(90.2191)),
-            new Pose(12.7213, 12.091, Math.toRadians(-160.5264)),
-            new Pose(26.1111, 32.723, Math.toRadians(57.017)),
-            new Pose(21.8256, 48.832, Math.toRadians(104.8973)),
-            new Pose(38.3489, 31.2244, Math.toRadians(-46.8197)),
-            new Pose(17.2518, 100.395, Math.toRadians(106.9617)),
-            new Pose(11.5333, 98.7444, Math.toRadians(-163.9003))
-    };
+    private Follower follower;
+    private PathChain[] paths = new PathChain[7];
+    private AutoState autoState = AutoState.PATH1;
+
+    // Updated points
+    private static final Pose START =
+            new Pose(46.4165, 8.3509, Math.toRadians(90));
+    private static final Pose POINT1 =
+            new Pose(46.3568, 23.9845, Math.toRadians(90.2191));
+    private static final Pose POINT2 =
+            new Pose(14.815, 12.9082, Math.toRadians(-160.6506));
+    private static final Pose POINT3 =
+            new Pose(26.0055, 31.3329, Math.toRadians(58.7271));
+    private static final Pose POINT4 =
+            new Pose(22.1045, 45.9476, Math.toRadians(104.9449));
+    private static final Pose POINT5 =
+            new Pose(38.3489, 31.2244, Math.toRadians(-42.1877));
+    private static final Pose POINT6 =
+            new Pose(17.2518, 100.395, Math.toRadians(106.9617));
+    private static final Pose POINT7 =
+            new Pose(11.5333, 98.7444, Math.toRadians(-163.9003));
 
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-
-        follower.setTranslationalPIDFCoefficients(new PIDFCoefficients(0.09, 0, 0.0034, 0.07));
-        follower.setHeadingPIDFCoefficients(new PIDFCoefficients(2.5, 0, 0.02, 0.04));
-        follower.setDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.025, 0, 0.0001, 0.6, 0.01));
-
+        follower.setStartingPose(START);
         follower.setMaxPower(0.35);
-        follower.setStartingPose(POINTS[0]);
         buildPaths();
+        autoState = AutoState.PATH1;
 
-        telemetry.addLine("Ready - place robot on new start point");
-        telemetry.update();
-    }
-
-    @Override
-    public void init_loop() {
-        follower.update();
-        Pose p = follower.getPose();
-        telemetry.addData("X", "%.1f", p.getX());
-        telemetry.addData("Y", "%.1f", p.getY());
-        telemetry.addData("Heading", "%.1f", Math.toDegrees(p.getHeading()));
+        telemetry.addLine("Ready");
         telemetry.update();
     }
 
     @Override
     public void start() {
-        follower.setStartingPose(POINTS[0]);
-        currentPath = 0;
-        stopped = false;
-        follower.followPath(paths[currentPath], true);
+        autoState = AutoState.PATH1;
     }
 
     @Override
     public void loop() {
         follower.update();
+        autonomousPathUpdate();
 
         Pose p = follower.getPose();
-        Pose target = POINTS[currentPath + 1];
-
-        // Distance to the current target
-        double dx = p.getX() - target.getX();
-        double dy = p.getY() - target.getY();
-        double distance = Math.sqrt(dx * dx + dy * dy);
-
-        // Hard stop if close enough OR path is done
-        if ((distance < 2.0 || !follower.isBusy()) && !stopped) {
-            follower.breakFollowing();
-            stopped = true;
-
-            if (currentPath < paths.length - 1) {
-                currentPath++;
-                stopped = false;
-                follower.followPath(paths[currentPath], true);
-            }
-        }
-
-        telemetry.addData("Path", (currentPath + 1) + " / " + paths.length);
-        telemetry.addData("Distance", "%.1f", distance);
-        telemetry.addData("Status", stopped ? "Stopped" : "Running");
         telemetry.addData("X", "%.1f", p.getX());
         telemetry.addData("Y", "%.1f", p.getY());
         telemetry.addData("Heading", "%.1f", Math.toDegrees(p.getHeading()));
+        telemetry.addData("State", autoState);
+        telemetry.addData("Busy", follower.isBusy());
         telemetry.update();
     }
 
     private void buildPaths() {
-        // Only first path active for testing
-        paths = new PathChain[1];
+        paths[0] = makePath(START, POINT1);
+        paths[1] = makePath(POINT1, POINT2);
+        paths[2] = makePath(POINT2, POINT3);
+        paths[3] = makePath(POINT3, POINT4);
+        paths[4] = makePath(POINT4, POINT5);
+        paths[5] = makePath(POINT5, POINT6);
+        paths[6] = makePath(POINT6, POINT7);
+    }
 
-        paths[0] = follower.pathBuilder()
-                .addPath(new BezierLine(POINTS[0], POINTS[1]))
-                .setLinearHeadingInterpolation(POINTS[0].getHeading(), POINTS[1].getHeading())
+    private PathChain makePath(Pose start, Pose end) {
+        return follower.pathBuilder()
+                .addPath(new BezierLine(start, end))
+                .setLinearHeadingInterpolation(start.getHeading(), end.getHeading())
                 .build();
+    }
 
-        /*
-        // Uncomment and change array size when ready
-        paths[1] = follower.pathBuilder()
-                .addPath(new BezierLine(POINTS[1], POINTS[2]))
-                .setLinearHeadingInterpolation(POINTS[1].getHeading(), POINTS[2].getHeading())
-                .build();
-        */
+    private void autonomousPathUpdate() {
+        switch (autoState) {
+
+            case PATH1:
+                follower.followPath(paths[0], true);
+                autoState = AutoState.PATH2;
+                break;
+
+            case PATH2:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths[1], true);
+                    autoState = AutoState.PATH3;
+                }
+                break;
+
+            case PATH3:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths[2], true);
+                    autoState = AutoState.PATH4;
+                }
+                break;
+
+            case PATH4:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths[3], true);
+                    autoState = AutoState.PATH5;
+                }
+                break;
+
+            case PATH5:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths[4], true);
+                    autoState = AutoState.PATH6;
+                }
+                break;
+
+            case PATH6:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths[5], true);
+                    autoState = AutoState.PATH7;
+                }
+                break;
+
+            case PATH7:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths[6], true);
+                    autoState = AutoState.COMPLETE;
+                }
+                break;
+
+            case COMPLETE:
+                break;
+        }
     }
 }
