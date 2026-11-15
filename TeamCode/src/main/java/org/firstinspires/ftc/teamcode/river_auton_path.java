@@ -41,7 +41,7 @@ public class river_auton_path extends OpMode {
         follower.setDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.025, 0, 0.0001, 0.6, 0.01));
 
         follower.setMaxPower(0.35);
-        follower.setStartingPose(POINTS[0]);   // real start position
+        follower.setStartingPose(POINTS[0]);
         buildPaths();
 
         telemetry.addLine("Ready - place robot on new start point");
@@ -70,7 +70,16 @@ public class river_auton_path extends OpMode {
     public void loop() {
         follower.update();
 
-        if (!follower.isBusy() && !stopped) {
+        Pose p = follower.getPose();
+        Pose target = POINTS[currentPath + 1];
+
+        // Distance to the current target
+        double dx = p.getX() - target.getX();
+        double dy = p.getY() - target.getY();
+        double distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Hard stop if close enough OR path is done
+        if ((distance < 2.0 || !follower.isBusy()) && !stopped) {
             follower.breakFollowing();
             stopped = true;
 
@@ -81,9 +90,9 @@ public class river_auton_path extends OpMode {
             }
         }
 
-        Pose p = follower.getPose();
         telemetry.addData("Path", (currentPath + 1) + " / " + paths.length);
-        telemetry.addData("Status", follower.isBusy() ? "Running" : "Stopped");
+        telemetry.addData("Distance", "%.1f", distance);
+        telemetry.addData("Status", stopped ? "Stopped" : "Running");
         telemetry.addData("X", "%.1f", p.getX());
         telemetry.addData("Y", "%.1f", p.getY());
         telemetry.addData("Heading", "%.1f", Math.toDegrees(p.getHeading()));
@@ -91,8 +100,7 @@ public class river_auton_path extends OpMode {
     }
 
     private void buildPaths() {
-        // Start with only the first path for testing.
-        // Change to 2, 3, etc. and uncomment more when ready.
+        // Only first path active for testing
         paths = new PathChain[1];
 
         paths[0] = follower.pathBuilder()
@@ -101,14 +109,10 @@ public class river_auton_path extends OpMode {
                 .build();
 
         /*
+        // Uncomment and change array size when ready
         paths[1] = follower.pathBuilder()
                 .addPath(new BezierLine(POINTS[1], POINTS[2]))
                 .setLinearHeadingInterpolation(POINTS[1].getHeading(), POINTS[2].getHeading())
-                .build();
-
-        paths[2] = follower.pathBuilder()
-                .addPath(new BezierLine(POINTS[2], POINTS[3]))
-                .setLinearHeadingInterpolation(POINTS[2].getHeading(), POINTS[3].getHeading())
                 .build();
         */
     }
