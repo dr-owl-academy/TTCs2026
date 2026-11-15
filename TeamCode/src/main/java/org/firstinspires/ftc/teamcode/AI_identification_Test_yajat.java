@@ -224,10 +224,6 @@ public class AI_identification_Test_yajat extends OpMode {
 
         Pose currentPose = follower.getPose();
 
-        telemetry.addData("Robot X", currentPose.getX());
-        telemetry.addData("Robot Y", currentPose.getY());
-        telemetry.addData("Robot Heading", Math.toDegrees(currentPose.getHeading()));
-
         if (follower.getPose() == null) {
 
             follower.setTeleOpDrive(0, 0, 0, true);
@@ -240,6 +236,12 @@ public class AI_identification_Test_yajat extends OpMode {
             telemetry.update();
             return;
         }
+
+        telemetry.addData("Robot X", currentPose.getX());
+        telemetry.addData("Robot Y", currentPose.getY());
+        telemetry.addData("Robot Heading", Math.toDegrees(currentPose.getHeading()));
+
+
 
         // Detect new A button press
 
@@ -261,6 +263,7 @@ public class AI_identification_Test_yajat extends OpMode {
             if (!follower.isBusy()) {
 
                 autoRunning = false;
+                aiming = false;
 
                 telemetry.addData(
                         "Autonomous",
