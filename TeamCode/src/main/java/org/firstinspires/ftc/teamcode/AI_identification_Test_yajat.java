@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
@@ -33,6 +34,10 @@ public class AI_identification_Test_yajat extends OpMode {
     boolean LastA = false;
     boolean autoRunning = false;
 
+    // Remember the last AI classification
+    String lastAIClass = "None";
+    double lastAIConfidence = 0.0;
+
     final int AI_pipeline = 0;
 
     // SELECT YOUR ALLIANCE
@@ -48,11 +53,11 @@ public class AI_identification_Test_yajat extends OpMode {
 
         double waypoint1X, waypoint1Y;
         double waypoint2X, waypoint2Y;
-        double targetX, targetY,targetHeading;
+        double targetX, targetY, targetHeading;
 
         Route(double w1x, double w1y,
               double w2x, double w2y,
-              double tx, double ty,double tHeading) {
+              double tx, double ty, double tHeading) {
 
             waypoint1X = w1x;
             waypoint1Y = w1y;
@@ -81,24 +86,25 @@ public class AI_identification_Test_yajat extends OpMode {
     final Route BLUE_UPPER = new Route(
             116, 99,
             116, 30,
-            86, 30,90
+            86, 30, 90
     );
 
     final Route BLUE_LOWER = new Route(
             107, 39,
             107, 98,
-            86, 127,180
+            86, 127, 180
     );
+
     final Route RED_UPPER = new Route(
             Double.NaN, Double.NaN,
             Double.NaN, Double.NaN,
-            Double.NaN, Double.NaN,Double.NaN
+            Double.NaN, Double.NaN, Double.NaN
     );
 
     final Route RED_LOWER = new Route(
             Double.NaN, Double.NaN,
             Double.NaN, Double.NaN,
-            Double.NaN, Double.NaN,Double.NaN
+            Double.NaN, Double.NaN, Double.NaN
     );
 
     // =====================================
@@ -214,7 +220,8 @@ public class AI_identification_Test_yajat extends OpMode {
                         Math.toRadians(selectedRoute.targetHeading)
                 )
                 .build();
-        //limit auton motor power
+
+        // Limit autonomous motor power
         follower.setMaxPower(0.5);
 
         follower.followPath(switchSidePath, true);
@@ -253,9 +260,10 @@ public class AI_identification_Test_yajat extends OpMode {
 
         telemetry.addData("Robot X", currentPose.getX());
         telemetry.addData("Robot Y", currentPose.getY());
-        telemetry.addData("Robot Heading", Math.toDegrees(currentPose.getHeading()));
-
-
+        telemetry.addData(
+                "Robot Heading",
+                Math.toDegrees(currentPose.getHeading())
+        );
 
         // Detect new A button press
 
@@ -294,8 +302,10 @@ public class AI_identification_Test_yajat extends OpMode {
         // =================================
 
         else if (aiming) {
-            telemetry.addData("AI Branch","Entered");
 
+            telemetry.addData("AI Branch", "Entered");
+
+            // Allow controller movement during AI detection
             follower.setTeleOpDrive(
                     -gamepad1.left_stick_y,
                     -gamepad1.left_stick_x,
@@ -337,11 +347,15 @@ public class AI_identification_Test_yajat extends OpMode {
 
                     String className = best.getClassName();
 
+                    // Save latest AI classification
+                    lastAIClass = className;
+                    lastAIConfidence = best.getConfidence();
+
                     telemetry.addData("AI Class", className);
                     telemetry.addData("Confidence", best.getConfidence());
 
-
-                    if (className.equalsIgnoreCase("0 Tilt Towards Blue") && !autoRunning) {
+                    if (className.equalsIgnoreCase("0 Tilt Towards Blue")
+                            && !autoRunning) {
 
                         telemetry.addData(
                                 "AI Decision",
@@ -392,6 +406,16 @@ public class AI_identification_Test_yajat extends OpMode {
 
             telemetry.addData("Mode", "Driving Mode");
         }
+
+        // =================================
+        // LAST DETECTED AI INFORMATION
+        // =================================
+
+        telemetry.addData("Last AI Class", lastAIClass);
+        telemetry.addData(
+                "Last AI Confidence",
+                String.format("%.2f%%", lastAIConfidence * 100)
+        );
 
         telemetry.update();
     }
