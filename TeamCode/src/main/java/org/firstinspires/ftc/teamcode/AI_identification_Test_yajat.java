@@ -220,6 +220,12 @@ public class AI_identification_Test_yajat extends OpMode {
 
         follower.update();
 
+        Pose currentPose = follower.getPose();
+
+        telemetry.addData("Robot X", currentPose.getX());
+        telemetry.addData("Robot Y", currentPose.getY());
+        telemetry.addData("Robot Heading", Math.toDegrees(currentPose.getHeading()));
+
         if (follower.getPose() == null) {
 
             follower.setTeleOpDrive(0, 0, 0, true);
