@@ -57,10 +57,10 @@ public class DanielAuton1 extends OpMode {
             new Pose(99.651, 115.099, Math.toRadians(-1));
 
     private static final Pose FOURTH_POSE =
-            new Pose(129.44, 94.293, Math.toRadians(-1));
+            new Pose(125, 94.293, Math.toRadians(-1));
 
     private static final Pose FIFTH_POSE =
-            new Pose(129.44, 94.293, Math.toRadians(-108));
+            new Pose(125, 94.293, Math.toRadians(-108));
 
     private static final Pose SIXTH_POSE =
             new Pose(105.082, 21.135, Math.toRadians(-108));
@@ -79,7 +79,7 @@ public class DanielAuton1 extends OpMode {
     private static final Pose ELEVENTH_POSE =
             new Pose(87.208, 32.554, Math.toRadians(70));
     private static final Pose TWELFTH_POSE =
-            new Pose(108.446, 55.198, Math.toRadians(70));
+            new Pose(115, 51, Math.toRadians(70));
     private static final Pose THIRTEENTH_POSE =
             new Pose(108.446, 55.198, Math.toRadians(104));
     private static final Pose FOURTEENTH_POSE =
