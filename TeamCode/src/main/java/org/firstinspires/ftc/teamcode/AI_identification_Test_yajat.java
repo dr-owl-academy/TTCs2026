@@ -53,10 +53,12 @@ public class AI_identification_Test_yajat extends OpMode {
 
         double waypoint1X, waypoint1Y;
         double waypoint2X, waypoint2Y;
+        double waypoint3X, waypoint3Y;
         double targetX, targetY, targetHeading;
 
         Route(double w1x, double w1y,
               double w2x, double w2y,
+              double w3x, double w3y,
               double tx, double ty, double tHeading) {
 
             waypoint1X = w1x;
@@ -64,6 +66,9 @@ public class AI_identification_Test_yajat extends OpMode {
 
             waypoint2X = w2x;
             waypoint2Y = w2y;
+
+            waypoint3X = w3x;
+            waypoint3Y = w3y;
 
             targetX = tx;
             targetY = ty;
@@ -84,26 +89,30 @@ public class AI_identification_Test_yajat extends OpMode {
     // REPLACE THESE WITH ACTUAL FIELD COORDINATES
 
     final Route BLUE_UPPER = new Route(
-            112, 99,
-            112, 30,
+            113, 110,
+            119, 70,
+            113,28,
             86, 30, 90
     );
 
     final Route BLUE_LOWER = new Route(
-            107, 39,
-            107, 98,
-            86, 127, 180
+            113, 28,
+            119, 70,
+            113,110,
+            84, 118, 270
     );
 
     final Route RED_UPPER = new Route(
             Double.NaN, Double.NaN,
             Double.NaN, Double.NaN,
+            Double.NaN,Double.NaN,
             Double.NaN, Double.NaN, Double.NaN
     );
 
     final Route RED_LOWER = new Route(
             Double.NaN, Double.NaN,
             Double.NaN, Double.NaN,
+            Double.NaN,Double.NaN,
             Double.NaN, Double.NaN, Double.NaN
     );
 
