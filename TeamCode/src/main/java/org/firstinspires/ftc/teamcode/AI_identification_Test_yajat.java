@@ -79,8 +79,8 @@ public class AI_identification_Test_yajat extends OpMode {
     // REPLACE THESE WITH ACTUAL FIELD COORDINATES
 
     final Route BLUE_UPPER = new Route(
-            112, 99,
-            112, 39,
+            116, 99,
+            116, 30,
             86, 30,90
     );
 
@@ -215,7 +215,7 @@ public class AI_identification_Test_yajat extends OpMode {
                 )
                 .build();
         //limit auton motor power
-        follower.setMaxPower(0.6);
+        follower.setMaxPower(0.5);
 
         follower.followPath(switchSidePath, true);
 
