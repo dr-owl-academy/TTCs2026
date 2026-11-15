@@ -18,6 +18,7 @@ public class river_auton_path extends OpMode {
     private Follower follower;
     private PathChain[] paths;
     private int currentPath = 0;
+    private boolean stopped = false;
 
     private static final Pose[] POINTS = {
             new Pose(32.5277, 8.4566, Math.toRadians(90)),
@@ -60,6 +61,7 @@ public class river_auton_path extends OpMode {
     public void start() {
         follower.setStartingPose(POINTS[0]);
         currentPath = 0;
+        stopped = false;
         follower.followPath(paths[currentPath], true);
     }
 
@@ -67,15 +69,22 @@ public class river_auton_path extends OpMode {
     public void loop() {
         follower.update();
 
-        // Only advances if there are more paths
-        if (!follower.isBusy() && currentPath < paths.length - 1) {
-            currentPath++;
-            follower.followPath(paths[currentPath], true);
+        // Hard stop when the current path finishes
+        if (!follower.isBusy() && !stopped) {
+            follower.breakFollowing();   // hard stop
+            stopped = true;
+
+            // Only start the next path if more paths exist
+            if (currentPath < paths.length - 1) {
+                currentPath++;
+                stopped = false;
+                follower.followPath(paths[currentPath], true);
+            }
         }
 
         Pose p = follower.getPose();
         telemetry.addData("Path", (currentPath + 1) + " / " + paths.length);
-        telemetry.addData("Status", follower.isBusy() ? "Running" : "Done");
+        telemetry.addData("Status", follower.isBusy() ? "Running" : "Stopped");
         telemetry.addData("X", "%.1f", p.getX());
         telemetry.addData("Y", "%.1f", p.getY());
         telemetry.addData("Heading", "%.1f", Math.toDegrees(p.getHeading()));
@@ -83,9 +92,9 @@ public class river_auton_path extends OpMode {
     }
 
     private void buildPaths() {
-        // Only the first path is active right now.
-        // Uncomment the next line when you want to test more points.
-        paths = new PathChain[1];   // change to 2, 3, 4... as you debug
+        // Only the first path is active.
+        // Change the number and uncomment more blocks as you debug.
+        paths = new PathChain[1];
 
         // Path 1: start → point 1
         paths[0] = follower.pathBuilder()
