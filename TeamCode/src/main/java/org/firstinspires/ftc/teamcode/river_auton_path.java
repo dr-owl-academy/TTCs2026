@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -10,130 +9,233 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "River Red Auton", group = "Red")
+@Autonomous(name = "River Auton Path")
 public class river_auton_path extends OpMode {
 
     private enum AutoState {
-        PATH1, PAUSE1, TURN1,
-        PATH2, PAUSE2, TURN2,
-        PATH3, PAUSE3, TURN3,
-        PATH4, PAUSE4, TURN4,
-        PATH5, PAUSE5, TURN5,
-        PATH6, PAUSE6, TURN6,
-        PATH7, PAUSE7, TURN7,
+        PATH1,
+        PATH2,
+        PATH3,
+        PATH4,
+        PATH5,
+        PATH6,
+        PATH7,
+        PATH8,
+        PATH9,
+        PATH10,
+        PATH11,
+        PATH12,
+        PATH13,
+        PATH14,
+        PATH15,
+        PATH16,
+        PATH17,
+        PATH18,
         COMPLETE
     }
 
     private Follower follower;
-    private PathChain[] paths = new PathChain[7];
-    private AutoState autoState = AutoState.PATH1;
-    private long pauseStart = 0;
+    private Pose debugTarget = START_POSE;
+    private String debugAction = "Waiting to Start";
 
-    private static final Pose[] POINTS = {
-            new Pose(46.4165, 8.3509, Math.toRadians(90)),
-            new Pose(46.3568, 23.9845, Math.toRadians(90.2191)),
-            new Pose(14.815, 12.9082, Math.toRadians(-160.6506)),
-            new Pose(26.0055, 31.3329, Math.toRadians(58.7271)),
-            new Pose(22.1045, 45.9476, Math.toRadians(104.9449)),
-            new Pose(38.3489, 31.2244, Math.toRadians(-42.1877)),
-            new Pose(17.2518, 100.395, Math.toRadians(106.9617)),
-            new Pose(11.5333, 98.7444, Math.toRadians(-163.9003))
-    };
+    private PathChain[] paths = new PathChain[18]; //sets up pathchain for multiple paths
+    //start FSM state
+    private AutoState autoState = AutoState.PATH1;
+
+    // =========================================
+    // ROBOT POSES for FSM
+    // Pose format: X, Y, heading in radians
+    // =========================================
+
+    private static final Pose START_POSE =
+            new Pose(46.4165, 8.3509, Math.toRadians(90));
+
+    private static final Pose DRIVE_START_POSE =
+            new Pose(46.3568, 23.9845, Math.toRadians(90.2191));
+
+    private static final Pose TARGET_POSE =
+            new Pose(14.815, 12.9082, Math.toRadians(-160.6506));
+
+    private static final Pose FOURTH_POSE =
+            new Pose(26.0055, 31.3329, Math.toRadians(58.7271));
+
+    private static final Pose FIFTH_POSE =
+            new Pose(22.1045, 45.9476, Math.toRadians(104.9449));
+
+    private static final Pose SIXTH_POSE =
+            new Pose(38.3489, 31.2244, Math.toRadians(-42.1877));
+
+    private static final Pose SEVENTH_POSE =
+            new Pose(17.2518, 100.395, Math.toRadians(106.9617));
+
+    private static final Pose EIGHTH_POSE =
+            new Pose(11.5333, 98.7444, Math.toRadians(-163.9003));
+
+    private static final Pose NINTH_POSE =
+            new Pose(94.859, 17.045, Math.toRadians(116));
+
+    private static final Pose TENTH_POSE =
+            new Pose(87.208, 32.554, Math.toRadians(116));
+    private static final Pose ELEVENTH_POSE =
+            new Pose(87.208, 32.554, Math.toRadians(70));
+    private static final Pose TWELFTH_POSE =
+            new Pose(115, 51, Math.toRadians(70));
+    private static final Pose THIRTEENTH_POSE =
+            new Pose(108.446, 55.198, Math.toRadians(104));
+    private static final Pose FOURTEENTH_POSE =
+            new Pose(109.051, 86.086, Math.toRadians(104));
+    private static final Pose FIFTEENTH_POSE =
+            new Pose(109.051, 96.086, Math.toRadians(119));
+    private static final Pose SIXTEENTH_POSE =
+            new Pose(96.236, 117.378, Math.toRadians(119));
+    private static final Pose SEVENTEENTH_POSE =
+            new Pose(96.236, 117.378, Math.toRadians(-68));
+    private static final Pose EIGHTEENTH_POSE =
+            new Pose(124.840, 47.484, Math.toRadians(-68));
+
+
+
+
 
     @Override
     public void init() {
+
         follower = Constants.createFollower(hardwareMap);
 
-        // Faster turning
-        follower.setHeadingPIDFCoefficients(new PIDFCoefficients(3.0, 0, 0.02, 0.05));
+        follower.setStartingPose(START_POSE);
 
-        follower.setStartingPose(POINTS[0]);
-        follower.setMaxPower(0.35);
+        // Reduced power for testing.
+        follower.setMaxPower(0.5);
+
         buildPaths();
+
         autoState = AutoState.PATH1;
 
-        telemetry.addLine("Ready");
+        telemetry.addLine("Autonomous ready");
         telemetry.update();
     }
+
 
     @Override
     public void start() {
         autoState = AutoState.PATH1;
-    }
+    } //redundant line, only used to reset state when auton begins
+
 
     @Override
     public void loop() {
+
+        // Update Pedro Pathing every loop.
         follower.update();
+
+        // Run autonomous state machine.
         autonomousPathUpdate();
 
-        Pose p = follower.getPose();
-        telemetry.addData("X", "%.1f", p.getX());
-        telemetry.addData("Y", "%.1f", p.getY());
-        telemetry.addData("Heading", "%.1f", Math.toDegrees(p.getHeading()));
+        Pose currentPose = follower.getPose();
+
+        telemetry.addData("X", currentPose.getX());
+        telemetry.addData("Y", currentPose.getY());
+
+        telemetry.addData(
+                "Heading (degrees)",
+                Math.toDegrees(currentPose.getHeading())
+        );
+
         telemetry.addData("State", autoState);
-        telemetry.addData("Busy", follower.isBusy());
+        telemetry.addData("Follower Busy", follower.isBusy());
+//helps with debug, shows if robot is moving or not or if it is still running the path
+        if (autoState == AutoState.COMPLETE) {
+            telemetry.addLine("Autonomous complete");
+        }
+
         telemetry.update();
     }
 
-    private void buildPaths() {
-        for (int i = 0; i < 7; i++) {
-            paths[i] = makePath(POINTS[i], POINTS[i + 1]);
-        }
+
+    @Override
+    public void stop() {
+        // No additional cleanup required.
     }
 
-    private PathChain makePath(Pose start, Pose end) {
+
+    // =========================================
+    // BUILD ALL PATHS
+    // Each path gets its own starting and ending
+    // heading from its Pose coordinates.
+    // =========================================
+
+    private void buildPaths() {
+
+        paths[0] = makeConstantPath(START_POSE, DRIVE_START_POSE);
+
+        paths[1] = makeConstantPath(DRIVE_START_POSE, TARGET_POSE);
+
+        paths[2] = makeConstantPath(TARGET_POSE, FOURTH_POSE);
+
+        paths[3] = makeConstantPath(FOURTH_POSE, FIFTH_POSE);
+
+        paths[4] = makeConstantPath(FIFTH_POSE, SIXTH_POSE);
+
+        paths[5] = makeConstantPath(SIXTH_POSE, SEVENTH_POSE);
+
+        paths[6] = makeConstantPath(SEVENTH_POSE, EIGHTH_POSE);
+
+        paths[7] = makeConstantPath(EIGHTH_POSE, NINTH_POSE);
+
+        paths[8] = makeConstantPath(NINTH_POSE, TENTH_POSE);
+
+        paths[9] = makeConstantPath(TENTH_POSE, ELEVENTH_POSE);
+
+        paths[10] = makeConstantPath(ELEVENTH_POSE, TWELFTH_POSE);
+
+        paths[11] = makeConstantPath(TWELFTH_POSE, THIRTEENTH_POSE);
+
+        paths[12] = makeConstantPath(THIRTEENTH_POSE, FOURTEENTH_POSE);
+
+        paths[13] = makeConstantPath(FOURTEENTH_POSE, FIFTEENTH_POSE);
+
+        paths[14] = makeConstantPath(FIFTEENTH_POSE, SIXTEENTH_POSE);
+
+        paths[15] = makeConstantPath(SIXTEENTH_POSE, SEVENTEENTH_POSE);
+
+        paths[16] = makeConstantPath(SEVENTEENTH_POSE, EIGHTEENTH_POSE);
+
+
+
+
+
+
+    } //builds all the paths in order for robot to move to correct heading while driving to next path
+
+
+    // Creates a path that interpolates heading between poses.
+    private PathChain makeConstantPath(Pose start, Pose end) {
+
         return follower.pathBuilder()
                 .addPath(new BezierLine(start, end))
-                .setLinearHeadingInterpolation(start.getHeading(), end.getHeading())
+                .setConstantHeadingInterpolation(
+                        start.getHeading()
+                )
                 .build();
-    }
+    }//designs the path builder for auton instead of writing same code for every path
 
-    // Short path that only turns (same position, new heading)
-    private PathChain makeTurnPath(Pose current, double targetHeading) {
-        Pose end = new Pose(current.getX(), current.getY(), targetHeading);
-        return follower.pathBuilder()
-                .addPath(new BezierLine(current, end))
-                .setLinearHeadingInterpolation(current.getHeading(), targetHeading)
-                .build();
-    }
+
+    // =========================================
+    // AUTONOMOUS STATE MACHINE
+    // =========================================
 
     private void autonomousPathUpdate() {
-        Pose current = follower.getPose();
 
         switch (autoState) {
 
             case PATH1:
                 follower.followPath(paths[0], true);
-                autoState = AutoState.PAUSE1;
-                break;
-            case PAUSE1:
-                if (!follower.isBusy()) {
-                    pauseStart = System.currentTimeMillis();
-                    autoState = AutoState.TURN1;
-                }
-                break;
-            case TURN1:
-                if (System.currentTimeMillis() - pauseStart >= 1000) {
-                    follower.followPath(makeTurnPath(current, POINTS[1].getHeading()), true);
-                    autoState = AutoState.PATH2;
-                }
+                autoState = AutoState.PATH2;
                 break;
 
             case PATH2:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths[1], true);
-                    autoState = AutoState.PAUSE2;
-                }
-                break;
-            case PAUSE2:
-                if (!follower.isBusy()) {
-                    pauseStart = System.currentTimeMillis();
-                    autoState = AutoState.TURN2;
-                }
-                break;
-            case TURN2:
-                if (System.currentTimeMillis() - pauseStart >= 1000) {
-                    follower.followPath(makeTurnPath(current, POINTS[2].getHeading()), true);
+                    follower.turnTo(Math.toRadians(-1));
                     autoState = AutoState.PATH3;
                 }
                 break;
@@ -141,37 +243,13 @@ public class river_auton_path extends OpMode {
             case PATH3:
                 if (!follower.isBusy()) {
                     follower.followPath(paths[2], true);
-                    autoState = AutoState.PAUSE3;
-                }
-                break;
-            case PAUSE3:
-                if (!follower.isBusy()) {
-                    pauseStart = System.currentTimeMillis();
-                    autoState = AutoState.TURN3;
-                }
-                break;
-            case TURN3:
-                if (System.currentTimeMillis() - pauseStart >= 1000) {
-                    follower.followPath(makeTurnPath(current, POINTS[3].getHeading()), true);
                     autoState = AutoState.PATH4;
                 }
                 break;
 
             case PATH4:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths[3], true);
-                    autoState = AutoState.PAUSE4;
-                }
-                break;
-            case PAUSE4:
-                if (!follower.isBusy()) {
-                    pauseStart = System.currentTimeMillis();
-                    autoState = AutoState.TURN4;
-                }
-                break;
-            case TURN4:
-                if (System.currentTimeMillis() - pauseStart >= 1000) {
-                    follower.followPath(makeTurnPath(current, POINTS[4].getHeading()), true);
+                    follower.turnTo(Math.toRadians(-108));
                     autoState = AutoState.PATH5;
                 }
                 break;
@@ -179,37 +257,13 @@ public class river_auton_path extends OpMode {
             case PATH5:
                 if (!follower.isBusy()) {
                     follower.followPath(paths[4], true);
-                    autoState = AutoState.PAUSE5;
-                }
-                break;
-            case PAUSE5:
-                if (!follower.isBusy()) {
-                    pauseStart = System.currentTimeMillis();
-                    autoState = AutoState.TURN5;
-                }
-                break;
-            case TURN5:
-                if (System.currentTimeMillis() - pauseStart >= 1000) {
-                    follower.followPath(makeTurnPath(current, POINTS[5].getHeading()), true);
                     autoState = AutoState.PATH6;
                 }
                 break;
 
             case PATH6:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths[5], true);
-                    autoState = AutoState.PAUSE6;
-                }
-                break;
-            case PAUSE6:
-                if (!follower.isBusy()) {
-                    pauseStart = System.currentTimeMillis();
-                    autoState = AutoState.TURN6;
-                }
-                break;
-            case TURN6:
-                if (System.currentTimeMillis() - pauseStart >= 1000) {
-                    follower.followPath(makeTurnPath(current, POINTS[6].getHeading()), true);
+                    follower.turnTo(Math.toRadians(113));
                     autoState = AutoState.PATH7;
                 }
                 break;
@@ -217,23 +271,82 @@ public class river_auton_path extends OpMode {
             case PATH7:
                 if (!follower.isBusy()) {
                     follower.followPath(paths[6], true);
-                    autoState = AutoState.PAUSE7;
+                    autoState = AutoState.PATH8;
                 }
                 break;
-            case PAUSE7:
+
+            case PATH8:
                 if (!follower.isBusy()) {
-                    pauseStart = System.currentTimeMillis();
-                    autoState = AutoState.TURN7;
+                    follower.turnTo(Math.toRadians(116));
+                    autoState = AutoState.PATH9;
                 }
                 break;
-            case TURN7:
-                if (System.currentTimeMillis() - pauseStart >= 1000) {
-                    follower.followPath(makeTurnPath(current, POINTS[7].getHeading()), true);
+
+            case PATH9:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths[8], true);
+                    autoState = AutoState.PATH10;
+                }
+                break;
+            case PATH10:
+                if (!follower.isBusy()) {
+                    follower.turnTo(Math.toRadians(70));
+                    autoState = AutoState.PATH11;
+                }
+                break;
+            case PATH11:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths[10], true);
+                    autoState = AutoState.PATH12;
+                }
+                break;
+            case PATH12:
+                if (!follower.isBusy()) {
+                    follower.turnTo(Math.toRadians(104));
+                    autoState = AutoState.PATH13;
+                }
+                break;
+            case PATH13:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths[12], true);
+                    autoState = AutoState.PATH14;
+                }
+                break;
+            case PATH14:
+                if (!follower.isBusy()) {
+                    follower.turnTo(Math.toRadians(119));
+                    autoState = AutoState.PATH15;
+                }
+                break;
+            case PATH15:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths[14], true);
+                    autoState = AutoState.PATH16;
+                }
+                break;
+            case PATH16:
+                if (!follower.isBusy()) {
+                    follower.turnTo(Math.toRadians(-68));
+                    autoState = AutoState.PATH17;
+                }
+                break;
+            case PATH17:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths[16], true);
+                    autoState = AutoState.PATH18;
+                }
+                break;
+
+
+
+            case PATH18:
+                if (!follower.isBusy()) {
                     autoState = AutoState.COMPLETE;
                 }
                 break;
 
             case COMPLETE:
+                // Autonomous has finished.
                 break;
         }
     }
