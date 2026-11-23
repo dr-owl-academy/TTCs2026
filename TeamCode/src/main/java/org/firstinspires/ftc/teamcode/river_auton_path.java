@@ -20,7 +20,7 @@ public class river_auton_path extends OpMode {
     private PathChain[] paths = new PathChain[7];
     private AutoState autoState = AutoState.PATH1;
 
-    // Your points
+    // New points
     private static final Pose START =
             new Pose(46.4165, 8.3509, Math.toRadians(90));
     private static final Pose POINT1 =
@@ -32,11 +32,11 @@ public class river_auton_path extends OpMode {
     private static final Pose POINT4 =
             new Pose(22.1045, 45.9476, Math.toRadians(104.9449));
     private static final Pose POINT5 =
-            new Pose(38.3489, 31.2244, Math.toRadians(-42.1877));
+            new Pose(35.0986, 31.9073, Math.toRadians(-47.2162));
     private static final Pose POINT6 =
-            new Pose(17.2518, 100.395, Math.toRadians(106.9617));
+            new Pose(28.2347, 98.8582, Math.toRadians(95.8536));
     private static final Pose POINT7 =
-            new Pose(11.5333, 98.7444, Math.toRadians(-163.9003));
+            new Pose(15.3938, 98.7703, Math.toRadians(-179.6077));
 
     @Override
     public void init() {
