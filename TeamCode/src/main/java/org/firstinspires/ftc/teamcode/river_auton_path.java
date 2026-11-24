@@ -152,7 +152,7 @@ public class river_auton_path extends OpMode {
                 break;
             case AI_AFTER_2:
                 // Call PromodPathPlaner here
-                boolean tiltedAway = PromodPathPlaner.isHiveTiltedAway();  // <-- method call
+                boolean tiltedAway = River_Path_Planer.isHiveTiltedAway();  // <-- method call
 
                 if (tiltedAway) {
                     // Hive tilted away → go to alternate point
@@ -191,7 +191,7 @@ public class river_auton_path extends OpMode {
                 }
                 break;
             case AI_AFTER_4:
-                boolean tiltedAway4 = PromodPathPlaner.isHiveTiltedAway();
+                boolean tiltedAway4 = River_Path_Planer.isHiveTiltedAway();
 
                 if (tiltedAway4) {
                     follower.followPath(altAfter4, true);
@@ -228,7 +228,7 @@ public class river_auton_path extends OpMode {
                 }
                 break;
             case AI_AFTER_6:
-                boolean tiltedAway6 = PromodPathPlaner.isHiveTiltedAway();
+                boolean tiltedAway6 = River_Path_Planer.isHiveTiltedAway();
 
                 if (tiltedAway6) {
                     follower.followPath(altAfter6, true);
@@ -251,7 +251,7 @@ public class river_auton_path extends OpMode {
                 }
                 break;
             case AI_AFTER_7:
-                boolean tiltedAway7 = PromodPathPlaner.isHiveTiltedAway();
+                boolean tiltedAway7 = River_Path_Planer.isHiveTiltedAway();
 
                 if (tiltedAway7) {
                     follower.followPath(altAfter7, true);
