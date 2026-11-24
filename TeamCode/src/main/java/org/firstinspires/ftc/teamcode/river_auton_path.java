@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 public class river_auton_path extends OpMode {
 
     private enum AutoState {
+        Check_AI,
         PATH1, WAIT1,
         PATH2, WAIT2,
         PATH3, WAIT3,
@@ -26,8 +27,9 @@ public class river_auton_path extends OpMode {
 
     private Follower follower;
     private PathChain[] paths = new PathChain[7];
-    private AutoState autoState = AutoState.PATH1;
+    private AutoState autoState = AutoState.Check_AI;
     private long waitStart = 0;
+    private String aiResult = "none";
 
     private static final Pose START =
             new Pose(51.6289, 6.8244, Math.toRadians(90));
@@ -54,7 +56,7 @@ public class river_auton_path extends OpMode {
         follower.setStartingPose(START);
         follower.setMaxPower(0.5);
         buildPaths();
-        autoState = AutoState.PATH1;
+        autoState = AutoState.Check_AI;
         telemetry.addLine("Autonomous ready");
         telemetry.update();
     }
@@ -67,6 +69,12 @@ public class river_auton_path extends OpMode {
     @Override
     public void loop() {
         follower.update();
+
+        // TODO: Replace this with your real AI / Limelight read
+        // Example: aiResult = limelight.getClassifierResult();
+        // For testing you can temporarily set it here:
+        // aiResult = "garden";
+
         autonomousPathUpdate();
 
         Pose p = follower.getPose();
@@ -75,6 +83,7 @@ public class river_auton_path extends OpMode {
         telemetry.addData("Heading", Math.toDegrees(p.getHeading()));
         telemetry.addData("State", autoState);
         telemetry.addData("Busy", follower.isBusy());
+        telemetry.addData("AI Result", aiResult);
         telemetry.update();
     }
 
@@ -101,6 +110,21 @@ public class river_auton_path extends OpMode {
 
     private void autonomousPathUpdate() {
         switch (autoState) {
+
+            case Check_AI:I:
+                // Example decisions — change the strings to match your AI
+                if (aiResult.equals("garden")) {
+                    follower.followPath(paths[1], true);   // go to garden point
+                    autoState = AutoState.PATH2;
+                } else if (aiResult.equals("flower")) {
+                    follower.followPath(paths[3], true);   // go to flower point
+                    autoState = AutoState.PATH4;
+                } else if (aiResult.equals("shoot")) {
+                    follower.followPath(paths[0], true);   // go to shoot point
+                    autoState = AutoState.PATH1;
+                }
+                // Add more else-if lines for your other cases (up to ~8)
+                break;
 
             case PATH1:
                 follower.followPath(paths[0], true);
