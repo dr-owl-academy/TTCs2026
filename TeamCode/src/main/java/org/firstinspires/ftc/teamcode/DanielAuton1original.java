@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous(name = "DanielSimpleAuton1original")
-public class DanielAuton1 extends OpMode {
+public class DanielAuton1original extends OpMode {
 
     private enum AutoState {
         PATH1,
@@ -92,9 +92,6 @@ public class DanielAuton1 extends OpMode {
             new Pose(96.236, 117.378, Math.toRadians(-68));
     private static final Pose EIGHTEENTH_POSE =
             new Pose(124.840, 47.484, Math.toRadians(-68));
-
-
-
 
 
     @Override
@@ -199,10 +196,6 @@ public class DanielAuton1 extends OpMode {
         paths[15] = makeConstantPath(SIXTEENTH_POSE, SEVENTEENTH_POSE);
 
         paths[16] = makeConstantPath(SEVENTEENTH_POSE, EIGHTEENTH_POSE);
-
-
-
-
 
 
     } //builds all the paths in order for robot to move to correct heading while driving to next path
@@ -338,7 +331,6 @@ public class DanielAuton1 extends OpMode {
                 break;
 
 
-
             case PATH18:
                 if (!follower.isBusy()) {
                     autoState = AutoState.COMPLETE;
@@ -350,3 +342,4 @@ public class DanielAuton1 extends OpMode {
                 break;
         }
     }
+}
