@@ -10,7 +10,6 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
-
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
@@ -295,12 +294,17 @@ public class Auton_Blue_Lower extends OpMode {
         LLResultTypes.ClassifierResult best =
                 result.getClassifierResults().get(0);
 
-        try {
-            return Integer.parseInt(best.getClassName());
+        String className = best.getClassName();
+
+        if (className.equals("1")) {
+            return TILT_AWAY_BLUE;
         }
-        catch (NumberFormatException e) {
-            return -1;
+
+        if (className.equals("0")) {
+            return TILT_TOWARD_BLUE;
         }
+
+        return -1;
     }
 
     // BUILD AND FOLLOW PATH
