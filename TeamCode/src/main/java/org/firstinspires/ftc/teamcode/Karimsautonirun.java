@@ -153,7 +153,7 @@ public class Karimsautonirun extends OpMode {
                 "limelight"
         );
 
-        limelight.pipelineSwitch(0);
+        limelight.pipelineSwitch(2);
         limelight.start();
 
         telemetry.addLine("Red River Autonomous Ready");
