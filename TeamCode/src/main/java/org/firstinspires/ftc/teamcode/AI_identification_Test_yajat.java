@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
@@ -18,43 +17,73 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name = "AI_Identification_test_yajat")
+@TeleOp(name = "AI_identification_test_yajat")
 public class AI_identification_Test_yajat extends OpMode {
 
     private Follower follower;
     private Limelight3A limelight;
 
+    // =========================================
+    // CONTROL VARIABLES
+    // =========================================
+
     private boolean aiming = false;
     private boolean lastA = false;
     private boolean autoRunning = false;
+
+    private boolean selectedUpperStart = true;
+    private boolean appliedUpperStart = true;
 
     private String lastAIClass = "None";
     private double lastAIConfidence = 0;
 
     private final int AI_PIPELINE = 0;
 
-    // BLUE ALLIANCE
-    private final boolean blueTeam = true;
-
     // =========================================
-    // DANIEL'S AUTONOMOUS COORDINATES
+    // BLUE ALLIANCE STARTING POSITIONS
     // =========================================
 
-    private static final Pose START_POSE =
-            new Pose(99.651, 132.274, Math.toRadians(-90));
+    // Daniel's original starting position.
+    private static final Pose BLUE_UPPER_START =
+            new Pose(
+                    99.651,
+                    132.274,
+                    Math.toRadians(-90)
+            );
 
-    private static final Pose DANIEL_WAYPOINT_1 =
-            new Pose(125, 94.293, Math.toRadians(-1));
+    // Mirrored starting position across field center.
+    // Change this if your actual lower starting position differs.
+    private static final Pose BLUE_LOWER_START =
+            new Pose(
+                    99.651,
+                    11.726,
+                    Math.toRadians(90)
+            );
 
-    private static final Pose DANIEL_WAYPOINT_2 =
-            new Pose(105.082, 21.135, Math.toRadians(-108));
+    // =========================================
+    // BLUE SHOOTING POSITIONS
+    // =========================================
 
-    private static final Pose SHOOTING_POSITION =
-            new Pose(86, 30, Math.toRadians(90));
+    private static final Pose BLUE_UPPER_SHOOTING =
+            new Pose(
+                    84,
+                    118,
+                    Math.toRadians(270)
+            );
+
+    private static final Pose BLUE_LOWER_SHOOTING =
+            new Pose(
+                    86,
+                    30,
+                    Math.toRadians(90)
+            );
 
     // =========================================
     // HIVE OBSTACLE BOUNDARIES
     // =========================================
+
+    // Expanded for the 17 x 17 inch robot
+    // and additional clearance.
 
     private static final double HIVE_MIN_X = 36.77;
     private static final double HIVE_MAX_X = 107.23;
@@ -62,11 +91,47 @@ public class AI_identification_Test_yajat extends OpMode {
     private static final double HIVE_MIN_Y = 42.00;
     private static final double HIVE_MAX_Y = 102.00;
 
-    private static final double TARGET_HEADING =
-            Math.toRadians(90);
+    private static final double CORNER_MARGIN = 1.0;
 
     // =========================================
-    // AUTONOMOUS PATH STORAGE
+    // DANIEL'S AUTONOMOUS WAYPOINTS
+    // =========================================
+
+    private static final Pose DANIEL_DRIVE_START =
+            new Pose(99.651, 115.099, 0);
+
+    private static final Pose DANIEL_FOURTH =
+            new Pose(125, 94.293, 0);
+
+    private static final Pose DANIEL_SIXTH =
+            new Pose(105.082, 21.135, 0);
+
+    private static final Pose DANIEL_EIGHTH =
+            new Pose(94.859, 17.045, 0);
+
+    private static final Pose DANIEL_TENTH =
+            new Pose(87.208, 32.554, 0);
+
+    private static final Pose DANIEL_TWELFTH =
+            new Pose(115, 51, 0);
+
+    private static final Pose DANIEL_THIRTEENTH =
+            new Pose(108.446, 55.198, 0);
+
+    private static final Pose DANIEL_FOURTEENTH =
+            new Pose(109.051, 86.086, 0);
+
+    private static final Pose DANIEL_FIFTEENTH =
+            new Pose(109.051, 96.086, 0);
+
+    private static final Pose DANIEL_SIXTEENTH =
+            new Pose(96.236, 117.378, 0);
+
+    private static final Pose DANIEL_EIGHTEENTH =
+            new Pose(124.840, 47.484, 0);
+
+    // =========================================
+    // PATH STORAGE
     // =========================================
 
     private List<PathChain> autonomousPaths =
@@ -83,7 +148,7 @@ public class AI_identification_Test_yajat extends OpMode {
 
         follower = Constants.createFollower(hardwareMap);
 
-        follower.setStartingPose(START_POSE);
+        follower.setStartingPose(BLUE_UPPER_START);
 
         limelight = hardwareMap.get(
                 Limelight3A.class,
@@ -94,6 +159,63 @@ public class AI_identification_Test_yajat extends OpMode {
         limelight.start();
 
         telemetry.addLine("AI Hive Switching Ready");
+        telemetry.addLine("D-pad UP: Upper start");
+        telemetry.addLine("D-pad DOWN: Lower start");
+
+        telemetry.update();
+    }
+
+    // =========================================
+    // SELECT STARTING SIDE
+    // =========================================
+
+    @Override
+    public void init_loop() {
+
+        if (gamepad1.dpad_up) {
+            selectedUpperStart = true;
+        }
+
+        else if (gamepad1.dpad_down) {
+            selectedUpperStart = false;
+        }
+
+        // Only reset the starting pose when
+        // the selected side actually changes.
+
+        if (selectedUpperStart != appliedUpperStart) {
+
+            if (selectedUpperStart) {
+
+                follower.setStartingPose(BLUE_UPPER_START);
+
+            } else {
+
+                follower.setStartingPose(BLUE_LOWER_START);
+            }
+
+            appliedUpperStart = selectedUpperStart;
+        }
+
+        telemetry.addData(
+                "Selected Start",
+                selectedUpperStart ? "BLUE UPPER" : "BLUE LOWER"
+        );
+
+        telemetry.addData(
+                "Starting X",
+                selectedUpperStart
+                        ? BLUE_UPPER_START.getX()
+                        : BLUE_LOWER_START.getX()
+        );
+
+        telemetry.addData(
+                "Starting Y",
+                selectedUpperStart
+                        ? BLUE_UPPER_START.getY()
+                        : BLUE_LOWER_START.getY()
+        );
+
         telemetry.update();
     }
 
@@ -117,16 +239,42 @@ public class AI_identification_Test_yajat extends OpMode {
     }
 
     // =========================================
-    // CHECK WHETHER A PATH CROSSES THE HIVE
+    // CHECK WHETHER A POSITION OVERLAPS HIVE
+    // =========================================
+
+    private boolean insideHive(double x, double y) {
+
+        return x >= HIVE_MIN_X
+                && x <= HIVE_MAX_X
+                && y >= HIVE_MIN_Y
+                && y <= HIVE_MAX_Y;
+    }
+
+    // =========================================
+    // CHECK WHETHER A POSITION IS SAFE
+    // =========================================
+
+    private boolean isPoseSafe(Pose pose) {
+
+        return !insideHive(
+                pose.getX(),
+                pose.getY()
+        );
+    }
+
+    // =========================================
+    // CHECK WHETHER A STRAIGHT PATH IS SAFE
     // =========================================
 
     private boolean isPathSafe(Pose start, Pose end) {
 
         double length = distance(start, end);
 
+        // Check every half inch along the path.
+
         int samples = Math.max(
                 1,
-                (int) Math.ceil(length)
+                (int) Math.ceil(length * 2)
         );
 
         for (int i = 0; i <= samples; i++) {
@@ -139,13 +287,7 @@ public class AI_identification_Test_yajat extends OpMode {
             double y = start.getY()
                     + (end.getY() - start.getY()) * t;
 
-            boolean insideHive =
-                    x > HIVE_MIN_X
-                            && x < HIVE_MAX_X
-                            && y > HIVE_MIN_Y
-                            && y < HIVE_MAX_Y;
-
-            if (insideHive) {
+            if (insideHive(x, y)) {
                 return false;
             }
         }
@@ -161,34 +303,55 @@ public class AI_identification_Test_yajat extends OpMode {
 
         List<Pose> nodes = new ArrayList<>();
 
+        // Node 0 = starting position.
+        // Node 1 = destination.
+
         nodes.add(start);
         nodes.add(goal);
 
-        // Four corners of the expanded hive obstacle
+        // =====================================
+        // EXPANDED HIVE CORNERS
+        // =====================================
 
         nodes.add(new Pose(
-                HIVE_MIN_X,
-                HIVE_MIN_Y,
-                TARGET_HEADING
+                HIVE_MIN_X - CORNER_MARGIN,
+                HIVE_MIN_Y - CORNER_MARGIN,
+                0
         ));
 
         nodes.add(new Pose(
-                HIVE_MIN_X,
-                HIVE_MAX_Y,
-                TARGET_HEADING
+                HIVE_MIN_X - CORNER_MARGIN,
+                HIVE_MAX_Y + CORNER_MARGIN,
+                0
         ));
 
         nodes.add(new Pose(
-                HIVE_MAX_X,
-                HIVE_MIN_Y,
-                TARGET_HEADING
+                HIVE_MAX_X + CORNER_MARGIN,
+                HIVE_MIN_Y - CORNER_MARGIN,
+                0
         ));
 
         nodes.add(new Pose(
-                HIVE_MAX_X,
-                HIVE_MAX_Y,
-                TARGET_HEADING
+                HIVE_MAX_X + CORNER_MARGIN,
+                HIVE_MAX_Y + CORNER_MARGIN,
+                0
         ));
+
+        // =====================================
+        // DANIEL'S AUTONOMOUS WAYPOINTS
+        // =====================================
+
+        nodes.add(DANIEL_DRIVE_START);
+        nodes.add(DANIEL_FOURTH);
+        nodes.add(DANIEL_SIXTH);
+        nodes.add(DANIEL_EIGHTH);
+        nodes.add(DANIEL_TENTH);
+        nodes.add(DANIEL_TWELFTH);
+        nodes.add(DANIEL_THIRTEENTH);
+        nodes.add(DANIEL_FOURTEENTH);
+        nodes.add(DANIEL_FIFTEENTH);
+        nodes.add(DANIEL_SIXTEENTH);
+        nodes.add(DANIEL_EIGHTEENTH);
 
         int n = nodes.size();
 
@@ -199,30 +362,39 @@ public class AI_identification_Test_yajat extends OpMode {
         boolean[] visited = new boolean[n];
 
         for (int i = 0; i < n; i++) {
+
             distances[i] = Double.POSITIVE_INFINITY;
+
             previous[i] = -1;
         }
 
-        // Cannot plan a route if either endpoint
-        // already overlaps the expanded obstacle.
+        // =====================================
+        // VALIDATE START AND DESTINATION
+        // =====================================
 
-        if (start.getX() > HIVE_MIN_X
-                && start.getX() < HIVE_MAX_X
-                && start.getY() > HIVE_MIN_Y
-                && start.getY() < HIVE_MAX_Y) {
+        if (!isPoseSafe(start)) {
+
+            telemetry.addLine(
+                    "ERROR: Starting position overlaps hive boundary"
+            );
+
             return new ArrayList<>();
         }
 
-        if (goal.getX() > HIVE_MIN_X
-                && goal.getX() < HIVE_MAX_X
-                && goal.getY() > HIVE_MIN_Y
-                && goal.getY() < HIVE_MAX_Y) {
+        if (!isPoseSafe(goal)) {
+
+            telemetry.addLine(
+                    "ERROR: Destination overlaps hive boundary"
+            );
+
             return new ArrayList<>();
         }
 
         distances[0] = 0;
 
-        // Dijkstra's algorithm
+        // =====================================
+        // DIJKSTRA MAIN LOOP
+        // =====================================
 
         for (int count = 0; count < n; count++) {
 
@@ -231,8 +403,7 @@ public class AI_identification_Test_yajat extends OpMode {
             double smallestDistance =
                     Double.POSITIVE_INFINITY;
 
-            // Find the unvisited node with
-            // the smallest known distance.
+            // Find closest unvisited node.
 
             for (int i = 0; i < n; i++) {
 
@@ -240,13 +411,18 @@ public class AI_identification_Test_yajat extends OpMode {
                         && distances[i] < smallestDistance) {
 
                     smallestDistance = distances[i];
+
                     current = i;
                 }
             }
 
+            // No reachable nodes remain.
+
             if (current == -1) {
                 break;
             }
+
+            // Destination reached.
 
             if (current == 1) {
                 break;
@@ -254,7 +430,9 @@ public class AI_identification_Test_yajat extends OpMode {
 
             visited[current] = true;
 
-            // Examine every possible neighboring node.
+            // =================================
+            // EXAMINE NEIGHBORING NODES
+            // =================================
 
             for (int next = 0; next < n; next++) {
 
@@ -265,8 +443,11 @@ public class AI_identification_Test_yajat extends OpMode {
                 Pose a = nodes.get(current);
                 Pose b = nodes.get(next);
 
-                // Only connect nodes if the
-                // straight segment is collision-free.
+                if (!isPoseSafe(b)) {
+                    continue;
+                }
+
+                // Reject paths that intersect hive.
 
                 if (!isPathSafe(a, b)) {
                     continue;
@@ -277,19 +458,29 @@ public class AI_identification_Test_yajat extends OpMode {
                 double newDistance =
                         distances[current] + edgeDistance;
 
+                // Update shortest known distance.
+
                 if (newDistance < distances[next]) {
 
                     distances[next] = newDistance;
+
                     previous[next] = current;
                 }
             }
         }
 
-        // Reconstruct shortest path.
+        // =====================================
+        // RECONSTRUCT ROUTE
+        // =====================================
 
         List<Pose> route = new ArrayList<>();
 
         if (!Double.isFinite(distances[1])) {
+
+            telemetry.addLine(
+                    "Dijkstra: No safe route found"
+            );
+
             return route;
         }
 
@@ -306,48 +497,7 @@ public class AI_identification_Test_yajat extends OpMode {
     }
 
     // =========================================
-    // CONVERT DIJKSTRA ROUTE INTO PEDRO PATHS
-    // =========================================
-
-    private void addRouteLeg(Pose start, Pose goal) {
-
-        List<Pose> route = dijkstra(start, goal);
-
-        if (route.size() < 2) {
-
-            telemetry.addData(
-                    "Dijkstra Error",
-                    "No safe route found"
-            );
-
-            return;
-        }
-
-        for (int i = 0; i < route.size() - 1; i++) {
-
-            Pose pathStart = route.get(i);
-            Pose pathEnd = route.get(i + 1);
-
-            PathChain path = follower.pathBuilder()
-
-                    .addPath(new BezierLine(
-                            pathStart,
-                            pathEnd
-                    ))
-
-                    .setLinearHeadingInterpolation(
-                            pathStart.getHeading(),
-                            TARGET_HEADING
-                    )
-
-                    .build();
-
-            autonomousPaths.add(path);
-        }
-    }
-
-    // =========================================
-    // BUILD COMPLETE BLUE UPPER ROUTE
+    // BUILD ROUTE FOR EITHER BLUE SIDE
     // =========================================
 
     private void buildSwitchSideRoute() {
@@ -357,34 +507,115 @@ public class AI_identification_Test_yajat extends OpMode {
         Pose currentPose = follower.getPose();
 
         if (currentPose == null) {
+
             telemetry.addLine("Pose unavailable");
+
             return;
         }
 
-        // First: current position to Daniel waypoint 1.
+        // =====================================
+        // DETERMINE CURRENT FIELD SIDE
+        // =====================================
 
-        addRouteLeg(
+        boolean currentlyUpper =
+                currentPose.getY() > 72;
+
+        Pose destination;
+
+        if (currentlyUpper) {
+
+            // Upper BLUE -> Lower BLUE
+
+            destination = BLUE_LOWER_SHOOTING;
+
+            telemetry.addLine(
+                    "BLUE UPPER -> BLUE LOWER"
+            );
+
+        } else {
+
+            // Lower BLUE -> Upper BLUE
+
+            destination = BLUE_UPPER_SHOOTING;
+
+            telemetry.addLine(
+                    "BLUE LOWER -> BLUE UPPER"
+            );
+        }
+
+        telemetry.addData(
+                "Current Y",
+                currentPose.getY()
+        );
+
+        telemetry.addData(
+                "Destination X",
+                destination.getX()
+        );
+
+        telemetry.addData(
+                "Destination Y",
+                destination.getY()
+        );
+
+        // =====================================
+        // CALCULATE DIJKSTRA ROUTE
+        // =====================================
+
+        List<Pose> route = dijkstra(
                 currentPose,
-                DANIEL_WAYPOINT_1
+                destination
         );
 
-        // Second: Daniel waypoint 1 to waypoint 2.
+        if (route.size() < 2) {
 
-        addRouteLeg(
-                DANIEL_WAYPOINT_1,
-                DANIEL_WAYPOINT_2
-        );
+            telemetry.addLine(
+                    "ERROR: Could not create safe route"
+            );
 
-        // Third: waypoint 2 to shooting position.
+            aiming = false;
 
-        addRouteLeg(
-                DANIEL_WAYPOINT_2,
-                SHOOTING_POSITION
-        );
+            return;
+        }
+
+        // =====================================
+        // CONVERT ROUTE INTO PEDRO PATHS
+        // =====================================
+
+        for (int i = 0; i < route.size() - 1; i++) {
+
+            Pose pathStart = route.get(i);
+
+            Pose pathEnd = route.get(i + 1);
+
+            PathChain path = follower.pathBuilder()
+
+                    .addPath(
+                            new BezierLine(
+                                    pathStart,
+                                    pathEnd
+                            )
+                    )
+
+                    .setConstantHeadingInterpolation(
+                            destination.getHeading()
+                    )
+
+                    .build();
+
+            autonomousPaths.add(path);
+        }
+
+        // =====================================
+        // START AUTONOMOUS MOVEMENT
+        // =====================================
 
         if (autonomousPaths.isEmpty()) {
 
-            telemetry.addLine("No valid autonomous route");
+            telemetry.addLine("No paths generated");
+
+            aiming = false;
+
             return;
         }
 
@@ -393,14 +624,22 @@ public class AI_identification_Test_yajat extends OpMode {
         follower.setMaxPower(0.5);
 
         follower.followPath(
-                autonomousPaths.get(currentPathIndex),
+                autonomousPaths.get(0),
                 true
         );
 
         autoRunning = true;
+
         aiming = false;
 
-        telemetry.addLine("Safe route started");
+        telemetry.addLine(
+                "Safe autonomous route started"
+        );
+
+        telemetry.addData(
+                "Number of paths",
+                autonomousPaths.size()
+        );
     }
 
     // =========================================
@@ -417,14 +656,19 @@ public class AI_identification_Test_yajat extends OpMode {
 
             currentPathIndex++;
 
+            // More path segments remain.
+
             if (currentPathIndex < autonomousPaths.size()) {
 
                 follower.followPath(
                         autonomousPaths.get(currentPathIndex),
                         true
                 );
+            }
 
-            } else {
+            // All paths completed.
+
+            else {
 
                 autoRunning = false;
 
@@ -440,7 +684,7 @@ public class AI_identification_Test_yajat extends OpMode {
     }
 
     // =========================================
-    // LIMELIGHT CLASSIFICATION
+    // LIMELIGHT AI DETECTION
     // =========================================
 
     private void detectHiveTilt() {
@@ -449,7 +693,10 @@ public class AI_identification_Test_yajat extends OpMode {
 
         if (result == null || !result.isValid()) {
 
-            telemetry.addLine("Waiting for AI detection");
+            telemetry.addLine(
+                    "Waiting for valid Limelight result"
+            );
+
             return;
         }
 
@@ -458,9 +705,16 @@ public class AI_identification_Test_yajat extends OpMode {
 
         if (detections == null || detections.isEmpty()) {
 
-            telemetry.addLine("No classifications");
+            telemetry.addLine(
+                    "No AI classifications"
+            );
+
             return;
         }
+
+        // =====================================
+        // FIND HIGHEST CONFIDENCE CLASS
+        // =====================================
 
         LLResultTypes.ClassifierResult best =
                 detections.get(0);
@@ -479,31 +733,43 @@ public class AI_identification_Test_yajat extends OpMode {
 
         lastAIConfidence = best.getConfidence();
 
-        telemetry.addData("AI Class", lastAIClass);
+        telemetry.addData(
+                "AI Class",
+                lastAIClass
+        );
 
         telemetry.addData(
-                "Confidence",
+                "AI Confidence",
                 lastAIConfidence
         );
 
-        // HIVE TILTED TOWARDS ROBOT:
-        // Switch to the other shooting side.
+        // =====================================
+        // TILT TOWARDS
+        // =====================================
 
         if (lastAIClass.equalsIgnoreCase(
                 "0 Tilt Towards Blue")) {
 
-            telemetry.addLine("Decision: SWITCH SIDES");
+            telemetry.addLine(
+                    "DECISION: SWITCH SIDES"
+            );
 
             buildSwitchSideRoute();
         }
 
-        // HIVE TILTED AWAY:
-        // Remain at the current shooting position.
+        // =====================================
+        // TILT AWAY
+        // =====================================
 
         else if (lastAIClass.equalsIgnoreCase(
                 "1 Tilt Away Blue")) {
 
-            telemetry.addLine("Decision: STAY");
+            telemetry.addLine(
+                    "DECISION: STAY IN POSITION"
+            );
+
+            // No movement.
+            // Robot remains at its current position.
 
             aiming = false;
         }
@@ -522,21 +788,46 @@ public class AI_identification_Test_yajat extends OpMode {
 
         if (currentPose == null) {
 
-            telemetry.addLine("Pedro pose unavailable");
+            telemetry.addLine(
+                    "Pedro Pathing pose unavailable"
+            );
 
             telemetry.update();
+
             return;
         }
 
-        telemetry.addData("Robot X", currentPose.getX());
-        telemetry.addData("Robot Y", currentPose.getY());
+        // =====================================
+        // ROBOT POSITION TELEMETRY
+        // =====================================
 
         telemetry.addData(
-                "Heading",
-                Math.toDegrees(currentPose.getHeading())
+                "Robot X",
+                currentPose.getX()
         );
 
-        // Detect A button rising edge.
+        telemetry.addData(
+                "Robot Y",
+                currentPose.getY()
+        );
+
+        telemetry.addData(
+                "Robot Heading",
+                Math.toDegrees(
+                        currentPose.getHeading()
+                )
+        );
+
+        telemetry.addData(
+                "Current Side",
+                currentPose.getY() > 72
+                        ? "BLUE UPPER"
+                        : "BLUE LOWER"
+        );
+
+        // =====================================
+        // A BUTTON ACTIVATION
+        // =====================================
 
         if (gamepad1.a && !lastA && !autoRunning) {
 
@@ -564,7 +855,7 @@ public class AI_identification_Test_yajat extends OpMode {
             );
 
             telemetry.addData(
-                    "Path Count",
+                    "Total Paths",
                     autonomousPaths.size()
             );
         }
@@ -575,6 +866,9 @@ public class AI_identification_Test_yajat extends OpMode {
 
         else if (aiming) {
 
+            // Allow driver to move while
+            // AI detection is active.
+
             follower.setTeleOpDrive(
                     -gamepad1.left_stick_y,
                     -gamepad1.left_stick_x,
@@ -584,7 +878,9 @@ public class AI_identification_Test_yajat extends OpMode {
 
             detectHiveTilt();
 
-            telemetry.addLine("AI Detection Mode");
+            telemetry.addLine(
+                    "AI Detection Mode"
+            );
         }
 
         // =====================================
@@ -600,10 +896,19 @@ public class AI_identification_Test_yajat extends OpMode {
                     true
             );
 
-            telemetry.addLine("Driver Control");
+            telemetry.addLine(
+                    "Driver Control"
+            );
         }
 
-        telemetry.addData("Last AI Class", lastAIClass);
+        // =====================================
+        // LAST AI INFORMATION
+        // =====================================
+
+        telemetry.addData(
+                "Last AI Class",
+                lastAIClass
+        );
 
         telemetry.addData(
                 "Last AI Confidence",
