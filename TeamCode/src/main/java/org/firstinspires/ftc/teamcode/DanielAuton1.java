@@ -54,44 +54,44 @@ public class DanielAuton1 extends OpMode {
     // =========================================
 
     private static final Pose START_POSE =
-            new Pose(99.651, 132.274, Math.toRadians(-90));
+            new Pose(99.651, 132.274, Math.toRadians(-90)); //starts here
 
     private static final Pose DRIVE_START_POSE =
-            new Pose(99.651, 115.099, Math.toRadians(-90)); //accidentally added extra
+            new Pose(99.651, 115.099, Math.toRadians(-90)); //goes forward to shoot; determines whether to go to other side or collect more
 
     private static final Pose TARGET_POSE =
-            new Pose(99.651, 115.099, Math.toRadians(-1));
+            new Pose(99.651, 115.099, Math.toRadians(-1)); //turns in place
 
     private static final Pose FOURTH_POSE =
-            new Pose(125, 94.293, Math.toRadians(-1));
+            new Pose(125, 94.293, Math.toRadians(-1)); //goes to flower; alt path also meets up here
 
     private static final Pose FIFTH_POSE =
-            new Pose(125, 94.293, Math.toRadians(-108));
+            new Pose(125, 94.293, Math.toRadians(-108)); //turns in place
 
     private static final Pose SIXTH_POSE =
-            new Pose(105.082, 21.135, Math.toRadians(-108));
+            new Pose(105.082, 21.135, Math.toRadians(-108)); //goes to other side and shoots; determines whether to go back to other side or stay
 
     private static final Pose SEVENTH_POSE =
-            new Pose(105.082, 21.135, Math.toRadians(113));
+            new Pose(105.082, 21.135, Math.toRadians(113)); //rotates in place
 
     private static final Pose EIGHTH_POSE =
-            new Pose(94.859, 17.045, Math.toRadians(113));
+            new Pose(94.859, 17.045, Math.toRadians(113)); //goes to flower and collects
 
     private static final Pose NINTH_POSE =
-            new Pose(94.859, 17.045, Math.toRadians(116));
+            new Pose(94.859, 17.045, Math.toRadians(116)); //rotates in place
 
     private static final Pose TENTH_POSE =
-            new Pose(87.208, 32.554, Math.toRadians(116));
+            new Pose(87.208, 32.554, Math.toRadians(116)); //collects balls after it drops out of hive
     private static final Pose ELEVENTH_POSE =
-            new Pose(87.208, 32.554, Math.toRadians(70));
+            new Pose(87.208, 32.554, Math.toRadians(70)); //rotates in place
     private static final Pose TWELFTH_POSE =
-            new Pose(115, 51, Math.toRadians(70));
+            new Pose(115, 51, Math.toRadians(70)); //step 1 of going around field
     private static final Pose THIRTEENTH_POSE =
-            new Pose(108.446, 55.198, Math.toRadians(104));
+            new Pose(108.446, 55.198, Math.toRadians(104)); //step 2
     private static final Pose FOURTEENTH_POSE =
-            new Pose(109.051, 86.086, Math.toRadians(104));
+            new Pose(109.051, 86.086, Math.toRadians(104)); //step 3
     private static final Pose FIFTEENTH_POSE =
-            new Pose(109.051, 96.086, Math.toRadians(119));
+            new Pose(109.051, 96.086, Math.toRadians(119)); //step 4
     private static final Pose SIXTEENTH_POSE =
             new Pose(96.236, 117.378, Math.toRadians(119));
     private static final Pose SEVENTEENTH_POSE =
