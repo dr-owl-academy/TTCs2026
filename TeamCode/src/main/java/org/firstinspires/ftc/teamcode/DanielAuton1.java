@@ -35,6 +35,8 @@ public class DanielAuton1 extends OpMode {
         ALT_PATH_2,
         ALT_PATH_3,
         ALT_PATH_4,
+        ALT_PATH_5,
+        ALT_PATH_6,
         COMPLETE
     }
 
@@ -42,7 +44,7 @@ public class DanielAuton1 extends OpMode {
     private Pose debugTarget = START_POSE;
     private String debugAction = "Waiting to Start";
 
-    private PathChain[] paths = new PathChain[21]; //sets up pathchain for multiple paths
+    private PathChain[] paths = new PathChain[23]; //sets up pathchain for multiple paths
 //start FSM state
     private AutoState autoState = AutoState.PATH1;
 
@@ -100,6 +102,11 @@ public class DanielAuton1 extends OpMode {
             new Pose(132,132,Math.toRadians(80));
     private static final Pose ALT_SECOND_POSE =
             new Pose(109.3,112.17,Math.toRadians(113));
+    private static final Pose ALT_THIRD_POSE =
+            new Pose(132,132,Math.toRadians(20));
+
+
+
 
 
 
@@ -212,6 +219,10 @@ public class DanielAuton1 extends OpMode {
         paths[18] = makeConstantPath(ALT_POSE, FOURTH_POSE);
         paths[19] = makeConstantPath(SEVENTH_POSE, ALT_SECOND_POSE);
         paths[20] = makeConstantPath(ALT_SECOND_POSE, THIRTEENTH_POSE);
+        paths[21] = makeConstantPath(SIXTEENTH_POSE, ALT_THIRD_POSE);
+        paths[22] = makeConstantPath(ALT_THIRD_POSE, EIGHTEENTH_POSE);
+
+
 
 
 
@@ -354,8 +365,17 @@ public class DanielAuton1 extends OpMode {
                 break;
                 case PATH16:
                 if (!follower.isBusy()) {
-                    follower.turnTo(Math.toRadians(-68));
-                    autoState = AutoState.PATH17;
+                    boolean hiveTippedCorrectly = true;
+
+                    if (hiveTippedCorrectly) {
+                        follower.turnTo(Math.toRadians(-68));
+                        autoState = AutoState.PATH17;
+                    } else {
+                        follower.followPath(paths[21], true);
+                        autoState = AutoState.ALT_PATH_5;
+
+
+                    }
                 }
                 break;
                 case PATH17:
@@ -393,6 +413,17 @@ public class DanielAuton1 extends OpMode {
             case ALT_PATH_4:
                 if (!follower.isBusy()) {
                     autoState = AutoState.PATH12;
+                }
+                break;
+                case ALT_PATH_5:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths[22], true);
+                    autoState = AutoState.ALT_PATH_6;
+                }
+                break;
+            case ALT_PATH_6:
+                if (!follower.isBusy()) {
+                    autoState = AutoState.PATH16;
                 }
                 break;
 
