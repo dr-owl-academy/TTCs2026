@@ -14,23 +14,22 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 public class river_auton_path extends OpMode {
 
     private enum AutoState {
-        Check_AI,
         PATH1, WAIT1,
-        PATH2, WAIT2,
+        PATH2, WAIT2, AI_AFTER_2,
         PATH3, WAIT3,
-        PATH4, WAIT4,
+        PATH4, WAIT4, AI_AFTER_4,
         PATH5, WAIT5,
-        PATH6, WAIT6,
-        PATH7, WAIT7,
+        PATH6, WAIT6, AI_AFTER_6,
+        PATH7, WAIT7, AI_AFTER_7,
         COMPLETE
     }
 
     private Follower follower;
     private PathChain[] paths = new PathChain[7];
-    private AutoState autoState = AutoState.Check_AI;
+    private AutoState autoState = AutoState.PATH1;
     private long waitStart = 0;
-    private String aiResult = "none";
 
+    // ----- Poses (unchanged from your code) -----
     private static final Pose START =
             new Pose(51.6289, 6.8244, Math.toRadians(90));
     private static final Pose GOTO_SHOOT =
@@ -50,13 +49,27 @@ public class river_auton_path extends OpMode {
     private static final Pose PARK =
             new Pose(12.3437, 95.4274, Math.toRadians(-94.1671));
 
+    // Alternate points used when hive is tilted away
+    // (replace these coordinates with the real alternate poses you want)
+    private static final Pose ALT_AFTER_2 =
+            new Pose(20.0, 20.0, Math.toRadians(90));
+    private static final Pose ALT_AFTER_4 =
+            new Pose(40.0, 40.0, Math.toRadians(45));
+    private static final Pose ALT_AFTER_6 =
+            new Pose(30.0, 60.0, Math.toRadians(0));
+    private static final Pose ALT_AFTER_7 =
+            new Pose(15.0, 80.0, Math.toRadians(-90));
+
+    private PathChain altAfter2, altAfter4, altAfter6, altAfter7;
+
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(START);
         follower.setMaxPower(0.5);
         buildPaths();
-        autoState = AutoState.Check_AI;
+        buildAlternatePaths();
+        autoState = AutoState.PATH1;
         telemetry.addLine("Autonomous ready");
         telemetry.update();
     }
@@ -69,12 +82,6 @@ public class river_auton_path extends OpMode {
     @Override
     public void loop() {
         follower.update();
-
-        // TODO: Replace this with your real AI / Limelight read
-        // Example: aiResult = limelight.getClassifierResult();
-        // For testing you can temporarily set it here:
-        // aiResult = "garden";
-
         autonomousPathUpdate();
 
         Pose p = follower.getPose();
@@ -83,7 +90,6 @@ public class river_auton_path extends OpMode {
         telemetry.addData("Heading", Math.toDegrees(p.getHeading()));
         telemetry.addData("State", autoState);
         telemetry.addData("Busy", follower.isBusy());
-        telemetry.addData("AI Result", aiResult);
         telemetry.update();
     }
 
@@ -101,6 +107,15 @@ public class river_auton_path extends OpMode {
         paths[6] = makeLine(GET_POLLEN_FLOWER_2, PARK);
     }
 
+    private void buildAlternatePaths() {
+        // These are simple lines to the alternate points.
+        // Change them to whatever paths you actually want when the hive is tilted away.
+        altAfter2 = makeLine(GET_POLLEN_GARDEN, ALT_AFTER_2);
+        altAfter4 = makeLine(GET_POLLEN_FLOWER, ALT_AFTER_4);
+        altAfter6 = makeLine(GET_POLLEN_FLOWER_2, ALT_AFTER_6);
+        altAfter7 = makeLine(PARK, ALT_AFTER_7);
+    }
+
     private PathChain makeLine(Pose start, Pose end) {
         return follower.pathBuilder()
                 .addPath(new BezierLine(start, end))
@@ -111,21 +126,7 @@ public class river_auton_path extends OpMode {
     private void autonomousPathUpdate() {
         switch (autoState) {
 
-            case Check_AI:I:
-                // Example decisions — change the strings to match your AI
-                if (aiResult.equals("garden")) {
-                    follower.followPath(paths[1], true);   // go to garden point
-                    autoState = AutoState.PATH2;
-                } else if (aiResult.equals("flower")) {
-                    follower.followPath(paths[3], true);   // go to flower point
-                    autoState = AutoState.PATH4;
-                } else if (aiResult.equals("shoot")) {
-                    follower.followPath(paths[0], true);   // go to shoot point
-                    autoState = AutoState.PATH1;
-                }
-                // Add more else-if lines for your other cases (up to ~8)
-                break;
-
+            // ---------- PATH 1 ----------
             case PATH1:
                 follower.followPath(paths[0], true);
                 autoState = AutoState.WAIT1;
@@ -137,6 +138,7 @@ public class river_auton_path extends OpMode {
                 }
                 break;
 
+            // ---------- PATH 2 + AI ----------
             case PATH2:
                 if (System.currentTimeMillis() - waitStart >= 1800) {
                     follower.followPath(paths[1], true);
@@ -145,11 +147,24 @@ public class river_auton_path extends OpMode {
                 break;
             case WAIT2:
                 if (!follower.isBusy()) {
-                    waitStart = System.currentTimeMillis();
+                    autoState = AutoState.AI_AFTER_2;   // check after Path 2
+                }
+                break;
+            case AI_AFTER_2:
+                // Call PromodPathPlaner here
+                boolean tiltedAway = PromodPathPlaner.isHiveTiltedAway();  // <-- method call
+
+                if (tiltedAway) {
+                    // Hive tilted away → go to alternate point
+                    follower.followPath(altAfter2, true);
+                    autoState = AutoState.WAIT3;   // or whatever state continues after the alt path
+                } else {
+                    // Hive toward the path → continue main path
                     autoState = AutoState.PATH3;
                 }
                 break;
 
+            // ---------- PATH 3 ----------
             case PATH3:
                 if (System.currentTimeMillis() - waitStart >= 100) {
                     follower.followPath(paths[2], true);
@@ -163,6 +178,7 @@ public class river_auton_path extends OpMode {
                 }
                 break;
 
+            // ---------- PATH 4 + AI ----------
             case PATH4:
                 if (System.currentTimeMillis() - waitStart >= 1250) {
                     follower.followPath(paths[3], true);
@@ -171,11 +187,21 @@ public class river_auton_path extends OpMode {
                 break;
             case WAIT4:
                 if (!follower.isBusy()) {
-                    waitStart = System.currentTimeMillis();
+                    autoState = AutoState.AI_AFTER_4;
+                }
+                break;
+            case AI_AFTER_4:
+                boolean tiltedAway4 = PromodPathPlaner.isHiveTiltedAway();
+
+                if (tiltedAway4) {
+                    follower.followPath(altAfter4, true);
+                    autoState = AutoState.WAIT5;
+                } else {
                     autoState = AutoState.PATH5;
                 }
                 break;
 
+            // ---------- PATH 5 ----------
             case PATH5:
                 if (System.currentTimeMillis() - waitStart >= 1000) {
                     follower.followPath(paths[4], true);
@@ -189,6 +215,7 @@ public class river_auton_path extends OpMode {
                 }
                 break;
 
+            // ---------- PATH 6 + AI ----------
             case PATH6:
                 if (System.currentTimeMillis() - waitStart >= 1800) {
                     follower.followPath(paths[5], true);
@@ -197,11 +224,21 @@ public class river_auton_path extends OpMode {
                 break;
             case WAIT6:
                 if (!follower.isBusy()) {
-                    waitStart = System.currentTimeMillis();
+                    autoState = AutoState.AI_AFTER_6;
+                }
+                break;
+            case AI_AFTER_6:
+                boolean tiltedAway6 = PromodPathPlaner.isHiveTiltedAway();
+
+                if (tiltedAway6) {
+                    follower.followPath(altAfter6, true);
+                    autoState = AutoState.WAIT7;
+                } else {
                     autoState = AutoState.PATH7;
                 }
                 break;
 
+            // ---------- PATH 7 + AI ----------
             case PATH7:
                 if (System.currentTimeMillis() - waitStart >= 500) {
                     follower.followPath(paths[6], true);
@@ -210,6 +247,17 @@ public class river_auton_path extends OpMode {
                 break;
             case WAIT7:
                 if (!follower.isBusy()) {
+                    autoState = AutoState.AI_AFTER_7;
+                }
+                break;
+            case AI_AFTER_7:
+                boolean tiltedAway7 = PromodPathPlaner.isHiveTiltedAway();
+
+                if (tiltedAway7) {
+                    follower.followPath(altAfter7, true);
+                    // after alternate, go to complete (or add more states if needed)
+                    autoState = AutoState.COMPLETE;
+                } else {
                     autoState = AutoState.COMPLETE;
                 }
                 break;
