@@ -31,6 +31,10 @@ public class DanielAuton1 extends OpMode {
         PATH16,
         PATH17,
         PATH18,
+        ALT_PATH_1,
+        ALT_PATH_2,
+        ALT_PATH_3,
+        ALT_PATH_4,
         COMPLETE
     }
 
@@ -38,7 +42,7 @@ public class DanielAuton1 extends OpMode {
     private Pose debugTarget = START_POSE;
     private String debugAction = "Waiting to Start";
 
-    private PathChain[] paths = new PathChain[18]; //sets up pathchain for multiple paths
+    private PathChain[] paths = new PathChain[21]; //sets up pathchain for multiple paths
 //start FSM state
     private AutoState autoState = AutoState.PATH1;
 
@@ -92,6 +96,11 @@ public class DanielAuton1 extends OpMode {
             new Pose(96.236, 117.378, Math.toRadians(-68));
     private static final Pose EIGHTEENTH_POSE =
             new Pose(124.840, 47.484, Math.toRadians(-68));
+    private static final Pose ALT_POSE =
+            new Pose(132,132,Math.toRadians(80));
+    private static final Pose ALT_SECOND_POSE =
+            new Pose(109.3,112.17,Math.toRadians(113));
+
 
 
 
@@ -199,6 +208,10 @@ public class DanielAuton1 extends OpMode {
         paths[15] = makeConstantPath(SIXTEENTH_POSE, SEVENTEENTH_POSE);
 
         paths[16] = makeConstantPath(SEVENTEENTH_POSE, EIGHTEENTH_POSE);
+        paths[17] = makeConstantPath(DRIVE_START_POSE, ALT_POSE);
+        paths[18] = makeConstantPath(ALT_POSE, FOURTH_POSE);
+        paths[19] = makeConstantPath(SEVENTH_POSE, ALT_SECOND_POSE);
+        paths[20] = makeConstantPath(ALT_SECOND_POSE, THIRTEENTH_POSE);
 
 
 
@@ -235,8 +248,16 @@ public class DanielAuton1 extends OpMode {
 
             case PATH2:
                 if (!follower.isBusy()) {
-                    follower.turnTo(Math.toRadians(-1));
-                    autoState = AutoState.PATH3;
+                    boolean hiveTippedCorrectly = true;
+
+                    if (hiveTippedCorrectly) {
+
+                        follower.turnTo(Math.toRadians(-1));
+                        autoState = AutoState.PATH3;
+                    } else {
+                        follower.followPath(paths[17], true);
+                        autoState = AutoState.ALT_PATH_1;
+                    }
                 }
                 break;
 
@@ -270,8 +291,15 @@ public class DanielAuton1 extends OpMode {
 
             case PATH7:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths[6], true);
-                    autoState = AutoState.PATH8;
+                    boolean hiveTippedCorrectly = true;
+                    if (hiveTippedCorrectly) {
+
+                        follower.followPath(paths[6], true);
+                        autoState = AutoState.PATH8;
+                    } else {
+                        follower.followPath(paths[19], true);
+                        autoState = AutoState.ALT_PATH_3;
+                    }
                 }
                 break;
 
@@ -344,6 +372,31 @@ public class DanielAuton1 extends OpMode {
                     autoState = AutoState.COMPLETE;
                 }
                 break;
+
+                case ALT_PATH_1:
+                    if (!follower.isBusy()) {
+                        follower.followPath(paths[18], true);
+                        autoState = AutoState.ALT_PATH_2;
+                    }
+                    break;
+                    case ALT_PATH_2:
+                if (!follower.isBusy()) {
+                    autoState = AutoState.PATH4;
+                }
+                break;
+            case ALT_PATH_3:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths[20], true);
+                    autoState = AutoState.ALT_PATH_4;
+                }
+                break;
+            case ALT_PATH_4:
+                if (!follower.isBusy()) {
+                    autoState = AutoState.PATH12;
+                }
+                break;
+
+
 
             case COMPLETE:
                 // Autonomous has finished.
