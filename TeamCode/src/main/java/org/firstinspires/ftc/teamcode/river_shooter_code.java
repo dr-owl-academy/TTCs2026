@@ -1,82 +1,132 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-@TeleOp(name = "river_shooter_code")
+@TeleOp
 public class river_shooter_code extends OpMode {
-    DcMotor shooterflywheel;
-    Servo ShooterHood;
-    double shooterpower = 0.5;
-    double HoodPos = 0.1;
 
+    // Hardware and tuning variables
+    public DcMotorEx flywheelMotor;
+    public double highVelocity = 1500;
+    public double lowVelocity = 900;
+    public double curTargetVelocity = highVelocity;
 
-    // Hood servo position constraints
-    final double MIN_HOOD_POS = 0.10;
-    final double MAX_HOOD_POS = 0.46;
+    // PIDF constants: adjusted using the gamepad
+    public double p = 0.0;
+    public double f = 15.58;
 
-    // Adjustment increments
-    final double SHOOTER_STEP = 0.05;
-    final double HOOD_STEP = 0.02;
+    // Step adjustment sensitivity
+    public double[] stepSizes = {10.0, 1.0, 0.1, 0.01, 0.001};
+    public int stepIndex = 1;
 
-    boolean lastDpadUp = false;
-    boolean lastDpadDown = false;
-    boolean lastDpadRight = false;
-    boolean lastDpadLeft = false;
+    // ADDED: Panels telemetry
+    private TelemetryManager panelsTelemetry;
+
+    // ADDED: previous button states for one adjustment per press
+    private boolean previousY = false;
+    private boolean previousB = false;
+    private boolean previousLeft = false;
+    private boolean previousRight = false;
+    private boolean previousUp = false;
+    private boolean previousDown = false;
 
     @Override
     public void init() {
-        shooterflywheel=hardwareMap.get
-                (DcMotor.class,"flywheel");
-        shooterflywheel.setDirection(DcMotorSimple.Direction.REVERSE);
-        ShooterHood = hardwareMap.get(Servo.class,"Servo");
-        ShooterHood.setPosition(HoodPos);
+        flywheelMotor = hardwareMap.get(DcMotorEx.class, "flywheel");
+        flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        flywheelMotor.setDirection(DcMotor.Direction.REVERSE);
 
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(p, 0, 0, f);
+        flywheelMotor.setPIDFCoefficients(
+                DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+
+        // ADDED: initialize Panels and send status to both displays
+        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
+        panelsTelemetry.debug("Init Complete");
+        panelsTelemetry.debug("Y: High/Low velocity | B: Step size");
+        panelsTelemetry.debug("D-pad Left/Right: F | Up/Down: P");
+        panelsTelemetry.update(telemetry);
     }
 
     @Override
     public void loop() {
-        if (gamepad1.dpad_up && !lastDpadUp) {
-            shooterpower += SHOOTER_STEP;
+        // Read button states once per loop
+        boolean y = gamepad1.y;
+        boolean b = gamepad1.b;
+        boolean left = gamepad1.dpad_left;
+        boolean right = gamepad1.dpad_right;
+        boolean up = gamepad1.dpad_up;
+        boolean down = gamepad1.dpad_down;
+
+        // CHANGED: toggle only once per Y press
+        if (y && !previousY) {
+            if (curTargetVelocity == highVelocity) {
+                curTargetVelocity = lowVelocity;
+            } else {
+                curTargetVelocity = highVelocity;
+            }
         }
 
-        if (gamepad1.dpad_down && !lastDpadDown) {
-            shooterpower -= SHOOTER_STEP;
+        // CHANGED: cycle step size only once per B press
+        if (b && !previousB) {
+            stepIndex = (stepIndex + 1) % stepSizes.length;
         }
 
-        shooterpower = Math.max(0.0, Math.min(1.0, shooterpower));
-
-// Hood position
-        if (gamepad1.dpad_right && !lastDpadRight) {
-            HoodPos += HOOD_STEP;
+        // CHANGED: adjust F only once per D-pad press
+        if (left && !previousLeft) {
+            f -= stepSizes[stepIndex];
+        }
+        if (right && !previousRight) {
+            f += stepSizes[stepIndex];
         }
 
-        if (gamepad1.dpad_left && !lastDpadLeft) {
-            HoodPos -= HOOD_STEP;
+        // CHANGED: adjust P only once per D-pad press
+        if (up && !previousUp) {
+            p += stepSizes[stepIndex];
         }
-        HoodPos = Math.max(
-                MIN_HOOD_POS,
-                Math.min(MAX_HOOD_POS, HoodPos));
+        if (down && !previousDown) {
+            p -= stepSizes[stepIndex];
+        }
 
-        ShooterHood.setPosition(HoodPos);
+        previousY = y;
+        previousB = b;
+        previousLeft = left;
+        previousRight = right;
+        previousUp = up;
+        previousDown = down;
 
-// Save current button states for the next loop
-        lastDpadUp = gamepad1.dpad_up;
-        lastDpadDown = gamepad1.dpad_down;
-        lastDpadRight = gamepad1.dpad_right;
-        lastDpadLeft = gamepad1.dpad_left;
+        // Apply PIDF coefficients and command motor velocity
+        PIDFCoefficients newPIDF = new PIDFCoefficients(p, 0, 0, f);
+        flywheelMotor.setPIDFCoefficients(
+                DcMotor.RunMode.RUN_USING_ENCODER, newPIDF);
+        flywheelMotor.setVelocity(curTargetVelocity);
 
+        // Gather performance data; velocity units are encoder ticks/sec
+        double curVelocity = flywheelMotor.getVelocity();
+        double error = curTargetVelocity - curVelocity;
 
-        shooterflywheel.setPower(shooterpower);
-        telemetry.addData( "Shooter power", "%.2f", shooterpower);
-        telemetry.addData("Hood Pos", "%.4f", HoodPos);
-        telemetry.addData("Servo Command", "%.4f",
-                ShooterHood.getPosition());
-        telemetry.addData("D-pad Right", gamepad1.dpad_right);
-        telemetry.addData("D-pad Left", gamepad1.dpad_left);
-        telemetry.update();
+        // FIXED: Panels Graph reads numeric key/value telemetry.
+        // Use addData(), not graph(), with this Panels API.
+        panelsTelemetry.addData("Target Velocity", curTargetVelocity);
+        panelsTelemetry.addData("Actual Velocity", curVelocity);
+        panelsTelemetry.addData("Velocity Error", error);
+        panelsTelemetry.addData("Tuning P", p);
+        panelsTelemetry.addData("Tuning F", f);
+        panelsTelemetry.addData("Current Step Size", stepSizes[stepIndex]);
+
+        // ADDED: send to Panels and Driver Hub
+        panelsTelemetry.update(telemetry);
+    }
+
+    // ADDED: stop the flywheel when the OpMode ends
+    @Override
+    public void stop() {
+        flywheelMotor.setPower(0);
     }
 }
